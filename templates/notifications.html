@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - L.E.A.F{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card glass-card">
+                <div class="card-header glass-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>Notifications
+                    </h4>
+                    {% if notifications %}
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="markAllAsRead()">
+                        <i class="fas fa-check-double me-1"></i>Mark All Read
+                    </button>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body">
+                    {% if notifications %}
+                        <div class="notifications-list">
+                            {% for notification in notifications %}
+                            <div class="notification-item {% if not notification.is_read %}unread{% endif %}" data-id="{{ notification.id }}">
+                                <div class="notification-content">
+                                    <div class="notification-header">
+                                        <div class="notification-icon">
+                                            {% if notification.type == 'private_message' %}
+                                                <i class="fas fa-comment text-success"></i>
+                                            {% elif notification.type == 'borrow_request' %}
+                                                <i class="fas fa-hand-paper text-warning"></i>
+                                            {% elif notification.type == 'borrow_approved' %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            {% elif notification.type == 'borrow_declined' %}
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            {% else %}
+                                                <i class="fas fa-info-circle text-info"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="notification-text">
+                                            <h6 class="mb-1">{{ notification.title }}</h6>
+                                            <p class="mb-1">{{ notification.message }}</p>
+                                            <small class="text-muted">{{ notification.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        </div>
+                                        {% if not notification.is_read %}
+                                        <div class="notification-actions">
+                                            {% if notification.type == 'borrow_request' %}
+                                            <button type="button" class="btn btn-sm btn-success me-2" 
+                                                    onclick="handleBookRequest({{ notification.id }}, 'accept')" 
+                                                    id="accept-btn-{{ notification.id }}">
+                                                <i class="fas fa-check me-1"></i>Accept
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger me-2" 
+                                                    onclick="handleBookRequest({{ notification.id }}, 'decline')" 
+                                                    id="decline-btn-{{ notification.id }}">
+                                                <i class="fas fa-times me-1"></i>Decline
+                                            </button>
+                                            {% elif notification.type == 'private_message' %}
+                                            <button type="button" class="btn btn-sm btn-primary me-2" 
+                                                    onclick="enterChat({{ notification.related_user_id }}, {{ notification.book_id if notification.book_id else 'null' }})" 
+                                                    id="chat-btn-{{ notification.id }}">
+                                                <i class="fas fa-comment me-1"></i>Enter Chat
+                                            </button>
+                                            {% endif %}
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="markAsRead({{ notification.id }})">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-notifications text-center py-5">
+                            <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No notifications yet</h5>
+                            <p class="text-muted">When someone shows interest in borrowing your posted books, you'll see notifications here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Back to Home Button -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Catalog
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Notification-specific styles */
+.glass-header {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 15px 15px 0 0;
+}
+
+.notifications-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.notification-item.unread {
+    background: rgba(74, 144, 226, 0.1);
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+.notification-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.notification-text {
+    flex-grow: 1;
+    color: #fff;
+}
+
+.notification-text h6 {
+    color: #fff;
+    font-weight: 600;
+}
+
+.notification-text p {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+}
+
+.notification-actions {
+    flex-shrink: 0;
+}
+
+.empty-notifications {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Scrollbar styling */
+.notifications-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.notifications-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.notifications-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Animation for marking as read */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+}
+
+.notification-item.marking-read {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+</style>
+
+<script>
+function handleBookRequest(notificationId, action) {
+    const acceptBtn = document.getElementById(`accept-btn-${notificationId}`);
+    const declineBtn = document.getElementById(`decline-btn-${notificationId}`);
+    
+    // Disable buttons during request
+    if (acceptBtn) acceptBtn.disabled = true;
+    if (declineBtn) declineBtn.disabled = true;
+    
+    fetch(`/notifications/book-request/${notificationId}/${action}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
+            if (notificationElement) {
+                const actionsDiv = notificationElement.querySelector('.notification-actions');
+                if (actionsDiv) {
+                    const statusMessage = action === 'accept' ? 
+                        '<span class="badge bg-success">Accepted</span>' : 
+                        '<span class="badge bg-danger">Declined</span>';
+                    actionsDiv.innerHTML = statusMessage;
+                }
+            }
+            
+            // Mark as read automatically
+            markAsRead(notificationId);
+        } else {
+            alert(data.error || 'An error occurred');
+            // Re-enable buttons on error
+            if (acceptBtn) acceptBtn.disabled = false;
+            if (declineBtn) declineBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while processing the request');
+        // Re-enable buttons on error
+        if (acceptBtn) acceptBtn.disabled = false;
+        if (declineBtn) declineBtn.disabled = false;
+    });
+}
+
+function markAsRead(notificationId) {
+    const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
+    if (notificationElement) {
+        notificationElement.classList.add('marking-read');
+    }
+    
+    fetch(`/api/notifications/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            setTimeout(() => {
+                if (notificationElement) {
+                    notificationElement.classList.remove('unread', 'marking-read');
+                    const actionsDiv = notificationElement.querySelector('.notification-actions');
+                    if (actionsDiv && !actionsDiv.innerHTML.includes('badge')) {
+                        actionsDiv.remove();
+                    }
+                }
+                updateNotificationBadge();
+            }, 300);
+        } else {
+            console.error('Failed to mark notification as read');
+            if (notificationElement) {
+                notificationElement.classList.remove('marking-read');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        if (notificationElement) {
+            notificationElement.classList.remove('marking-read');
+        }
+    });
+}
+
+function markAllAsRead() {
+    fetch('/api/notifications/read_all', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload the page to reflect changes
+            location.reload();
+        } else {
+            console.error('Failed to mark all notifications as read');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function enterChat(userId, bookId) {
+    // Build the chat URL
+    let chatUrl = `/chat/${userId}`;
+    if (bookId && bookId !== null) {
+        chatUrl += `/${bookId}`;
+    }
+    
+    // Navigate to the chat page
+    window.location.href = chatUrl;
+}
+
+function updateNotificationBadge() {
+    fetch('/api/notifications/count')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const badge = document.getElementById('notification-badge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error updating notification badge:', error);
+    });
+}
+
+// Update notification badge on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateNotificationBadge();
+});
+</script>
+{% endblock %}

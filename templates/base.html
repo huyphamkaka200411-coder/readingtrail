@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}L.E.A.F - Digital Book Borrowing{% endblock %}</title>
+
+    <!-- Bootstrap CSS with Replit theme -->
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top glass-navbar">
+        <div class="container-fluid">
+            <!-- Brand and Toggle -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <i class="fas fa-book me-2"></i>
+                <span class="fw-bold">L.E.A.F</span>
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i>Browse
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('info') }}">
+                            <i class="fas fa-info-circle me-1"></i>Info
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-user me-1"></i>My Books
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('post_book') }}">
+                            <i class="fas fa-plus-circle me-1"></i>Post Book
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ url_for('notifications') }}">
+                            <i class="fas fa-bell me-1"></i>Notifications
+                            <span id="navbar-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('achievements') }}">
+                            <i class="fas fa-trophy me-1"></i>Achievements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ranks') }}">
+                            <i class="fas fa-medal me-1"></i>Ranks
+                        </a>
+                    </li>
+                    {% if current_user.get_total_points() >= 150 %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('store') }}">
+                            <i class="fas fa-store me-1"></i>Store
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                
+                <!-- User Section -->
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item me-3">
+                        <span class="nav-link">
+                            <i class="fas fa-books me-1"></i>
+                            <span id="navbar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> borrowed
+                        </span>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <div class="d-flex flex-column">
+                                <span class="fw-semibold">{{ current_user.get_full_name() or current_user.username }}</span>
+                                {% set rank_info = current_user.get_rank_info() %}
+                                <small class="text-muted">
+                                    <i class="fas {{ rank_info.current_rank.icon }}" style="color: {{ rank_info.current_rank.color }}"></i>
+                                    {{ rank_info.current_rank.name }} ({{ rank_info.total_points }} pts)
+                                </small>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                                <i class="fas fa-user me-2"></i>Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('signup') }}">
+                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+
+        </div>
+    </nav>
+
+    <!-- Sidebar Trigger Area -->
+    <div class="sidebar-trigger" id="sidebarTrigger"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-book me-2"></i>L.E.A.F</h4>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('index') }}" class="sidebar-link">
+                <i class="fas fa-home"></i>
+                <span>Browse Books</span>
+            </a>
+            <a href="{{ url_for('info') }}" class="sidebar-link">
+                <i class="fas fa-info-circle"></i>
+                <span>Info</span>
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span>My Books</span>
+            </a>
+            <a href="{{ url_for('post_book') }}" class="sidebar-link">
+                <i class="fas fa-plus-circle"></i>
+                <span>Post Book</span>
+            </a>
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+                <span id="sidebar-notification-badge" class="sidebar-badge" style="display: none;">0</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <div class="sidebar-divider"></div>
+
+            <a href="{{ url_for('achievements') }}" class="sidebar-link">
+                <i class="fas fa-trophy"></i>
+                <span>Achievements</span>
+            </a>
+            <a href="{{ url_for('ranks') }}" class="sidebar-link">
+                <i class="fas fa-medal"></i>
+                <span>Ranks</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <i class="fas fa-books"></i>
+                    <span>
+                        <span id="sidebar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> borrowed
+                    </span>
+                </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            {% if current_user.is_authenticated %}
+                <div class="sidebar-user">
+                    <a href="{{ url_for('profile') }}" class="user-info-link">
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-details">
+                                <span class="user-name">{{ current_user.get_full_name() or current_user.username }}</span>
+                                {% set rank_info = current_user.get_rank_info() %}
+                                <div class="user-rank">
+                                    <i class="fas {{ rank_info.current_rank.icon }}" style="color: {{ rank_info.current_rank.color }}"></i>
+                                    <span>{{ rank_info.current_rank.name }}</span>
+                                    <span class="points-badge">{{ rank_info.total_points }} pts</span>
+                                </div>
+                                {% if rank_info.next_rank %}
+                                    <div class="rank-progress">
+                                        <div class="progress-bar-mini">
+                                            <div class="progress-fill" style="width: {{ rank_info.progress_percentage }}%; background-color: {{ rank_info.next_rank.color }}"></div>
+                                        </div>
+                                        <span class="progress-text">{{ rank_info.points_needed }} to {{ rank_info.next_rank.name }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="sidebar-link logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            {% else %}
+                <div class="sidebar-auth">
+                    <a href="{{ url_for('login') }}" class="sidebar-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="{{ url_for('signup') }}" class="sidebar-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Sign Up</span>
+                    </a>
+                </div>
+            {% endif %}
+        </nav>
+                <button type="button" class="btn btn-sm glass-button" 
+                        onclick="toggleSidebar()" 
+                        aria-label="Close sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+
+    <!-- Alert Container -->
+    <div id="alert-container" class="container mt-3"></div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-navbar text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-book me-2"></i>L.E.A.F</h5>
+                    <p class="mb-0">Your digital gateway to literature and knowledge.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Sidebar JavaScript -->
+    <script>
+    // Prevent multiple initialization
+    if (!window.sidebarInitialized) {
+        window.sidebarInitialized = true;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarTrigger = document.getElementById('sidebarTrigger');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (!sidebar || !sidebarTrigger || !sidebarOverlay) return;
+
+            let isAnimating = false;
+
+            function openSidebar() {
+                if (isAnimating) return;
+                isAnimating = true;
+
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                // Reset animation flag after transition
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 400);
+            }
+
+            function closeSidebar() {
+                if (isAnimating) return;
+                isAnimating = true;
+
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+
+                // Reset animation flag after transition
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 400);
+            }
+
+            // Trigger area for opening sidebar
+            sidebarTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openSidebar();
+            });
+
+            // Close sidebar when clicking on overlay
+            sidebarOverlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeSidebar();
+            });
+
+            // Prevent sidebar from closing when clicking on sidebar content
+            sidebar.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Close sidebar on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
+            });
+
+            // Handle active link highlighting
+            function updateActiveLink() {
+                const currentPath = window.location.pathname;
+                const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    const href = link.getAttribute('href');
+                    if (href && (href === currentPath || (currentPath === '/' && href.includes('index')))) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Update active link on load
+            updateActiveLink();
+
+            // Update sidebar notification badge
+            function updateSidebarNotificationBadge() {
+                const mainBadge = document.getElementById('notification-badge');
+                const sidebarBadge = document.getElementById('sidebar-notification-badge');
+                const mobileBadge = document.getElementById('mobile-notification-badge');
+
+                if (mainBadge) {
+                    const count = parseInt(mainBadge.textContent) || 0;
+                    const isVisible = mainBadge.style.display !== 'none' && count > 0;
+
+                    // Update sidebar badge
+                    if (sidebarBadge) {
+                        if (isVisible) {
+                            sidebarBadge.textContent = count;
+                            sidebarBadge.style.display = 'flex';
+                        } else {
+                            sidebarBadge.style.display = 'none';
+                        }
+                    }
+
+                    // Update mobile badge
+                    if (mobileBadge) {
+                        if (isVisible) {
+                            mobileBadge.textContent = count;
+                            mobileBadge.style.display = 'inline-block';
+                        } else {
+                            mobileBadge.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            // Update sidebar borrowed count
+            function updateSidebarBorrowedCount() {
+                const mainCount = document.getElementById('borrowed-count');
+                const sidebarCount = document.getElementById('sidebar-borrowed-count');
+                const mobileCount = document.getElementById('mobile-borrowed-count');
+
+                if (mainCount) {
+                    const countText = mainCount.textContent;
+                    
+                    // Update sidebar count
+                    if (sidebarCount) {
+                        sidebarCount.textContent = countText;
+                    }
+                    
+                    // Update mobile count
+                    if (mobileCount) {
+                        mobileCount.textContent = countText;
+                    }
+                }
+            }
+
+            // Initial updates
+            updateSidebarNotificationBadge();
+            updateSidebarBorrowedCount();
+
+            // Listen for changes in main badges with debouncing
+            let updateTimeout;
+            const observer = new MutationObserver(function(mutations) {
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(() => {
+                    updateSidebarNotificationBadge();
+                    updateSidebarBorrowedCount();
+                }, 100);
+            });
+
+            const mainBadge = document.getElementById('notification-badge');
+            const mainCount = document.getElementById('borrowed-count');
+
+            if (mainBadge) {
+                observer.observe(mainBadge, { 
+                    childList: true, 
+                    attributes: true, 
+                    attributeFilter: ['style'],
+                    subtree: true 
+                });
+            }
+            if (mainCount) {
+                observer.observe(mainCount, { 
+                    childList: true, 
+                    subtree: true 
+                });
+            }
+
+            // Listen for notification updates from the main script
+            window.addEventListener('notificationUpdate', updateSidebarNotificationBadge);
+
+            // Close sidebar when clicking on sidebar links (mobile UX)
+            const sidebarLinks = document.querySelectorAll('.sidebar-link:not(.logout)');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        setTimeout(closeSidebar, 200);
+                    }
+                });
+            });
+        });
+    }
+    </script>
+
+    <!-- Notification Badge Script -->
+    <script>
+    function updateNotificationBadge() {
+        fetch('/api/notifications/count')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const badge = document.getElementById('notification-badge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                    // Trigger sidebar update
+                    window.dispatchEvent(new CustomEvent('notificationUpdate'));
+                }
+            }
+        })
+        .catch(error => {
+            // Silently fail if notifications endpoint doesn't exist
+            // This prevents console spam while the feature is being developed
+            const badge = document.getElementById('notification-badge');
+            if (badge) {
+                badge.style.display = 'none';
+            }
+        });
+    }
+
+    // Update badge on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNotificationBadge();
+
+        // Update badge every 30 seconds for real-time updates
+        setInterval(updateNotificationBadge, 30000);
+    });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

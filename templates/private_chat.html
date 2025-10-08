@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}Chat with {{ recipient.get_full_name() or recipient.username }} - L.E.A.F{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card glass-card chat-container">
+                <div class="card-header glass-header">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-comment me-2"></i>
+                                Chat with {{ recipient.get_full_name() or recipient.username }}
+                            </h5>
+                            <small class="text-muted">Private conversation</small>
+                        </div>
+                        <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-user me-1"></i>View Profile
+                        </a>
+                    </div>
+                    
+                    {% if book %}
+                    <div class="book-context">
+                        <div class="alert alert-info py-2 px-3 mb-0">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-book me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>About: {{ book.title }}</strong>
+                                    <small class="d-block text-muted">by {{ book.author }}</small>
+                                </div>
+                                <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye me-1"></i>View Book
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body p-0">
+                    <!-- Chat Messages -->
+                    <div id="chat-messages" class="chat-messages">
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="message {% if message.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                                <div class="message-content">
+                                    <div class="message-header">
+                                        <span class="sender-name">
+                                            {% if message.sender_id == current_user.id %}
+                                                You
+                                            {% else %}
+                                                {{ recipient.get_full_name() or recipient.username }}
+                                            {% endif %}
+                                        </span>
+                                        <span class="message-time">{{ message.time_ago }}</span>
+                                    </div>
+                                    <div class="message-text">{{ message.message }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-chat">
+                                <i class="fas fa-comment-dots fa-3x text-muted mb-3"></i>
+                                <h6 class="text-muted">Start your conversation</h6>
+                                <p class="text-muted">
+                                    {% if book %}
+                                        Ask {{ recipient.get_full_name() or recipient.username }} about "{{ book.title }}"
+                                    {% else %}
+                                        Send a message to {{ recipient.get_full_name() or recipient.username }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Message Input -->
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <input type="text" id="message-input" class="form-control glass-input" 
+                                   placeholder="Type your message..." maxlength="1000">
+                            <button type="button" id="send-button" class="btn btn-primary glass-button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Back Button -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-outline-secondary glass-button me-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
+                    <i class="fas fa-home me-2"></i>Back to Catalog
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Chat Styles */
+.chat-container {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.glass-header {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 15px 15px 0 0;
+    flex-shrink: 0;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 450px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.message.sent {
+    justify-content: flex-end;
+}
+
+.message.received {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 70%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.message.sent .message-content {
+    background: rgba(74, 144, 226, 0.3);
+    border-color: rgba(74, 144, 226, 0.5);
+}
+
+.message.received .message-content {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
+
+.sender-name {
+    font-weight: bold;
+    color: #fff;
+}
+
+.message-time {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.message-text {
+    color: #fff;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.chat-input-container {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0 0 15px 15px;
+    flex-shrink: 0;
+}
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 25px;
+    padding: 12px 20px;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(74, 144, 226, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    color: #fff;
+}
+
+.glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    text-align: center;
+}
+
+/* Scrollbar styling */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Animation for new messages */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.new-message {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Book context styling */
+.book-context .alert {
+    border-radius: 0.75rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.book-context .alert-info {
+    background: rgba(13, 202, 240, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .message-content {
+        max-width: 85%;
+    }
+    
+    .chat-container {
+        height: 500px;
+    }
+    
+    .chat-messages {
+        max-height: 350px;
+    }
+    
+    .book-context .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+    
+    .book-context .btn {
+        align-self: flex-end;
+    }
+}
+</style>
+
+<script>
+const recipientId = {{ recipient.id }};
+const bookId = {% if book %}{{ book.id }}{% else %}null{% endif %};
+let lastMessageId = 0;
+
+// Initialize chat
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Set initial last message ID
+    const messages = document.querySelectorAll('.message');
+    if (messages.length > 0) {
+        // In a real implementation, you'd get this from the message data
+        lastMessageId = messages.length;
+    }
+    
+    // Scroll to bottom
+    scrollToBottom();
+    
+    // Send message on button click
+    sendButton.addEventListener('click', sendMessage);
+    
+    // Send message on Enter key
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Poll for new messages every 3 seconds
+    setInterval(pollForNewMessages, 3000);
+});
+
+function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const messageText = messageInput.value.trim();
+    
+    if (!messageText) return;
+    
+    // Disable input while sending
+    messageInput.disabled = true;
+    document.getElementById('send-button').disabled = true;
+    
+    fetch(`/api/chat/${recipientId}/send`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            message: messageText,
+            book_id: bookId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear input
+            messageInput.value = '';
+            
+            // Add message to chat
+            addMessageToChat(data.message, true);
+            scrollToBottom();
+        } else {
+            console.error('Failed to send message:', data.error);
+            showAlert('Failed to send message. Please try again.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        showAlert('Failed to send message. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Re-enable input
+        messageInput.disabled = false;
+        document.getElementById('send-button').disabled = false;
+        messageInput.focus();
+    });
+}
+
+function pollForNewMessages() {
+    fetch(`/api/chat/${recipientId}/messages`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const messages = data.messages;
+            const currentMessageCount = document.querySelectorAll('.message').length;
+            
+            if (messages.length > currentMessageCount) {
+                // Clear and rebuild messages
+                const chatMessages = document.getElementById('chat-messages');
+                const emptyChat = chatMessages.querySelector('.empty-chat');
+                if (emptyChat) {
+                    emptyChat.remove();
+                }
+                
+                // Remove old messages
+                chatMessages.querySelectorAll('.message').forEach(msg => msg.remove());
+                
+                // Add all messages
+                messages.forEach(message => {
+                    addMessageToChat(message, false);
+                });
+                
+                scrollToBottom();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error polling for messages:', error);
+    });
+}
+
+function addMessageToChat(message, isNew = false) {
+    const chatMessages = document.getElementById('chat-messages');
+    const emptyChat = chatMessages.querySelector('.empty-chat');
+    if (emptyChat) {
+        emptyChat.remove();
+    }
+    
+    const messageDiv = document.createElement('div');
+    const isSent = message.sender_id === {{ current_user.id if current_user.is_authenticated else 'null' }};
+    
+    messageDiv.className = `message ${isSent ? 'sent' : 'received'}${isNew ? ' new-message' : ''}`;
+    
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            <div class="message-header">
+                <span class="sender-name">${isSent ? 'You' : '{{ recipient.get_full_name() or recipient.username }}'}</span>
+                <span class="message-time">${message.time_ago}</span>
+            </div>
+            <div class="message-text">${escapeHtml(message.message)}</div>
+        </div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+}
+
+function scrollToBottom() {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showAlert(message, type = 'info') {
+    // Use the existing alert system from main.js if available
+    if (typeof window.showAlert === 'function') {
+        window.showAlert(message, type);
+    } else {
+        alert(message);
+    }
+}
+</script>
+{% endblock %}

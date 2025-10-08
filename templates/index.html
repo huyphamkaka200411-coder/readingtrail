@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Books - L.E.A.F{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-lg-8 col-md-7 mb-3 mb-md-0">
+            <h1 class="display-4 mb-2">
+                <i class="fas fa-book-open me-2 d-none d-sm-inline"></i>Book Catalog
+            </h1>
+            <p class="lead text-muted mb-0">Discover and borrow from our extensive digital library collection</p>
+        </div>
+        <div class="col-lg-4 col-md-5 d-flex align-items-center justify-content-center justify-content-md-end">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('post_book') }}" class="btn btn-success btn-lg glass-button w-100 w-md-auto">
+                <i class="fas fa-plus-circle me-2"></i>
+                <span class="d-none d-sm-inline">Post </span>Book
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card glass">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('index') }}" class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text glass-input">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control glass-input" 
+                                       name="search" 
+                                       placeholder="Search books, authors..." 
+                                       value="{{ search_query }}"
+                                       aria-label="Search books">
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <select class="form-select glass-input" name="category" aria-label="Select category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category }}" {% if category == category_filter %}selected{% endif %}>
+                                    {{ category }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-2">
+                            <button type="submit" class="btn btn-primary glass-button w-100">
+                                <i class="fas fa-filter me-1 d-sm-none"></i>
+                                <span class="d-none d-sm-inline">Filter</span>
+                                <span class="d-sm-none">Search & Filter</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    {% if search_query or category_filter %}
+    <div class="row mb-3">
+        <div class="col">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Showing {{ books|length }} result(s)
+                {% if search_query %}for "{{ search_query }}"{% endif %}
+                {% if category_filter %}in {{ category_filter }}{% endif %}
+                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-info ms-2">Clear Filters</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Books Grid -->
+    {% if books %}
+    <div class="row g-3 g-md-4">
+        {% for book in books %}
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+            <div class="card h-100 book-card glass-card">
+                <div class="book-cover-container">
+                    <img src="{{ book.cover_url }}" 
+                         class="card-img-top book-cover" 
+                         alt="{{ book.title }}"
+                         loading="lazy"
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22300%22 viewBox=%220 0 200 300%22><rect width=%22200%22 height=%22300%22 fill=%22%23666%22/><text x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22>No Image</text></svg>'">
+                    
+                    <!-- Borrowed Status Badge -->
+                    {% if book.id in borrowed_books %}
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge glass-badge bg-success">
+                            <i class="fas fa-check me-1"></i>
+                            <span class="d-none d-sm-inline">Borrowed</span>
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate" title="{{ book.title }}">{{ book.title }}</h5>
+                    <p class="card-text text-muted mb-1 small">
+                        <i class="fas fa-user me-1"></i>
+                        <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ book.author }}">{{ book.author }}</span>
+                    </p>
+                    <p class="card-text text-muted mb-2 small">
+                        <i class="fas fa-tag me-1"></i>{{ book.category }}
+                    </p>
+                    <p class="card-text flex-grow-1 small">
+                        {{ book.description[:80] }}{% if book.description|length > 80 %}...{% endif %}
+                    </p>
+                    
+                    <div class="book-info mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ book.publication_year }}
+                            <span class="d-none d-sm-inline"> • <i class="fas fa-file-alt me-1"></i>{{ book.pages }} pages</span>
+                        </small>
+                        
+                        <!-- Rating Display -->
+                        <div class="rating-display mt-2" data-book-id="{{ book.id }}">
+                            <div class="d-flex align-items-center">
+                                <div class="rating-stars-small me-2" id="stars-{{ book.id }}">
+                                    <!-- Stars will be loaded by JavaScript -->
+                                </div>
+                                <small class="rating-text-small" id="rating-text-{{ book.id }}">
+                                    Loading...
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('book_detail', book_id=book.id) }}" 
+                               class="btn btn-outline-primary glass-button btn-sm">
+                                <i class="fas fa-eye me-1"></i>
+                                <span class="d-none d-sm-inline">View </span>Details
+                            </a>
+                            
+                            {% if current_user.is_authenticated %}
+                                {% if book.poster and book.poster.id == current_user.id %}
+                                <button class="btn btn-secondary glass-button btn-sm" disabled>
+                                    <i class="fas fa-user me-1"></i>Your Book
+                                </button>
+                                {% elif book.id not in borrowed_books %}
+                                    {% if book.id in pending_requests %}
+                                    <button class="btn btn-warning glass-button btn-sm" disabled>
+                                        <i class="fas fa-clock me-1"></i>Pending
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-success glass-button btn-sm borrow-btn" 
+                                            data-book-id="{{ book.id }}"
+                                            data-book-title="{{ book.title }}">
+                                        <i class="fas fa-download me-1"></i>
+                                        <span class="d-none d-sm-inline">Borrow </span>Now
+                                    </button>
+                                    {% endif %}
+                                {% else %}
+                                <button class="btn btn-warning glass-button btn-sm return-btn" 
+                                        data-book-id="{{ book.id }}"
+                                        data-book-title="{{ book.title }}">
+                                    <i class="fas fa-undo me-1"></i>Return
+                                </button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="btn btn-primary glass-button btn-sm">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                </a>
+                            {% endif %}
+                            
+                            {% if book.poster %}
+                            <a href="{{ url_for('view_poster', user_id=book.poster.id) }}" 
+                               class="btn btn-outline-info glass-button btn-sm">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <span class="d-none d-sm-inline">View </span>Poster
+                            </a>
+                            
+                            {% if current_user.is_authenticated and book.poster.id != current_user.id %}
+                            <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" 
+                               class="btn btn-outline-success glass-button btn-sm">
+                                <i class="fas fa-comments me-1"></i>
+                                <span class="d-none d-sm-inline">Talk to </span>Author
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="row">
+        <div class="col">
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                <h3>No books found</h3>
+                <p class="text-muted">
+                    {% if search_query or category_filter %}
+                    Try adjusting your search criteria or filters.
+                    {% else %}
+                    There are no books available in the catalog at the moment.
+                    {% endif %}
+                </p>
+                {% if search_query or category_filter %}
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-1"></i>Browse All Books
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load catalog ratings when page loads
+    loadCatalogRatings();
+    
+    // Handle borrow button clicks
+    document.querySelectorAll('.borrow-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookId = this.dataset.bookId;
+            const bookTitle = this.dataset.bookTitle;
+            
+            borrowBookFromIndex(bookId, bookTitle, this);
+        });
+    });
+    
+    // Handle return button clicks
+    document.querySelectorAll('.return-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookId = this.dataset.bookId;
+            const bookTitle = this.dataset.bookTitle;
+            
+            returnBook(bookId, bookTitle, this);
+        });
+    });
+});
+
+// New function to handle borrow requests from index page with pending notification
+async function borrowBookFromIndex(bookId, bookTitle, buttonElement) {
+    try {
+        buttonElement.disabled = true;
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+        
+        // Make POST request to borrow route
+        const response = await fetch(`/borrow/${bookId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.ok) {
+            // Show pending request modal
+            showBorrowPendingModal(bookTitle);
+            
+            // Update button state to reflect pending status
+            buttonElement.className = 'btn btn-warning glass-button btn-sm';
+            buttonElement.innerHTML = '<i class="fas fa-clock me-1"></i>Pending';
+            buttonElement.disabled = true;
+            
+        } else {
+            console.error('Error response:', response.status);
+            buttonElement.disabled = false;
+            buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Borrow </span>Now';
+            showAlert('Failed to send borrow request. Please try again.', 'danger');
+        }
+    } catch (error) {
+        console.error('Error borrowing book:', error);
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Borrow </span>Now';
+        showAlert('Failed to send borrow request. Please try again.', 'danger');
+    }
+}
+
+// Function to show pending request modal
+function showBorrowPendingModal(bookTitle) {
+    const modalId = 'borrowPendingModal-' + Date.now();
+    const modalHTML = `
+        <div class="modal fade show" id="${modalId}" tabindex="-1" aria-labelledby="borrowPendingModalLabel" aria-hidden="true" style="display: block; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-card">
+                    <div class="modal-body text-center p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-clock fa-5x text-warning mb-3"></i>
+                            <h3 class="text-warning mb-3">Request Pending!</h3>
+                            <p class="text-muted mb-4">
+                                Your borrow request for "<strong>${bookTitle}</strong>" has been sent successfully!
+                            </p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                The book owner will review your request and you'll receive a notification once they respond.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="button" class="btn btn-primary btn-lg px-4" onclick="closePendingModal('${modalId}')">
+                                <i class="fas fa-check me-2"></i>Got It
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="goToDashboard()">
+                                <i class="fas fa-tachometer-alt me-2"></i>View My Requests
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+// Close pending request modal
+function closePendingModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Go to dashboard
+function goToDashboard() {
+    window.location.href = '/dashboard';
+}
+</script>
+{% endblock %}
