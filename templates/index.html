@@ -8,15 +8,15 @@
     <div class="row mb-4 align-items-center">
         <div class="col-lg-8 col-md-7 mb-3 mb-md-0">
             <h1 class="display-4 mb-2">
-                <i class="fas fa-book-open me-2 d-none d-sm-inline"></i>{{ 'book_catalog' | translate }}
+                <i class="fas fa-book-open me-2 d-none d-sm-inline"></i>Danh mục sách
             </h1>
-            <p class="lead text-muted mb-0">{{ 'discover_borrow' | translate }}</p>
+            <p class="lead text-muted mb-0">Khám phá và mượn sách từ thư viện số của chúng tôi</p>
         </div>
         <div class="col-lg-4 col-md-5 d-flex align-items-center justify-content-center justify-content-md-end">
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('post_book') }}" class="btn btn-success btn-lg glass-button w-100 w-md-auto">
                 <i class="fas fa-plus-circle me-2"></i>
-                <span class="d-none d-sm-inline">{{ 'post_book' | translate }}</span>
+                <span class="d-none d-sm-inline">Đăng sách</span>
             </a>
             {% endif %}
         </div>
@@ -36,14 +36,14 @@
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        name="search" 
-                                       placeholder="{{ 'search_books' | translate }}" 
+                                       placeholder="Tìm kiếm sách, tác giả..." 
                                        value="{{ search_query }}"
                                        aria-label="Search books">
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
                             <select class="form-select glass-input" name="category" aria-label="Select category">
-                                <option value="">{{ 'all_categories' | translate }}</option>
+                                <option value="">Tất cả thể loại</option>
                                 {% for category in categories %}
                                 <option value="{{ category }}" {% if category == category_filter %}selected{% endif %}>
                                     {{ category }}
@@ -54,8 +54,8 @@
                         <div class="col-12 col-sm-6 col-md-2">
                             <button type="submit" class="btn btn-primary glass-button w-100">
                                 <i class="fas fa-filter me-1 d-sm-none"></i>
-                                <span class="d-none d-sm-inline">{{ 'filter' | translate }}</span>
-                                <span class="d-sm-none">{{ 'filter' | translate }}</span>
+                                <span class="d-none d-sm-inline">Lọc</span>
+                                <span class="d-sm-none">Lọc</span>
                             </button>
                         </div>
                     </form>
@@ -202,17 +202,17 @@
         <div class="col">
             <div class="text-center py-5">
                 <i class="fas fa-search fa-4x text-muted mb-3"></i>
-                <h3>{{ 'no_books_found' | translate }}</h3>
+                <h3>Không tìm thấy sách</h3>
                 <p class="text-muted">
                     {% if search_query or category_filter %}
-                    Try adjusting your search criteria or filters.
+                    Không có sách trong danh mục hiện tại.
                     {% else %}
-                    {{ 'no_books_available' | translate }}
+                    Không có sách trong danh mục hiện tại.
                     {% endif %}
                 </p>
                 {% if search_query or category_filter %}
                 <a href="{{ url_for('index') }}" class="btn btn-primary">
-                    <i class="fas fa-home me-1"></i>{{ 'browse' | translate }}
+                    <i class="fas fa-home me-1"></i>Duyệt xem
                 </a>
                 {% endif %}
             </div>

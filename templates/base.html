@@ -34,45 +34,45 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-1"></i>{{ 'browse' | translate }}
+                            <i class="fas fa-home me-1"></i>Duyệt xem
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('info') }}">
-                            <i class="fas fa-info-circle me-1"></i>{{ 'info' | translate }}
+                            <i class="fas fa-info-circle me-1"></i>Thông tin
                         </a>
                     </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('dashboard') }}">
-                            <i class="fas fa-user me-1"></i>{{ 'my_books' | translate }}
+                            <i class="fas fa-user me-1"></i>Sách của tôi
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('post_book') }}">
-                            <i class="fas fa-plus-circle me-1"></i>{{ 'post_book' | translate }}
+                            <i class="fas fa-plus-circle me-1"></i>Đăng sách
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ url_for('notifications') }}">
-                            <i class="fas fa-bell me-1"></i>{{ 'notifications' | translate }}
+                            <i class="fas fa-bell me-1"></i>Thông báo
                             <span id="navbar-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('achievements') }}">
-                            <i class="fas fa-trophy me-1"></i>{{ 'achievements' | translate }}
+                            <i class="fas fa-trophy me-1"></i>Thành tích
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('ranks') }}">
-                            <i class="fas fa-medal me-1"></i>{{ 'ranks' | translate }}
+                            <i class="fas fa-medal me-1"></i>Bảng xếp hạng
                         </a>
                     </li>
                     {% if current_user.get_total_points() >= 150 %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('store') }}">
-                            <i class="fas fa-store me-1"></i>{{ 'store' | translate }}
+                            <i class="fas fa-store me-1"></i>Cửa hàng
                         </a>
                     </li>
                     {% endif %}
@@ -81,22 +81,11 @@
                 
                 <!-- User Section -->
                 <ul class="navbar-nav">
-                    <!-- Language Switcher -->
-                    <li class="nav-item me-3">
-                        <a href="{{ url_for('toggle_language') }}" class="nav-link language-toggle" 
-                           title="{% if current_language == 'vi' %}Switch to English{% else %}Chuyển sang Tiếng Việt{% endif %}">
-                            {% if current_language == 'vi' %}
-                                🇻🇳 <span class="d-none d-md-inline">VI</span>
-                            {% else %}
-                                🇬🇧 <span class="d-none d-md-inline">EN</span>
-                            {% endif %}
-                        </a>
-                    </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item me-3">
                         <span class="nav-link">
                             <i class="fas fa-books me-1"></i>
-                            <span id="navbar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> {{ 'borrowed' | translate }}
+                            <span id="navbar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> đã mượn
                         </span>
                     </li>
                     <li class="nav-item dropdown">
@@ -113,23 +102,23 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
                             <li><a class="dropdown-item" href="{{ url_for('profile') }}">
-                                <i class="fas fa-user me-2"></i>{{ 'profile' | translate }}
+                                <i class="fas fa-user me-2"></i>Hồ sơ
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i>{{ 'logout' | translate }}
+                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                             </a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">
-                            <i class="fas fa-sign-in-alt me-1"></i>{{ 'login' | translate }}
+                            <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('signup') }}">
-                            <i class="fas fa-user-plus me-1"></i>{{ 'signup' | translate }}
+                            <i class="fas fa-user-plus me-1"></i>Đăng ký
                         </a>
                     </li>
                     {% endif %}
