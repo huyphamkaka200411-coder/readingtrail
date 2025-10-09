@@ -104,7 +104,7 @@ async function borrowBook(bookId, bookTitle, buttonElement) {
             }
             
             // Update button state
-            buttonElement.innerHTML = '<i class="fas fa-undo me-1"></i>Return Book';
+            buttonElement.innerHTML = '<i class="fas fa-undo me-1"></i>Trả sách';
             buttonElement.className = 'btn btn-warning return-btn';
             buttonElement.classList.remove('borrow-btn');
             buttonElement.classList.add('return-btn');
@@ -129,7 +129,7 @@ async function borrowBook(bookId, bookTitle, buttonElement) {
         console.error('Error borrowing book:', error);
         console.error('Response status:', response?.status);
         console.error('Response text:', await response?.text());
-        showAlert('Failed to borrow book. Please try again.', 'danger');
+        showAlert('Không thể mượn sách. Vui lòng thử lại.', 'danger');
     } finally {
         isLoading = false;
         setButtonLoading(buttonElement, false);
@@ -178,7 +178,7 @@ async function returnBook(bookId, bookTitle, buttonElement) {
                 }
             } else {
                 // Update button state for catalog/detail pages
-                buttonElement.innerHTML = '<i class="fas fa-download me-1"></i>Borrow Now';
+                buttonElement.innerHTML = '<i class="fas fa-download me-1"></i>Mượn ngay';
                 buttonElement.className = 'btn btn-success borrow-btn';
                 buttonElement.classList.remove('return-btn');
                 buttonElement.classList.add('borrow-btn');
@@ -202,7 +202,7 @@ async function returnBook(bookId, bookTitle, buttonElement) {
         
     } catch (error) {
         console.error('Error returning book:', error);
-        showAlert('Failed to return book. Please try again.', 'danger');
+        showAlert('Không thể trả sách. Vui lòng thử lại.', 'danger');
     } finally {
         isLoading = false;
         setButtonLoading(buttonElement, false);
@@ -282,7 +282,7 @@ function addBorrowedBadge(buttonElement) {
         if (coverContainer && !coverContainer.querySelector('.badge')) {
             const badge = document.createElement('div');
             badge.className = 'position-absolute top-0 end-0 m-2';
-            badge.innerHTML = '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Borrowed</span>';
+            badge.innerHTML = '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Đã mượn</span>';
             coverContainer.appendChild(badge);
         }
     }
@@ -381,7 +381,7 @@ function borrowBookWithDueDate(bookId, bookTitle, button, proposedDueDate = null
     
     isLoading = true;
     const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...';
     button.disabled = true;
     
     const requestData = proposedDueDate ? { proposed_due_date: proposedDueDate } : {};
@@ -400,12 +400,12 @@ function borrowBookWithDueDate(bookId, bookTitle, button, proposedDueDate = null
             
             // Update UI based on response
             if (proposedDueDate) {
-                button.innerHTML = '<i class="fas fa-clock me-1"></i>Pending Approval';
+                button.innerHTML = '<i class="fas fa-clock me-1"></i>Chờ duyệt';
                 button.classList.remove('btn-success');
                 button.classList.add('btn-warning');
             } else {
                 // Replace with return button for auto-approved books
-                button.innerHTML = '<i class="fas fa-undo me-1"></i>Return Book';
+                button.innerHTML = '<i class="fas fa-undo me-1"></i>Trả sách';
                 button.classList.remove('btn-success', 'borrow-btn');
                 button.classList.add('btn-warning', 'return-btn');
                 button.dataset.bookId = bookId;
@@ -421,7 +421,7 @@ function borrowBookWithDueDate(bookId, bookTitle, button, proposedDueDate = null
         }
     })
     .catch(error => {
-        showAlert('danger', 'An error occurred while processing your request.');
+        showAlert('danger', 'Có lỗi xảy ra khi xử lý yêu cầu.');
         button.innerHTML = originalText;
         button.disabled = false;
     })
@@ -535,15 +535,15 @@ function showAchievementModal(achievement) {
                         <div class="achievement-icon-large mb-3">
                             <i class="fas ${achievement.icon}"></i>
                         </div>
-                        <h3 class="achievement-title mb-2">Achievement Unlocked!</h3>
+                        <h3 class="achievement-title mb-2">Đạt thành tích!</h3>
                         <h4 class="achievement-name mb-3">${achievement.name}</h4>
                         <p class="achievement-description mb-3">${achievement.description}</p>
                         <div class="achievement-points">
                             <i class="fas fa-star"></i>
-                            +${achievement.points} points
+                            +${achievement.points} điểm
                         </div>
                         <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal">
-                            <i class="fas fa-trophy me-2"></i>Awesome!
+                            <i class="fas fa-trophy me-2"></i>Tuyệt vời!
                         </button>
                     </div>
                 </div>
@@ -643,7 +643,7 @@ if (!document.querySelector('#achievement-styles')) {
 
 // Cancel borrow request function
 async function cancelBorrowRequest(bookId) {
-    if (!confirm('Are you sure you want to cancel this borrow request?')) {
+    if (!confirm('Bạn có chắc muốn hủy yêu cầu mượn sách?')) {
         return;
     }
     
@@ -664,10 +664,10 @@ async function cancelBorrowRequest(bookId) {
                 window.location.reload();
             }, 1000);
         } else {
-            showAlert(data.message || 'Failed to cancel request', 'error');
+            showAlert(data.message || 'Không thể hủy yêu cầu', 'error');
         }
     } catch (error) {
         console.error('Error cancelling request:', error);
-        showAlert('Error cancelling request', 'error');
+        showAlert('Lỗi khi hủy yêu cầu', 'error');
     }
 }
