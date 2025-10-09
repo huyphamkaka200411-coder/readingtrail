@@ -194,107 +194,25 @@
         </div>
     </div>
 
-    <!-- Tùy chỉnh nền -->
+    <!-- Chế độ hiển thị -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card glass-card">
                 <div class="card-header">
-                    <h4><i class="fas fa-image me-2"></i>Chủ đề nền</h4>
-                    <small class="text-muted">Tùy chỉnh nền trang hồ sơ của bạn</small>
+                    <h4><i class="fas fa-adjust me-2"></i>Chế độ hiển thị</h4>
+                    <small class="text-muted">Chuyển đổi giữa chế độ tối và sáng</small>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="background-options">
-                                <!-- Nền mặc định -->
-                                <div class="background-option {{ 'active' if not profile.background_style or profile.background_style == 'default' else '' }}" 
-                                     data-style="default" data-cost="0">
-                                    <div class="background-preview default-bg">
-                                        <span class="bg-label">Chủ đề mặc định</span>
-                                        <span class="bg-cost text-success">Miễn phí</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Tối cổ điển</span>
-                                    </div>
-                                </div>
-
-                                <!-- Chủ đề không gian -->
-                                <div class="background-option" data-style="space" data-cost="100">
-                                    <div class="background-preview space-bg">
-                                        <span class="bg-label">Chủ đề không gian</span>
-                                        <span class="bg-cost">100 điểm</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Hành trình vũ trụ</span>
-                                    </div>
-                                </div>
-
-                                <!-- Chủ đề đại dương -->
-                                <div class="background-option" data-style="ocean" data-cost="150">
-                                    <div class="background-preview ocean-bg">
-                                        <span class="bg-label">Chủ đề đại dương</span>
-                                        <span class="bg-cost">150 điểm</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Biển sâu</span>
-                                    </div>
-                                </div>
-
-                                <!-- Chủ đề rừng -->
-                                <div class="background-option" data-style="forest" data-cost="125">
-                                    <div class="background-preview forest-bg">
-                                        <span class="bg-label">Chủ đề rừng</span>
-                                        <span class="bg-cost">125 điểm</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Rừng huyền bí</span>
-                                    </div>
-                                </div>
-
-                                <!-- Chủ đề neon -->
-                                <div class="background-option" data-style="neon" data-cost="200">
-                                    <div class="background-preview neon-bg">
-                                        <span class="bg-label">Chủ đề neon</span>
-                                        <span class="bg-cost text-warning">200 điểm</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Cyberpunk</span>
-                                    </div>
-                                </div>
-
-                                <!-- Chủ đề cực quang -->
-                                <div class="background-option" data-style="aurora" data-cost="250">
-                                    <div class="background-preview aurora-bg">
-                                        <span class="bg-label">Chủ đề cực quang</span>
-                                        <span class="bg-cost text-danger">250 điểm</span>
-                                    </div>
-                                    <div class="option-info text-center mt-2">
-                                        <span class="option-name">Ánh sáng phương Bắc</span>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="fas fa-moon me-2" id="themeIcon"></i>
+                                <span id="themeLabel">Chế độ tối</span>
+                            </h5>
+                            <p class="text-muted mb-0">Chuyển đổi giữa chế độ sáng và tối</p>
                         </div>
-
-                        <div class="col-lg-4">
-                            <div class="background-settings">
-                                <h6><i class="fas fa-cog me-2"></i>Cài đặt nền</h6>
-
-                                <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" id="backgroundOverlay" 
-                                           {{ 'checked' if profile.background_overlay != False else '' }}>
-                                    <label class="form-check-label" for="backgroundOverlay">
-                                        Lớp phủ tối
-                                    </label>
-                                    <small class="form-text text-muted d-block">
-                                        Thêm lớp phủ tối để văn bản dễ đọc hơn
-                                    </small>
-                                </div>
-
-                                <div class="alert alert-info glass-alert">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <strong>Xem trước:</strong> Các thay đổi sẽ hiển thị trên trang hồ sơ của bạn sau khi lưu.
-                                </div>
-                            </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="darkModeToggle" checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
                         </div>
                     </div>
                 </div>
@@ -717,8 +635,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     let selectedBanner = '{{ profile.banner_style or "default" }}';
     let selectedColor = '{{ profile.title_color or "#ffffff" }}';
-    let selectedBackground = '{{ profile.background_style or "default" }}';
-    let backgroundOverlay = {{ 'true' if profile.background_overlay != False else 'false' }};
     let totalCost = 0;
 
     // Chọn banner
@@ -749,20 +665,33 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePreview();
     });
 
-    // Chọn nền
-    document.querySelectorAll('.background-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.background-option').forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            selectedBackground = this.dataset.style || 'default';
-            updateTotalCost();
-        });
+    // Dark/Light mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    const htmlElement = document.documentElement;
+    
+    // Kiểm tra theme hiện tại
+    const currentTheme = htmlElement.getAttribute('data-bs-theme') || 'dark';
+    darkModeToggle.checked = currentTheme === 'dark';
+    updateThemeUI(currentTheme);
+    
+    darkModeToggle.addEventListener('change', function() {
+        const newTheme = this.checked ? 'dark' : 'light';
+        htmlElement.setAttribute('data-bs-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeUI(newTheme);
     });
-
-    // Chuyển đổi lớp phủ nền
-    document.getElementById('backgroundOverlay').addEventListener('change', function() {
-        backgroundOverlay = this.checked;
-    });
+    
+    function updateThemeUI(theme) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-moon me-2';
+            themeLabel.textContent = 'Chế độ tối';
+        } else {
+            themeIcon.className = 'fas fa-sun me-2';
+            themeLabel.textContent = 'Chế độ sáng';
+        }
+    }
 
     function updateTotalCost() {
         let cost = 0;
@@ -771,12 +700,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeBanner = document.querySelector('.banner-option.active');
         if (activeBanner) {
             cost += parseInt(activeBanner.dataset.cost) || 0;
-        }
-        
-        // Chi phí nền
-        const activeBackground = document.querySelector('.background-option.active');
-        if (activeBackground) {
-            cost += parseInt(activeBackground.dataset.cost) || 0;
         }
         
         // Chi phí tiêu đề
@@ -830,8 +753,6 @@ document.addEventListener('DOMContentLoaded', function() {
             banner_style: selectedBanner === 'default' ? null : selectedBanner,
             title_color: selectedColor,
             custom_title: document.getElementById('customTitle').value.trim() || null,
-            background_style: selectedBackground === 'default' ? null : selectedBackground,
-            background_overlay: backgroundOverlay,
             cost: totalCost
         };
         
@@ -861,16 +782,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Khởi tạo lựa chọn đang hoạt động
-    document.querySelectorAll('.banner-option, .color-option, .background-option').forEach(option => {
+    document.querySelectorAll('.banner-option, .color-option').forEach(option => {
         if ((option.classList.contains('banner-option') && option.dataset.style === selectedBanner) ||
-            (option.classList.contains('color-option') && option.dataset.color === selectedColor) ||
-            (option.classList.contains('background-option') && option.dataset.style === selectedBackground)) {
+            (option.classList.contains('color-option') && option.dataset.color === selectedColor)) {
             option.classList.add('active');
         }
     });
-
-    // Đặt checkbox lớp phủ nền
-    document.getElementById('backgroundOverlay').checked = backgroundOverlay;
 
     // Khởi tạo
     updateTotalCost();
