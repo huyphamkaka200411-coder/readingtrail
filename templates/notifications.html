@@ -7,15 +7,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card glass-card">
-                <div class="card-header glass-header d-flex justify-content-between align-items-center">
+                <div class="card-header glass-header">
                     <h4 class="mb-0">
                         <i class="fas fa-bell me-2"></i>Thông báo
                     </h4>
-                    {% if notifications %}
-                    <button type="button" class="btn btn-sm btn-outline-light" onclick="markAllAsRead()">
-                        <i class="fas fa-check-double me-1"></i>Đánh dấu đã đọc tất cả
-                    </button>
-                    {% endif %}
                 </div>
                 
                 <div class="card-body">
@@ -63,9 +58,6 @@
                                                 <i class="fas fa-comment me-1"></i>Vào trò chuyện
                                             </button>
                                             {% endif %}
-                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="markAsRead({{ notification.id }})">
-                                                <i class="fas fa-check"></i>
-                                            </button>
                                         </div>
                                         {% endif %}
                                     </div>
@@ -191,21 +183,6 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* Hiệu ứng khi đánh dấu đã đọc */
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0.6;
-        transform: scale(0.98);
-    }
-}
-
-.notification-item.marking-read {
-    animation: fadeOut 0.3s ease-out forwards;
-}
 </style>
 
 <script>
@@ -238,8 +215,6 @@ function handleBookRequest(notificationId, action) {
                 }
             }
             
-            // Tự động đánh dấu đã đọc
-            markAsRead(notificationId);
         } else {
             alert(data.error || 'Đã xảy ra lỗi');
             // Kích hoạt lại nút khi có lỗi
@@ -253,67 +228,6 @@ function handleBookRequest(notificationId, action) {
         // Kích hoạt lại nút khi có lỗi
         if (acceptBtn) acceptBtn.disabled = false;
         if (declineBtn) declineBtn.disabled = false;
-    });
-}
-
-function markAsRead(notificationId) {
-    const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
-    if (notificationElement) {
-        notificationElement.classList.add('marking-read');
-    }
-    
-    fetch(`/api/notifications/${notificationId}/read`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            setTimeout(() => {
-                if (notificationElement) {
-                    notificationElement.classList.remove('unread', 'marking-read');
-                    const actionsDiv = notificationElement.querySelector('.notification-actions');
-                    if (actionsDiv && !actionsDiv.innerHTML.includes('badge')) {
-                        actionsDiv.remove();
-                    }
-                }
-                updateNotificationBadge();
-            }, 300);
-        } else {
-            console.error('Không thể đánh dấu thông báo là đã đọc');
-            if (notificationElement) {
-                notificationElement.classList.remove('marking-read');
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Lỗi:', error);
-        if (notificationElement) {
-            notificationElement.classList.remove('marking-read');
-        }
-    });
-}
-
-function markAllAsRead() {
-    fetch('/api/notifications/read_all', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Tải lại trang để phản ánh thay đổi
-            location.reload();
-        } else {
-            console.error('Không thể đánh dấu tất cả thông báo là đã đọc');
-        }
-    })
-    .catch(error => {
-        console.error('Lỗi:', error);
     });
 }
 
