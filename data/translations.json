@@ -1,0 +1,86 @@
+{
+  "welcome": {
+    "vi": "Chào mừng",
+    "en": "Welcome"
+  },
+  "browse": {
+    "vi": "Duyệt xem",
+    "en": "Browse"
+  },
+  "login": {
+    "vi": "Đăng nhập",
+    "en": "Login"
+  },
+  "signup": {
+    "vi": "Đăng ký",
+    "en": "Sign Up"
+  },
+  "logout": {
+    "vi": "Đăng xuất",
+    "en": "Logout"
+  },
+  "my_books": {
+    "vi": "Sách của tôi",
+    "en": "My Books"
+  },
+  "post_book": {
+    "vi": "Đăng sách",
+    "en": "Post Book"
+  },
+  "notifications": {
+    "vi": "Thông báo",
+    "en": "Notifications"
+  },
+  "achievements": {
+    "vi": "Thành tích",
+    "en": "Achievements"
+  },
+  "ranks": {
+    "vi": "Xếp hạng",
+    "en": "Ranks"
+  },
+  "store": {
+    "vi": "Cửa hàng",
+    "en": "Store"
+  },
+  "info": {
+    "vi": "Thông tin",
+    "en": "Info"
+  },
+  "profile": {
+    "vi": "Hồ sơ",
+    "en": "Profile"
+  },
+  "borrowed": {
+    "vi": "đã mượn",
+    "en": "borrowed"
+  },
+  "book_catalog": {
+    "vi": "Danh mục sách",
+    "en": "Book Catalog"
+  },
+  "discover_borrow": {
+    "vi": "Khám phá và mượn sách từ thư viện số của chúng tôi",
+    "en": "Discover and borrow from our extensive digital library collection"
+  },
+  "search_books": {
+    "vi": "Tìm kiếm sách, tác giả...",
+    "en": "Search books, authors..."
+  },
+  "all_categories": {
+    "vi": "Tất cả thể loại",
+    "en": "All Categories"
+  },
+  "filter": {
+    "vi": "Lọc",
+    "en": "Filter"
+  },
+  "no_books_found": {
+    "vi": "Không tìm thấy sách",
+    "en": "No books found"
+  },
+  "no_books_available": {
+    "vi": "Không có sách trong danh mục hiện tại.",
+    "en": "There are no books available in the catalog at the moment."
+  }
+}

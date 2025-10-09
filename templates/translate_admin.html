@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Translation Management - L.E.A.F{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="glass-card p-4 mb-4">
+                <h2 class="mb-4">
+                    <i class="fas fa-language me-2"></i>
+                    Translation Management
+                </h2>
+                <p class="text-muted">Manage Vietnamese and English translations for your application</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Translation Form -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="glass-card p-4">
+                <h4 class="mb-3">Add/Edit Translation</h4>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="key" class="form-label">Translation Key</label>
+                        <input type="text" class="form-control" id="key" name="key" 
+                               placeholder="e.g., welcome, login, borrow" required>
+                        <small class="form-text text-muted">
+                            Use lowercase with underscores (e.g., "book_catalog", "my_books")
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="vi_text" class="form-label">
+                            <img src="https://flagcdn.com/16x12/vn.png" alt="VN" class="me-1"> Vietnamese
+                        </label>
+                        <input type="text" class="form-control" id="vi_text" name="vi_text" 
+                               placeholder="Nhập văn bản tiếng Việt" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="en_text" class="form-label">
+                            <img src="https://flagcdn.com/16x12/gb.png" alt="EN" class="me-1"> English
+                        </label>
+                        <input type="text" class="form-control" id="en_text" name="en_text" 
+                               placeholder="Enter English text" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-2"></i>Save Translation
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="col-lg-6">
+            <div class="glass-card p-4">
+                <h4 class="mb-3">Quick Reference</h4>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>How to use translations in templates:</strong>
+                    <pre class="mt-2 mb-0"><code>{{ "{{ 'key_name' | translate }}" }}</code></pre>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Naming conventions:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Use lowercase letters only</li>
+                        <li>Separate words with underscores</li>
+                        <li>Be descriptive but concise</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Examples:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><code>welcome</code> - "Chào mừng" / "Welcome"</li>
+                        <li><code>borrow_book</code> - "Mượn sách" / "Borrow Book"</li>
+                        <li><code>search_books</code> - "Tìm sách" / "Search Books"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Translations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <h4 class="mb-3">
+                    <i class="fas fa-list me-2"></i>
+                    Existing Translations ({{ translations|length }})
+                </h4>
+                
+                {% if translations %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>🇻🇳 Vietnamese</th>
+                                <th>🇬🇧 English</th>
+                                <th width="100">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, value in translations.items() | sort %}
+                            <tr>
+                                <td><code>{{ key }}</code></td>
+                                <td>{{ value.vi }}</td>
+                                <td>{{ value.en }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary edit-btn" 
+                                            data-key="{{ key }}" 
+                                            data-vi="{{ value.vi }}" 
+                                            data-en="{{ value.en }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-btn" 
+                                            data-key="{{ key }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No translations found. Add your first translation above!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const key = this.dataset.key;
+            const vi = this.dataset.vi;
+            const en = this.dataset.en;
+            
+            document.getElementById('key').value = key;
+            document.getElementById('vi_text').value = vi;
+            document.getElementById('en_text').value = en;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+    
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const key = this.dataset.key;
+            
+            if (confirm(`Are you sure you want to delete the translation "${key}"?`)) {
+                fetch('/delete_translation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `key=${encodeURIComponent(key)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error deleting translation');
+                    console.error(error);
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.glass-card {
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+}
+
+.table-dark {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.table-dark tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #4a90e2;
+}
+
+pre code {
+    display: block;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+}
+</style>
+{% endblock %}

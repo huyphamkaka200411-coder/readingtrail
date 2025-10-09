@@ -21,7 +21,7 @@ from models import (
 # Import controllers
 from controllers import (
     auth_controller, book_controller, social_controller, 
-    review_controller, achievement_controller
+    review_controller, achievement_controller, translation_controller
 )
 from controllers.api_controller import api_bp
 
@@ -69,6 +69,23 @@ def inject_borrowed_count():
         notification_count=notification_count,
         datetime=datetime,
         timedelta=timedelta
+    )
+
+# Translation template filter
+@app.template_filter('translate')
+def translate_filter(key):
+    """Template filter for translations"""
+    return translation_controller.get_translation(key)
+
+# Context processor for current language
+@app.context_processor
+def inject_language():
+    """Inject current language into all templates"""
+    if 'language' not in session:
+        session['language'] = 'vi'
+    
+    return dict(
+        current_language=session.get('language', 'vi')
     )
 
 # Helper function for session management
@@ -259,6 +276,27 @@ def info():
 def achievements_guide():
     """Display guide on how to earn achievements and points"""
     return render_template('achievements_guide.html')
+
+# Translation routes
+@app.route('/translate', methods=['GET', 'POST'])
+def translate_admin():
+    """Translation management admin page"""
+    return translation_controller.translate_admin()
+
+@app.route('/delete_translation', methods=['POST'])
+def delete_translation():
+    """Delete a translation"""
+    return translation_controller.delete_translation()
+
+@app.route('/toggle_language')
+def toggle_language():
+    """Toggle between languages"""
+    return translation_controller.toggle_language()
+
+@app.route('/set_language/<lang>')
+def set_language(lang):
+    """Set language"""
+    return translation_controller.set_language(lang)
 
 # Initialize database
 with app.app_context():
