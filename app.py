@@ -202,41 +202,10 @@ def get_reviews(book_id):
 def delete_review(review_id):
     return review_controller.delete_review(review_id)
 
-# Achievement routes
-@app.route('/achievements')
-def achievements():
-    return achievement_controller.achievements()
-
-@app.route('/ranks')
-def ranks():
-    return achievement_controller.ranks()
-
-@app.route('/api/achievements/check', methods=['POST'])
-def check_achievements_api():
-    return achievement_controller.check_achievements_api()
-
-@app.route('/profile')
-def profile():
-    
-    return achievement_controller.profile()
-
-@app.route('/save_profile', methods=['POST'])
-def save_profile():
-    return achievement_controller.save_profile()
-
-@app.route('/seed_achievements')
-def seed_achievements():
-    return achievement_controller.seed_achievements()
-
 @app.route('/info')
 def info():
     """Display information about L.E.A.F platform"""
     return render_template('info.html')
-
-@app.route('/achievements-guide')
-def achievements_guide():
-    """Display guide on how to earn achievements and points"""
-    return render_template('achievements_guide.html')
 
 # Initialize database
 with app.app_context():
