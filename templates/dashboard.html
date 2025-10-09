@@ -1,6 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}My Books - L.E.A.F{% endblock %}
+{% block title %}Sách của tôi - L.E.A.F{% endblock %}
+
+{% set category_vn = {
+    'Fiction': 'Tiểu thuyết',
+    'Non-Fiction': 'Phi tiểu thuyết',
+    'Mystery': 'Trinh thám',
+    'Romance': 'Lãng mạn',
+    'Science Fiction': 'Khoa học viễn tưởng',
+    'Fantasy': 'Kỳ ảo',
+    'Biography': 'Tiểu sử',
+    'History': 'Lịch sử',
+    'Self-Help': 'Tự lực',
+    'Business': 'Kinh doanh',
+    'Technology': 'Công nghệ',
+    'Classic Literature': 'Văn học cổ điển',
+    'Educational': 'Giáo dục',
+    'Health & Fitness': 'Sức khỏe & Thể hình',
+    'Travel': 'Du lịch',
+    'Cooking': 'Nấu ăn',
+    'Art & Design': 'Nghệ thuật & Thiết kế',
+    'Philosophy': 'Triết học',
+    'Religion & Spirituality': 'Tôn giáo & Tâm linh',
+    'Politics': 'Chính trị',
+    'Psychology': 'Tâm lý học',
+    'True Crime': 'Tội phạm có thật',
+    'Horror': 'Kinh dị',
+    'Thriller': 'Giật gân',
+    'Young Adult': 'Thanh thiếu niên',
+    "Children's": 'Thiếu nhi',
+    'Poetry': 'Thơ',
+    'Drama': 'Kịch',
+    'Comics & Graphic Novels': 'Truyện tranh & Tiểu thuyết đồ họa',
+    'Other': 'Khác'
+} %}
 
 {% block content %}
 <div class="container py-4">
@@ -8,9 +41,9 @@
     <div class="row mb-4">
         <div class="col">
             <h1 class="display-4 mb-3">
-                <i class="fas fa-user me-3"></i>My Books
+                <i class="fas fa-user me-3"></i>Sách của tôi
             </h1>
-            <p class="lead text-muted">Manage your borrowed books and track due dates</p>
+            <p class="lead text-muted">Quản lý sách đã mượn và theo dõi ngày hạn trả</p>
         </div>
     </div>
 
@@ -21,7 +54,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-books fa-2x mb-2"></i>
                     <h3 class="card-title">{{ borrowed_books|length }}</h3>
-                    <p class="card-text">Books Borrowed</p>
+                    <p class="card-text">Sách đã mượn</p>
                 </div>
             </div>
         </div>
@@ -30,7 +63,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-plus-circle fa-2x mb-2"></i>
                     <h3 class="card-title">{{ posted_books|length if posted_books else 0 }}</h3>
-                    <p class="card-text">Books Posted</p>
+                    <p class="card-text">Sách đã đăng</p>
                 </div>
             </div>
         </div>
@@ -39,7 +72,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-clock fa-2x mb-2"></i>
                     <h3 class="card-title">{{ pending_requests|length if pending_requests else 0 }}</h3>
-                    <p class="card-text">Pending Requests</p>
+                    <p class="card-text">Yêu cầu chờ duyệt</p>
                 </div>
             </div>
         </div>
@@ -48,7 +81,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                     <h3 class="card-title">{{ borrowed_books|selectattr('is_overdue')|list|length }}</h3>
-                    <p class="card-text">Overdue Books</p>
+                    <p class="card-text">Sách quá hạn</p>
                 </div>
             </div>
         </div>
@@ -58,7 +91,7 @@
     {% if borrowed_books %}
     <div class="row mb-4">
         <div class="col">
-            <h3><i class="fas fa-list me-2"></i>Currently Borrowed</h3>
+            <h3><i class="fas fa-list me-2"></i>Đang mượn</h3>
         </div>
     </div>
     
@@ -68,7 +101,7 @@
             <div class="card h-100 glass-card {% if book.is_overdue %}border-danger{% endif %}">
                 {% if book.is_overdue %}
                 <div class="card-header bg-danger text-white">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Overdue
+                    <i class="fas fa-exclamation-triangle me-1"></i>Quá hạn
                 </div>
                 {% endif %}
                 
@@ -78,7 +111,7 @@
                             <img src="{{ book.cover_url }}" 
                                  class="img-fluid rounded book-cover-small" 
                                  alt="{{ book.title }}"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22 viewBox=%220 0 100 150%22><rect width=%22100%22 height=%22150%22 fill=%22%23666%22/><text x=%2250%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22>No Image</text></svg>'">
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22 viewBox=%220 0 100 150%22><rect width=%22100%22 height=%22150%22 fill=%22%23666%22/><text x=%2250%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22>Không có ảnh</text></svg>'">
                         </div>
                         <div class="col-8">
                             <h5 class="card-title">{{ book.title }}</h5>
@@ -87,7 +120,7 @@
                             </p>
                             <p class="card-text">
                                 <small class="text-muted">
-                                    <i class="fas fa-tag me-1"></i>{{ book.category }}
+                                    <i class="fas fa-tag me-1"></i>{{ category_vn.get(book.category, book.category) }}
                                 </small>
                             </p>
                             
@@ -95,7 +128,7 @@
                             <div class="mb-3">
                                 <strong class="{% if book.is_overdue %}text-danger{% endif %}">
                                     <i class="fas fa-calendar me-1"></i>
-                                    Due: {{ book.due_date }}
+                                    Hạn trả: {{ book.due_date }}
                                 </strong>
                             </div>
                             {% endif %}
@@ -107,12 +140,12 @@
                     <div class="d-grid gap-2 d-md-flex">
                         <a href="{{ url_for('book_detail', book_id=book.id) }}" 
                            class="btn btn-outline-primary btn-sm me-md-2 glass-button">
-                            <i class="fas fa-eye me-1"></i>View
+                            <i class="fas fa-eye me-1"></i>Xem
                         </a>
                         <button class="btn btn-warning btn-sm glass-button return-btn" 
                                 data-book-id="{{ book.id }}"
                                 data-book-title="{{ book.title }}">
-                            <i class="fas fa-undo me-1"></i>Return
+                            <i class="fas fa-undo me-1"></i>Trả
                         </button>
                     </div>
                 </div>
@@ -126,12 +159,12 @@
         <div class="col">
             <div class="text-center py-5">
                 <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
-                <h3>No books borrowed yet</h3>
+                <h3>Chưa mượn sách nào</h3>
                 <p class="text-muted mb-4">
-                    Start exploring our catalog to find your next great read!
+                    Bắt đầu khám phá danh mục để tìm cuốn sách hay tiếp theo!
                 </p>
                 <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg glass-button">
-                    <i class="fas fa-search me-2"></i>Browse Books
+                    <i class="fas fa-search me-2"></i>Duyệt sách
                 </a>
             </div>
         </div>
@@ -142,8 +175,8 @@
     {% if posted_books %}
     <div class="row mb-4">
         <div class="col">
-            <h3><i class="fas fa-plus-circle me-2"></i>Books I Posted</h3>
-            <p class="text-muted">Books you've added to the library catalog</p>
+            <h3><i class="fas fa-plus-circle me-2"></i>Sách tôi đã đăng</h3>
+            <p class="text-muted">Sách bạn đã thêm vào danh mục thư viện</p>
         </div>
     </div>
     
@@ -152,7 +185,7 @@
         <div class="col-lg-6 col-xl-4 mb-4">
             <div class="card h-100 glass-card border-success">
                 <div class="card-header bg-success text-white">
-                    <i class="fas fa-plus-circle me-1"></i>Posted by You
+                    <i class="fas fa-plus-circle me-1"></i>Đã đăng bởi bạn
                 </div>
                 
                 <div class="card-body">
@@ -161,7 +194,7 @@
                             <img src="{{ book.cover_url }}" 
                                  class="img-fluid rounded book-cover-small" 
                                  alt="{{ book.title }}"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22 viewBox=%220 0 100 150%22><rect width=%22100%22 height=%22150%22 fill=%22%23666%22/><text x=%2250%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22>No Image</text></svg>'">
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22 viewBox=%220 0 100 150%22><rect width=%22100%22 height=%22150%22 fill=%22%23666%22/><text x=%2250%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22>Không có ảnh</text></svg>'">
                         </div>
                         <div class="col-8">
                             <h5 class="card-title">{{ book.title }}</h5>
@@ -170,14 +203,14 @@
                             </p>
                             <p class="card-text">
                                 <small class="text-muted">
-                                    <i class="fas fa-tag me-1"></i>{{ book.category }}
+                                    <i class="fas fa-tag me-1"></i>{{ category_vn.get(book.category, book.category) }}
                                 </small>
                             </p>
                             
                             <div class="mb-2">
                                 <small class="text-muted">
                                     <i class="fas fa-calendar-plus me-1"></i>
-                                    Posted: {{ book.created_at.strftime('%B %d, %Y') if book.created_at else 'Recently' }}
+                                    Đăng: {{ book.created_at.strftime('%d/%m/%Y') if book.created_at else 'Gần đây' }}
                                 </small>
                             </div>
                         </div>
@@ -188,11 +221,11 @@
                     <div class="d-grid gap-2 d-md-flex">
                         <a href="{{ url_for('book_detail', book_id=book.id) }}" 
                            class="btn btn-outline-primary btn-sm me-md-2 glass-button">
-                            <i class="fas fa-eye me-1"></i>View Details
+                            <i class="fas fa-eye me-1"></i>Xem chi tiết
                         </a>
                         <a href="{{ url_for('view_poster', user_id=book.posted_by) }}" 
                            class="btn btn-outline-success btn-sm glass-button">
-                            <i class="fas fa-user me-1"></i>My Profile
+                            <i class="fas fa-user me-1"></i>Hồ sơ của tôi
                         </a>
                     </div>
                 </div>
@@ -205,12 +238,12 @@
     <div class="row mb-5">
         <div class="col">
             <div class="text-center py-4">
-                <h3><i class="fas fa-plus-circle me-2"></i>Books I Posted</h3>
+                <h3><i class="fas fa-plus-circle me-2"></i>Sách tôi đã đăng</h3>
                 <p class="text-muted mb-4">
-                    You haven't posted any books to the library yet.
+                    Bạn chưa đăng sách nào lên thư viện.
                 </p>
                 <a href="{{ url_for('post_book') }}" class="btn btn-success btn-lg glass-button">
-                    <i class="fas fa-plus me-2"></i>Post Your First Book
+                    <i class="fas fa-plus me-2"></i>Đăng sách đầu tiên
                 </a>
             </div>
         </div>
@@ -221,8 +254,8 @@
     {% if pending_requests %}
     <div class="row mb-4">
         <div class="col">
-            <h3><i class="fas fa-clock me-2"></i>Pending Requests</h3>
-            <p class="text-muted">Waiting for book owner approval</p>
+            <h3><i class="fas fa-clock me-2"></i>Yêu cầu chờ duyệt</h3>
+            <p class="text-muted">Đang chờ chủ sách phê duyệt</p>
         </div>
     </div>
     
@@ -231,7 +264,7 @@
         <div class="col-lg-6 col-xl-4 mb-4">
             <div class="card h-100 glass-card border-warning">
                 <div class="card-header bg-warning text-dark">
-                    <i class="fas fa-clock me-1"></i>Pending Approval
+                    <i class="fas fa-clock me-1"></i>Chờ duyệt
                 </div>
                 
                 <div class="card-body">
@@ -245,12 +278,12 @@
                         <div class="col-8">
                             <h5 class="card-title">{{ request.book.title }}</h5>
                             <p class="card-text text-muted mb-1">
-                                <small>by {{ request.book.author }}</small>
+                                <small>của {{ request.book.author }}</small>
                             </p>
                             <p class="card-text">
                                 <small class="text-muted">
                                     <i class="fas fa-calendar-alt me-1"></i>
-                                    Requested: {{ request.request.borrowed_date.strftime('%B %d, %Y') }}
+                                    Yêu cầu: {{ request.request.borrowed_date.strftime('%d/%m/%Y') }}
                                 </small>
                             </p>
                             <p class="card-text">

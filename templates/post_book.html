@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Post Book - LibraryApp{% endblock %}
+{% block title %}Đăng sách - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -10,98 +10,98 @@
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <i class="fas fa-plus-circle fa-4x mb-3 text-primary"></i>
-                        <h2 class="card-title">Post Book</h2>
-                        <p class="text-muted">Add a new book to our digital library</p>
+                        <h2 class="card-title">Đăng sách</h2>
+                        <p class="text-muted">Thêm sách mới vào thư viện số</p>
                     </div>
 
                     <form method="POST">
                         <!-- Book Name -->
                         <div class="mb-4">
-                            <label for="title" class="form-label">Book Name *</label>
+                            <label for="title" class="form-label">Tên sách *</label>
                             <input type="text" 
                                    class="form-control glass-input" 
                                    id="title" 
                                    name="title" 
-                                   placeholder="Enter book title"
+                                   placeholder="Nhập tên sách"
                                    required>
                         </div>
 
                         <div class="row">
                             <!-- Genre/Category -->
                             <div class="col-md-6 mb-4">
-                                <label for="category" class="form-label">Genre *</label>
+                                <label for="category" class="form-label">Thể loại *</label>
                                 <select class="form-select glass-input" id="category" name="category" required>
-                                    <option value="">Select genre</option>
-                                    <option value="Fiction">Fiction</option>
-                                    <option value="Non-Fiction">Non-Fiction</option>
-                                    <option value="Mystery">Mystery</option>
-                                    <option value="Romance">Romance</option>
-                                    <option value="Science Fiction">Science Fiction</option>
-                                    <option value="Fantasy">Fantasy</option>
-                                    <option value="Biography">Biography</option>
-                                    <option value="History">History</option>
-                                    <option value="Self-Help">Self-Help</option>
-                                    <option value="Business">Business</option>
-                                    <option value="Technology">Technology</option>
-                                    <option value="Classic Literature">Classic Literature</option>
-                                    <option value="Educational">Educational</option>
-                                    <option value="Health & Fitness">Health & Fitness</option>
-                                    <option value="Travel">Travel</option>
-                                    <option value="Cooking">Cooking</option>
-                                    <option value="Art & Design">Art & Design</option>
-                                    <option value="Philosophy">Philosophy</option>
-                                    <option value="Religion & Spirituality">Religion & Spirituality</option>
-                                    <option value="Politics">Politics</option>
-                                    <option value="Psychology">Psychology</option>
-                                    <option value="True Crime">True Crime</option>
-                                    <option value="Horror">Horror</option>
-                                    <option value="Thriller">Thriller</option>
-                                    <option value="Young Adult">Young Adult</option>
-                                    <option value="Children's">Children's</option>
-                                    <option value="Poetry">Poetry</option>
-                                    <option value="Drama">Drama</option>
-                                    <option value="Comics & Graphic Novels">Comics & Graphic Novels</option>
-                                    <option value="Other">Other</option>
+                                    <option value="">Chọn thể loại</option>
+                                    <option value="Fiction">Tiểu thuyết</option>
+                                    <option value="Non-Fiction">Phi tiểu thuyết</option>
+                                    <option value="Mystery">Trinh thám</option>
+                                    <option value="Romance">Lãng mạn</option>
+                                    <option value="Science Fiction">Khoa học viễn tưởng</option>
+                                    <option value="Fantasy">Kỳ ảo</option>
+                                    <option value="Biography">Tiểu sử</option>
+                                    <option value="History">Lịch sử</option>
+                                    <option value="Self-Help">Tự lực</option>
+                                    <option value="Business">Kinh doanh</option>
+                                    <option value="Technology">Công nghệ</option>
+                                    <option value="Classic Literature">Văn học cổ điển</option>
+                                    <option value="Educational">Giáo dục</option>
+                                    <option value="Health & Fitness">Sức khỏe & Thể hình</option>
+                                    <option value="Travel">Du lịch</option>
+                                    <option value="Cooking">Nấu ăn</option>
+                                    <option value="Art & Design">Nghệ thuật & Thiết kế</option>
+                                    <option value="Philosophy">Triết học</option>
+                                    <option value="Religion & Spirituality">Tôn giáo & Tâm linh</option>
+                                    <option value="Politics">Chính trị</option>
+                                    <option value="Psychology">Tâm lý học</option>
+                                    <option value="True Crime">Tội phạm có thật</option>
+                                    <option value="Horror">Kinh dị</option>
+                                    <option value="Thriller">Giật gân</option>
+                                    <option value="Young Adult">Thanh thiếu niên</option>
+                                    <option value="Children's">Thiếu nhi</option>
+                                    <option value="Poetry">Thơ</option>
+                                    <option value="Drama">Kịch</option>
+                                    <option value="Comics & Graphic Novels">Truyện tranh & Tiểu thuyết đồ họa</option>
+                                    <option value="Other">Khác</option>
                                 </select>
                             </div>
 
                             <!-- Author -->
                             <div class="col-md-6 mb-4">
-                                <label for="author" class="form-label">Author *</label>
+                                <label for="author" class="form-label">Tác giả *</label>
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        id="author" 
                                        name="author" 
-                                       placeholder="Author name"
+                                       placeholder="Tên tác giả"
                                        required>
                             </div>
                         </div>
 
                         <!-- Book Cover -->
                         <div class="mb-4">
-                            <label for="cover_url" class="form-label">Book Cover</label>
+                            <label for="cover_url" class="form-label">Bìa sách</label>
                             <input type="url" 
                                    class="form-control glass-input" 
                                    id="cover_url" 
                                    name="cover_url" 
-                                   placeholder="Secure link to book cover image (optional)">
-                            <div class="form-text">Provide a direct link to the book cover image (e.g., from Google Images, Amazon, etc.)</div>
+                                   placeholder="Link ảnh bìa sách (tùy chọn)">
+                            <div class="form-text">Cung cấp link trực tiếp đến ảnh bìa sách (vd: từ Google Images, Amazon, v.v.)</div>
                         </div>
 
                         <!-- Description -->
                         <div class="mb-4">
-                            <label for="description" class="form-label">Description of Book Content</label>
+                            <label for="description" class="form-label">Mô tả nội dung sách</label>
                             <textarea class="form-control glass-input" 
                                       id="description" 
                                       name="description" 
                                       rows="4" 
-                                      placeholder="Brief description of the book's content, themes, or plot..."></textarea>
+                                      placeholder="Mô tả ngắn gọn về nội dung, chủ đề hoặc cốt truyện của sách..."></textarea>
                         </div>
 
                         <div class="row">
                             <!-- Publication Year -->
                             <div class="col-md-4 mb-4">
-                                <label for="publication_year" class="form-label">Year</label>
+                                <label for="publication_year" class="form-label">Năm xuất bản</label>
                                 <input type="number" 
                                        class="form-control glass-input" 
                                        id="publication_year" 
@@ -113,7 +113,7 @@
 
                             <!-- Pages -->
                             <div class="col-md-4 mb-4">
-                                <label for="pages" class="form-label">Pages</label>
+                                <label for="pages" class="form-label">Số trang</label>
                                 <input type="number" 
                                        class="form-control glass-input" 
                                        id="pages" 
@@ -136,23 +136,23 @@
                         <!-- Book Price + Contact -->
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label for="price" class="form-label">Book Price</label>
+                                <label for="price" class="form-label">Giá sách</label>
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        id="price" 
                                        name="price" 
-                                       placeholder="$15 or Free">
-                                <div class="form-text">Price or indicate if free</div>
+                                       placeholder="150.000đ hoặc Miễn phí">
+                                <div class="form-text">Giá hoặc ghi miễn phí</div>
                             </div>
 
                             <div class="col-md-6 mb-4">
-                                <label for="contact" class="form-label">Contact</label>
+                                <label for="contact" class="form-label">Liên hệ</label>
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        id="contact" 
                                        name="contact" 
-                                       placeholder="email@example.com or phone">
-                                <div class="form-text">How people can reach you</div>
+                                       placeholder="email@example.com hoặc số điện thoại">
+                                <div class="form-text">Cách mọi người có thể liên hệ bạn</div>
                             </div>
                         </div>
 
@@ -160,12 +160,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <button type="submit" class="btn btn-primary btn-lg w-100 glass-button">
-                                    <i class="fas fa-plus me-2"></i>Post
+                                    <i class="fas fa-plus me-2"></i>Đăng
                                 </button>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg w-100 glass-button">
-                                    <i class="fas fa-arrow-left me-2"></i>Back to Home
+                                    <i class="fas fa-arrow-left me-2"></i>Về trang chủ
                                 </a>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                         <div class="text-center mt-3">
                             <small class="text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
-                                Fields marked with * are required
+                                Các trường đánh dấu * là bắt buộc
                             </small>
                         </div>
                     </form>
@@ -191,22 +191,22 @@
             <div class="modal-body text-center p-5">
                 <div class="mb-4">
                     <i class="fas fa-check-circle fa-5x text-success mb-3"></i>
-                    <h3 class="text-success mb-3">Book Posted Successfully!</h3>
+                    <h3 class="text-success mb-3">Đăng sách thành công!</h3>
                     <p class="text-muted mb-4">
-                        Your book "<strong>{{ book_title }}</strong>" has been added to the library catalog.
+                        Sách "<strong>{{ book_title }}</strong>" đã được thêm vào danh mục thư viện.
                     </p>
                 </div>
                 
                 {% if achievements %}
                 <div class="achievement-notifications mb-4">
                     <h5 class="text-warning mb-3">
-                        <i class="fas fa-trophy me-2"></i>Achievements Unlocked!
+                        <i class="fas fa-trophy me-2"></i>Đạt thành tích!
                     </h5>
                     {% for achievement in achievements %}
                     <div class="alert alert-warning d-flex align-items-center mb-2">
                         <i class="fas fa-trophy me-2"></i>
                         <strong>{{ achievement.name }}</strong>
-                        <span class="ms-auto badge bg-warning">+{{ achievement.points }} points</span>
+                        <span class="ms-auto badge bg-warning">+{{ achievement.points }} điểm</span>
                     </div>
                     {% endfor %}
                 </div>
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!title || !author || !category) {
             e.preventDefault();
-            alert('Please fill in all required fields (Title, Author, and Genre).');
+            alert('Vui lòng điền đầy đủ các trường bắt buộc (Tên sách, Tác giả và Thể loại).');
             return false;
         }
         
