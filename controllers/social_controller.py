@@ -5,7 +5,7 @@ Handles social features like discussions, private messages, and user profiles.
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_required, current_user
 from config import db
-from models import Discussion, PrivateMessage, User, Book, Notification, BorrowedBook, UserProfile
+from models import Discussion, PrivateMessage, User, Book, Notification, BorrowedBook
 from datetime import datetime
 import logging
 
@@ -27,16 +27,6 @@ def discussion():
                 
                 db.session.add(discussion_msg)
                 db.session.commit()
-                
-                # Check and award achievements for authenticated users
-                if current_user.is_authenticated:
-                    from controllers.achievement_controller import check_and_award_achievements
-                    newly_unlocked = check_and_award_achievements(current_user.id)
-                    
-                    # Show achievement notifications if any were unlocked
-                    if newly_unlocked:
-                        for achievement in newly_unlocked:
-                            flash(f'🏆 Achievement Unlocked: {achievement.name}! (+{achievement.points} points)', 'achievement')
                 
                 flash('Message posted successfully!', 'success')
             except Exception as e:
@@ -87,16 +77,6 @@ def book_discussion(book_id):
                 
                 db.session.add(discussion_msg)
                 db.session.commit()
-                
-                # Check and award achievements for authenticated users
-                if current_user.is_authenticated:
-                    from controllers.achievement_controller import check_and_award_achievements
-                    newly_unlocked = check_and_award_achievements(current_user.id)
-                    
-                    # Show achievement notifications if any were unlocked
-                    if newly_unlocked:
-                        for achievement in newly_unlocked:
-                            flash(f'🏆 Achievement Unlocked: {achievement.name}! (+{achievement.points} points)', 'achievement')
                 
                 flash('Message posted successfully!', 'success')
             except Exception as e:

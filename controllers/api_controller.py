@@ -8,8 +8,7 @@ from datetime import datetime, timedelta
 from config import db
 from models import (
     User, Book, BorrowedBook, BookReview, 
-    Achievement, UserAchievement, Discussion, 
-    PrivateMessage, Notification
+    Discussion, PrivateMessage, Notification
 )
 import logging
 
@@ -624,61 +623,6 @@ def delete_review(review_id):
         logging.error(f"Error deleting review {review_id}: {e}")
         db.session.rollback()
         return error_response('Failed to delete review', 500)
-
-# ============================================================================
-# ACHIEVEMENTS API ENDPOINTS
-# ============================================================================
-
-@api_bp.route('/achievements', methods=['GET'])
-def get_achievements():
-    """GET /api/v1/achievements - List all achievements"""
-    try:
-        achievements = Achievement.query.filter_by(is_active=True).all()
-        
-        result = [achievement.to_dict() for achievement in achievements]
-        
-        return success_response(result)
-        
-    except Exception as e:
-        logging.error(f"Error fetching achievements: {e}")
-        return error_response('Failed to fetch achievements', 500)
-
-@api_bp.route('/achievements/<int:achievement_id>', methods=['GET'])
-def get_achievement(achievement_id):
-    """GET /api/v1/achievements/{id} - Get specific achievement"""
-    try:
-        achievement = Achievement.query.get(achievement_id)
-        if not achievement:
-            return error_response('Achievement not found', 404)
-        
-        return success_response(achievement.to_dict())
-        
-    except Exception as e:
-        logging.error(f"Error fetching achievement {achievement_id}: {e}")
-        return error_response('Failed to fetch achievement', 500)
-
-@api_bp.route('/users/<int:user_id>/achievements', methods=['GET'])
-def get_user_achievements(user_id):
-    """GET /api/v1/users/{id}/achievements - Get user's achievements"""
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            return error_response('User not found', 404)
-        
-        user_achievements = UserAchievement.query.filter_by(user_id=user_id).all()
-        
-        result = [{
-            'id': ua.id,
-            'achievement': ua.achievement.to_dict() if ua.achievement else None,
-            'unlocked_at': ua.unlocked_at.isoformat() if ua.unlocked_at else None,
-            'is_seen': ua.is_seen
-        } for ua in user_achievements]
-        
-        return success_response(result)
-        
-    except Exception as e:
-        logging.error(f"Error fetching achievements for user {user_id}: {e}")
-        return error_response('Failed to fetch user achievements', 500)
 
 # ============================================================================
 # DISCUSSIONS API ENDPOINTS

@@ -174,20 +174,12 @@
                                 </a>
                             {% endif %}
                             
-                            {% if book.poster %}
-                            <a href="{{ url_for('view_poster', user_id=book.poster.id) }}" 
-                               class="btn btn-outline-info glass-button btn-sm">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <span class="d-none d-sm-inline">Xem </span>Người đăng
-                            </a>
-                            
-                            {% if current_user.is_authenticated and book.poster.id != current_user.id %}
+                            {% if book.poster and current_user.is_authenticated and book.poster.id != current_user.id %}
                             <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" 
                                class="btn btn-outline-success glass-button btn-sm">
                                 <i class="fas fa-comments me-1"></i>
                                 <span class="d-none d-sm-inline">Nhắn tin </span>Chủ sách
                             </a>
-                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
