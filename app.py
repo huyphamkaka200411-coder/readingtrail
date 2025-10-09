@@ -14,13 +14,13 @@ from config import create_app, db, login_manager
 # Import models after db is initialized
 from models import (
     User, Book, BorrowedBook, Discussion, Notification, 
-    PrivateMessage, BookReview, Achievement, UserAchievement, UserProfile
+    PrivateMessage, BookReview
 )
 
 # Import controllers
 from controllers import (
     auth_controller, book_controller, social_controller, 
-    review_controller, achievement_controller
+    review_controller
 )
 from controllers.api_controller import api_bp
 
