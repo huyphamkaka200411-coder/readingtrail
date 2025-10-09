@@ -3,23 +3,31 @@ Translation Controller
 Handles translation management and language switching.
 """
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 import json
 import os
+from functools import lru_cache
 
 TRANSLATIONS_FILE = 'data/translations.json'
 
-def load_translations():
-    """Load translations from JSON file"""
+@lru_cache(maxsize=1)
+def _cached_load_translations():
+    """Load translations from JSON file with caching"""
     if os.path.exists(TRANSLATIONS_FILE):
         with open(TRANSLATIONS_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {}
 
+def load_translations():
+    """Load translations from JSON file"""
+    return _cached_load_translations()
+
 def save_translations(translations):
-    """Save translations to JSON file"""
+    """Save translations to JSON file and clear cache"""
     with open(TRANSLATIONS_FILE, 'w', encoding='utf-8') as f:
         json.dump(translations, f, ensure_ascii=False, indent=2)
+    
+    _cached_load_translations.cache_clear()
 
 def get_translation(key, lang=None):
     """Get translation for a key in specified language"""
@@ -33,8 +41,13 @@ def get_translation(key, lang=None):
     
     return key
 
+@login_required
 def translate_admin():
-    """Translation management admin page"""
+    """Translation management admin page - requires admin authorization"""
+    if not current_user.is_admin:
+        flash('You do not have permission to access translation management. Admin access required.', 'danger')
+        return redirect(url_for('index'))
+    
     translations = load_translations()
     
     if request.method == 'POST':
@@ -61,8 +74,12 @@ def translate_admin():
     
     return render_template('translate_admin.html', translations=translations)
 
+@login_required
 def delete_translation():
-    """Delete a translation key"""
+    """Delete a translation key - requires admin authorization"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'message': 'Admin authorization required'}), 403
+    
     key = request.form.get('key')
     
     if not key:
