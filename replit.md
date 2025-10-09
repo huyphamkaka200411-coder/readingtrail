@@ -4,6 +4,13 @@
 L.E.A.F is a web-based digital library management system built with Flask that enables users to browse, search, borrow, and review books from a digital catalog. It aims to provide a comprehensive, interactive platform for book enthusiasts, incorporating social features like discussions, private messaging, user profiles, and an achievement/ranking system to foster community engagement. The project's ambition is to deliver a lightweight, scalable, and user-friendly digital library experience with a strong focus on community interaction.
 
 ## Recent Changes (October 2025)
+- **Additional UI Cleanup (Oct 9)**: Further simplification of user interface:
+  - Installed pytz package to fix timezone handling in private chat feature
+  - Removed "Xem người đăng" (view poster) button from book detail pages
+  - Replaced "Trả sách" (return book) button with status message on book detail pages
+  - Removed mark-as-read functionality from notifications (removed checkmark buttons and "Đánh dấu đã đọc tất cả" button)
+  - Notifications now display without read/unread states - cleaner, simpler interface
+
 - **UI Simplification (Oct 9)**: Major cleanup to streamline user interface:
   - Removed "Đã mượn" (borrowed count) display from navbar, sidebar, and profile page
   - Replaced complex background customization with simple dark/light mode toggle using localStorage and Bootstrap's data-bs-theme
