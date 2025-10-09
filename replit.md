@@ -14,15 +14,14 @@ Timezone preference: Vietnam timezone (UTC+7) for all timestamps.
 - **Theming**: Bootstrap 5 with a Replit dark theme.
 - **Responsiveness**: Mobile-first approach with comprehensive responsive design across all screen sizes.
 - **Navigation**: Dual navigation system with a responsive top navbar and a sidebar, synchronized for consistency.
-- **Localization**: Supports Vietnamese (default) and English with a user-friendly language switcher.
+- **Language**: All content is in Vietnamese.
 
 ### Technical Implementations
 - **Backend Framework**: Flask (Python web framework).
 - **Database**: PostgreSQL with Flask-SQLAlchemy ORM for persistent storage of books, borrowing records, user data, reviews, achievements, and social interactions.
-- **Session Management**: Flask sessions used for user state, including language preferences and temporary borrowing tracking.
+- **Session Management**: Flask sessions used for user state and temporary borrowing tracking.
 - **Architecture Pattern**: Refactored to a modular MVC (Model-View-Controller) pattern with separate files for models and controllers.
 - **Logging**: Python's built-in logging module.
-- **Internationalization**: Comprehensive i18n system with translation management interface and session-based language preference storage.
 
 ### Feature Specifications
 - **Book Management**: Browsing, searching, detailed views, and borrowing/returning of books.
@@ -35,12 +34,11 @@ Timezone preference: Vietnam timezone (UTC+7) for all timestamps.
 - **Achievements & Ranking**:
     - **Achievements**: System to track and award achievements for various user actions (borrowing, reviewing, posting, etc.).
     - **Ranking**: 8-tier ranking system based on achievement points, with a dedicated ranks page and leaderboard.
-- **Admin Tools**: Translation management interface for administrators.
 
 ### System Design Choices
 - **Database-driven**: All core data is persisted in a PostgreSQL database for scalability and reliability.
 - **Modular Codebase**: Application factory pattern and MVC structure for improved maintainability and scalability.
-- **Dynamic Content**: Jinja2 templating engine for rendering dynamic content and applying translations.
+- **Dynamic Content**: Jinja2 templating engine for rendering dynamic content.
 
 ## External Dependencies
 

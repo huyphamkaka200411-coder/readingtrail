@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Browse Books - L.E.A.F{% endblock %}
+{% block title %}Duyệt Sách - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -38,11 +38,11 @@
                                        name="search" 
                                        placeholder="Tìm kiếm sách, tác giả..." 
                                        value="{{ search_query }}"
-                                       aria-label="Search books">
+                                       aria-label="Tìm kiếm sách">
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
-                            <select class="form-select glass-input" name="category" aria-label="Select category">
+                            <select class="form-select glass-input" name="category" aria-label="Chọn thể loại">
                                 <option value="">Tất cả thể loại</option>
                                 {% for category in categories %}
                                 <option value="{{ category }}" {% if category == category_filter %}selected{% endif %}>
@@ -70,10 +70,10 @@
         <div class="col">
             <div class="alert alert-info">
                 <i class="fas fa-info-circle me-2"></i>
-                Showing {{ books|length }} result(s)
-                {% if search_query %}for "{{ search_query }}"{% endif %}
-                {% if category_filter %}in {{ category_filter }}{% endif %}
-                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-info ms-2">Clear Filters</a>
+                Hiển thị {{ books|length }} kết quả
+                {% if search_query %}cho "{{ search_query }}"{% endif %}
+                {% if category_filter %}trong {{ category_filter }}{% endif %}
+                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-info ms-2">Xóa bộ lọc</a>
             </div>
         </div>
     </div>
@@ -90,14 +90,14 @@
                          class="card-img-top book-cover" 
                          alt="{{ book.title }}"
                          loading="lazy"
-                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22300%22 viewBox=%220 0 200 300%22><rect width=%22200%22 height=%22300%22 fill=%22%23666%22/><text x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22>No Image</text></svg>'">
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22300%22 viewBox=%220 0 200 300%22><rect width=%22200%22 height=%22300%22 fill=%22%23666%22/><text x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22>Không có ảnh</text></svg>'">
                     
                     <!-- Borrowed Status Badge -->
                     {% if book.id in borrowed_books %}
                     <div class="position-absolute top-0 end-0 m-2">
                         <span class="badge glass-badge bg-success">
                             <i class="fas fa-check me-1"></i>
-                            <span class="d-none d-sm-inline">Borrowed</span>
+                            <span class="d-none d-sm-inline">Đã mượn</span>
                         </span>
                     </div>
                     {% endif %}
@@ -119,7 +119,7 @@
                     <div class="book-info mb-3">
                         <small class="text-muted">
                             <i class="fas fa-calendar me-1"></i>{{ book.publication_year }}
-                            <span class="d-none d-sm-inline"> • <i class="fas fa-file-alt me-1"></i>{{ book.pages }} pages</span>
+                            <span class="d-none d-sm-inline"> • <i class="fas fa-file-alt me-1"></i>{{ book.pages }} trang</span>
                         </small>
                         
                         <!-- Rating Display -->
@@ -129,7 +129,7 @@
                                     <!-- Stars will be loaded by JavaScript -->
                                 </div>
                                 <small class="rating-text-small" id="rating-text-{{ book.id }}">
-                                    Loading...
+                                    Đang tải...
                                 </small>
                             </div>
                         </div>
@@ -140,37 +140,37 @@
                             <a href="{{ url_for('book_detail', book_id=book.id) }}" 
                                class="btn btn-outline-primary glass-button btn-sm">
                                 <i class="fas fa-eye me-1"></i>
-                                <span class="d-none d-sm-inline">View </span>Details
+                                <span class="d-none d-sm-inline">Xem </span>Chi tiết
                             </a>
                             
                             {% if current_user.is_authenticated %}
                                 {% if book.poster and book.poster.id == current_user.id %}
                                 <button class="btn btn-secondary glass-button btn-sm" disabled>
-                                    <i class="fas fa-user me-1"></i>Your Book
+                                    <i class="fas fa-user me-1"></i>Sách của bạn
                                 </button>
                                 {% elif book.id not in borrowed_books %}
                                     {% if book.id in pending_requests %}
                                     <button class="btn btn-warning glass-button btn-sm" disabled>
-                                        <i class="fas fa-clock me-1"></i>Pending
+                                        <i class="fas fa-clock me-1"></i>Chờ duyệt
                                     </button>
                                     {% else %}
                                     <button class="btn btn-success glass-button btn-sm borrow-btn" 
                                             data-book-id="{{ book.id }}"
                                             data-book-title="{{ book.title }}">
                                         <i class="fas fa-download me-1"></i>
-                                        <span class="d-none d-sm-inline">Borrow </span>Now
+                                        <span class="d-none d-sm-inline">Mượn </span>ngay
                                     </button>
                                     {% endif %}
                                 {% else %}
                                 <button class="btn btn-warning glass-button btn-sm return-btn" 
                                         data-book-id="{{ book.id }}"
                                         data-book-title="{{ book.title }}">
-                                    <i class="fas fa-undo me-1"></i>Return
+                                    <i class="fas fa-undo me-1"></i>Trả sách
                                 </button>
                                 {% endif %}
                             {% else %}
                                 <a href="{{ url_for('login') }}" class="btn btn-primary glass-button btn-sm">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                    <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
                                 </a>
                             {% endif %}
                             
@@ -178,14 +178,14 @@
                             <a href="{{ url_for('view_poster', user_id=book.poster.id) }}" 
                                class="btn btn-outline-info glass-button btn-sm">
                                 <i class="fas fa-user-circle me-1"></i>
-                                <span class="d-none d-sm-inline">View </span>Poster
+                                <span class="d-none d-sm-inline">Xem </span>Người đăng
                             </a>
                             
                             {% if current_user.is_authenticated and book.poster.id != current_user.id %}
                             <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" 
                                class="btn btn-outline-success glass-button btn-sm">
                                 <i class="fas fa-comments me-1"></i>
-                                <span class="d-none d-sm-inline">Talk to </span>Author
+                                <span class="d-none d-sm-inline">Nhắn tin </span>Tác giả
                             </a>
                             {% endif %}
                             {% endif %}
@@ -204,11 +204,7 @@
                 <i class="fas fa-search fa-4x text-muted mb-3"></i>
                 <h3>Không tìm thấy sách</h3>
                 <p class="text-muted">
-                    {% if search_query or category_filter %}
                     Không có sách trong danh mục hiện tại.
-                    {% else %}
-                    Không có sách trong danh mục hiện tại.
-                    {% endif %}
                 </p>
                 {% if search_query or category_filter %}
                 <a href="{{ url_for('index') }}" class="btn btn-primary">
