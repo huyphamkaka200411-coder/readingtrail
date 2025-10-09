@@ -116,11 +116,7 @@ def profile():
     # Get borrowed books count
     borrowed_count = BorrowedBook.query.filter_by(user_id=current_user.id, is_returned=False).count()
     
-    # Get user's power-ups
-    from models.powerup import UserPowerUp
-    user_powerups = UserPowerUp.query.filter_by(user_id=current_user.id).order_by(UserPowerUp.purchased_at.desc()).all()
-    
-    return render_template('profile.html', profile=user_profile, borrowed_count=borrowed_count, user_powerups=user_powerups)
+    return render_template('profile.html', profile=user_profile, borrowed_count=borrowed_count)
 
 
 @login_required
