@@ -69,13 +69,6 @@
                             <i class="fas fa-medal me-1"></i>Bảng xếp hạng
                         </a>
                     </li>
-                    {% if current_user.get_total_points() >= 150 %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('store') }}">
-                            <i class="fas fa-store me-1"></i>Cửa hàng
-                        </a>
-                    </li>
-                    {% endif %}
                     {% endif %}
                 </ul>
 

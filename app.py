@@ -14,8 +14,7 @@ from config import create_app, db, login_manager
 # Import models after db is initialized
 from models import (
     User, Book, BorrowedBook, Discussion, Notification, 
-    PrivateMessage, BookReview, Achievement, UserAchievement, UserProfile,
-    PowerUp, UserPowerUp
+    PrivateMessage, BookReview, Achievement, UserAchievement, UserProfile
 )
 
 # Import controllers
@@ -228,27 +227,6 @@ def save_profile():
 @app.route('/seed_achievements')
 def seed_achievements():
     return achievement_controller.seed_achievements()
-
-# Store routes
-@app.route('/store')
-def store():
-    from controllers import store_controller
-    return store_controller.store()
-
-@app.route('/purchase_powerup', methods=['POST'])
-def purchase_powerup():
-    from controllers import store_controller
-    return store_controller.purchase_powerup()
-
-@app.route('/activate_powerup', methods=['POST'])
-def activate_powerup():
-    from controllers import store_controller
-    return store_controller.activate_powerup()
-
-@app.route('/seed_powerups')
-def seed_powerups():
-    from controllers import store_controller
-    return store_controller.seed_powerups()
 
 @app.route('/info')
 def info():
