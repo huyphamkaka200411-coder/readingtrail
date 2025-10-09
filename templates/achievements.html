@@ -82,21 +82,10 @@
         </div>
     </div>
 
-    <!-- Danh Mục Thành Tích -->
-    <div class="achievement-categories mb-4">
-        <div class="category-filters">
-            <button class="category-filter active" data-category="all">Tất Cả</button>
-            <button class="category-filter" data-category="books">Sách</button>
-            <button class="category-filter" data-category="reviews">Đánh Giá</button>
-            <button class="category-filter" data-category="social">Xã Hội</button>
-            <button class="category-filter" data-category="special">Đặc Biệt</button>
-        </div>
-    </div>
-
     <!-- Tiến Trình Thành Tích -->
     <div class="achievements-container">
         {% for progress in achievement_progress %}
-        <div class="achievement-card {{ progress.achievement.category }}" data-category="{{ progress.achievement.category }}">
+        <div class="achievement-card {{ progress.achievement.category }}">
             <div class="achievement-content">
                 <div class="achievement-icon {% if progress.is_unlocked %}unlocked{% else %}locked{% endif %}">
                     <i class="fas {{ progress.achievement.icon }}"></i>
@@ -237,35 +226,6 @@
     font-size: 2rem;
     color: #f39c12;
     opacity: 0.7;
-}
-
-.achievement-categories {
-    text-align: center;
-}
-
-.category-filters {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.category-filter {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 8px 16px;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.category-filter.active,
-.category-filter:hover {
-    background: #3498db;
-    color: white;
-    transform: translateY(-2px);
 }
 
 .achievements-container {
@@ -480,29 +440,4 @@
 }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const categoryFilters = document.querySelectorAll('.category-filter');
-    const achievementCards = document.querySelectorAll('.achievement-card');
-
-    categoryFilters.forEach(filter => {
-        filter.addEventListener('click', function() {
-            const category = this.dataset.category;
-
-            // Cập nhật filter đang chọn
-            categoryFilters.forEach(f => f.classList.remove('active'));
-            this.classList.add('active');
-
-            // Lọc thành tích
-            achievementCards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
-});
-</script>
 {% endblock %}

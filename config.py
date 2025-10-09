@@ -41,8 +41,7 @@ def create_app():
         # Import all models to ensure they're registered with SQLAlchemy
         from models import (
             User, Book, BorrowedBook, Discussion, Notification, 
-            PrivateMessage, BookReview, Achievement, UserAchievement, UserProfile,
-            PowerUp, UserPowerUp
+            PrivateMessage, BookReview, Achievement, UserAchievement, UserProfile
         )
         db.create_all()
     

@@ -242,7 +242,7 @@ function updateBorrowedCount(change = 0) {
 
 // Update notification count in both sidebar and navbar
 function updateNotificationCount() {
-    fetch('/api/notification-count')
+    fetch('/api/notifications/count')
         .then(response => response.json())
         .then(data => {
             const count = data.unread_count || 0;
