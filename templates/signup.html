@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Sign Up - L.E.A.F{% endblock %}
+{% block title %}Đăng ký - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -9,9 +9,9 @@
             <div class="card glass-card">
                 <div class="card-header glass-header text-center">
                     <h3 class="mb-0">
-                        <i class="fas fa-user-plus me-2"></i>Join L.E.A.F
+                        <i class="fas fa-user-plus me-2"></i>Tham gia L.E.A.F
                     </h3>
-                    <p class="text-muted mb-0">Create your account to start your reading journey</p>
+                    <p class="text-muted mb-0">Tạo tài khoản để bắt đầu hành trình đọc sách</p>
                 </div>
                 
                 <div class="card-body p-4">
@@ -19,77 +19,77 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="first_name" class="form-label">
-                                    <i class="fas fa-user me-1"></i>First Name
+                                    <i class="fas fa-user me-1"></i>Tên
                                 </label>
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        id="first_name" 
                                        name="first_name" 
-                                       placeholder="Enter first name">
+                                       placeholder="Nhập tên">
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="last_name" class="form-label">
-                                    <i class="fas fa-user me-1"></i>Last Name
+                                    <i class="fas fa-user me-1"></i>Họ
                                 </label>
                                 <input type="text" 
                                        class="form-control glass-input" 
                                        id="last_name" 
                                        name="last_name" 
-                                       placeholder="Enter last name">
+                                       placeholder="Nhập họ">
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="username" class="form-label">
-                                <i class="fas fa-at me-1"></i>Username <span class="text-danger">*</span>
+                                <i class="fas fa-at me-1"></i>Tên người dùng <span class="text-danger">*</span>
                             </label>
                             <input type="text" 
                                    class="form-control glass-input" 
                                    id="username" 
                                    name="username" 
-                                   placeholder="Choose a unique username"
+                                   placeholder="Chọn tên người dùng duy nhất"
                                    required>
-                            <small class="text-muted">This will be your unique identifier on the platform</small>
+                            <small class="text-muted">Đây sẽ là định danh duy nhất của bạn trên nền tảng</small>
                         </div>
                         
                         <div class="mb-3">
                             <label for="email" class="form-label">
-                                <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                                <i class="fas fa-envelope me-1"></i>Địa chỉ Email <span class="text-danger">*</span>
                             </label>
                             <input type="email" 
                                    class="form-control glass-input" 
                                    id="email" 
                                    name="email" 
-                                   placeholder="Enter your email address"
+                                   placeholder="Nhập địa chỉ email"
                                    required>
                         </div>
                         
                         <div class="mb-4">
                             <label for="password" class="form-label">
-                                <i class="fas fa-lock me-1"></i>Password <span class="text-danger">*</span>
+                                <i class="fas fa-lock me-1"></i>Mật khẩu <span class="text-danger">*</span>
                             </label>
                             <input type="password" 
                                    class="form-control glass-input" 
                                    id="password" 
                                    name="password" 
-                                   placeholder="Create a secure password"
+                                   placeholder="Tạo mật khẩu an toàn"
                                    minlength="6"
                                    required>
-                            <small class="text-muted">Password must be at least 6 characters long</small>
+                            <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
                         </div>
                         
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-success btn-lg glass-button">
-                                <i class="fas fa-user-plus me-2"></i>Create Account
+                                <i class="fas fa-user-plus me-2"></i>Tạo tài khoản
                             </button>
                         </div>
                     </form>
                     
                     <div class="text-center">
-                        <p class="text-muted mb-0">Already have an account?</p>
+                        <p class="text-muted mb-0">Đã có tài khoản?</p>
                         <a href="{{ url_for('login') }}" class="btn btn-link text-decoration-none">
-                            <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                            <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
                         </a>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Real-time password validation
     password.addEventListener('input', function() {
         if (this.value.length < 6) {
-            this.setCustomValidity('Password must be at least 6 characters long');
+            this.setCustomValidity('Mật khẩu phải có ít nhất 6 ký tự');
         } else {
             this.setCustomValidity('');
         }
@@ -200,9 +200,9 @@ document.addEventListener('DOMContentLoaded', function() {
     username.addEventListener('input', function() {
         const value = this.value;
         if (value.length < 3) {
-            this.setCustomValidity('Username must be at least 3 characters long');
+            this.setCustomValidity('Tên người dùng phải có ít nhất 3 ký tự');
         } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-            this.setCustomValidity('Username can only contain letters, numbers, and underscores');
+            this.setCustomValidity('Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới');
         } else {
             this.setCustomValidity('');
         }
