@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Header Section -->
+    <!-- Phần tiêu đề -->
     <div class="row mb-4 align-items-center">
         <div class="col-lg-8 col-md-7 mb-3 mb-md-0">
             <h1 class="display-4 mb-2">
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Search and Filter Section -->
+    <!-- Phần tìm kiếm và lọc -->
     <div class="row mb-4">
         <div class="col">
             <div class="card glass">
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <!-- Results Summary -->
+    <!-- Tóm tắt kết quả -->
     {% if search_query or category_filter %}
     <div class="row mb-3">
         <div class="col">
@@ -79,7 +79,7 @@
     </div>
     {% endif %}
 
-    <!-- Books Grid -->
+    <!-- Lưới sách -->
     {% if books %}
     <div class="row g-3 g-md-4">
         {% for book in books %}
@@ -92,7 +92,7 @@
                          loading="lazy"
                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22300%22 viewBox=%220 0 200 300%22><rect width=%22200%22 height=%22300%22 fill=%22%23666%22/><text x=%22100%22 y=%22150%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22>Không có ảnh</text></svg>'">
                     
-                    <!-- Borrowed Status Badge -->
+                    <!-- Huy hiệu trạng thái đã mượn -->
                     {% if book.id in borrowed_books %}
                     <div class="position-absolute top-0 end-0 m-2">
                         <span class="badge glass-badge bg-success">
@@ -122,11 +122,11 @@
                             <span class="d-none d-sm-inline"> • <i class="fas fa-file-alt me-1"></i>{{ book.pages }} trang</span>
                         </small>
                         
-                        <!-- Rating Display -->
+                        <!-- Hiển thị đánh giá -->
                         <div class="rating-display mt-2" data-book-id="{{ book.id }}">
                             <div class="d-flex align-items-center">
                                 <div class="rating-stars-small me-2" id="stars-{{ book.id }}">
-                                    <!-- Stars will be loaded by JavaScript -->
+                                    <!-- Sao sẽ được tải bởi JavaScript -->
                                 </div>
                                 <small class="rating-text-small" id="rating-text-{{ book.id }}">
                                     Đang tải...
@@ -185,7 +185,7 @@
                             <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" 
                                class="btn btn-outline-success glass-button btn-sm">
                                 <i class="fas fa-comments me-1"></i>
-                                <span class="d-none d-sm-inline">Nhắn tin </span>Tác giả
+                                <span class="d-none d-sm-inline">Nhắn tin </span>Chủ sách
                             </a>
                             {% endif %}
                             {% endif %}
@@ -197,7 +197,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <!-- Empty State -->
+    <!-- Trạng thái rỗng -->
     <div class="row">
         <div class="col">
             <div class="text-center py-5">
@@ -221,10 +221,10 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Load catalog ratings when page loads
+    // Tải đánh giá danh mục khi trang tải
     loadCatalogRatings();
     
-    // Handle borrow button clicks
+    // Xử lý click nút mượn
     document.querySelectorAll('.borrow-btn').forEach(button => {
         button.addEventListener('click', function() {
             const bookId = this.dataset.bookId;
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Handle return button clicks
+    // Xử lý click nút trả
     document.querySelectorAll('.return-btn').forEach(button => {
         button.addEventListener('click', function() {
             const bookId = this.dataset.bookId;
@@ -245,13 +245,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// New function to handle borrow requests from index page with pending notification
+// Hàm mới để xử lý yêu cầu mượn từ trang chủ với thông báo chờ duyệt
 async function borrowBookFromIndex(bookId, bookTitle, buttonElement) {
     try {
         buttonElement.disabled = true;
-        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi...';
         
-        // Make POST request to borrow route
+        // Gửi yêu cầu POST đến route mượn sách
         const response = await fetch(`/borrow/${bookId}`, {
             method: 'POST',
             headers: {
@@ -260,29 +260,29 @@ async function borrowBookFromIndex(bookId, bookTitle, buttonElement) {
         });
 
         if (response.ok) {
-            // Show pending request modal
+            // Hiển thị modal yêu cầu chờ duyệt
             showBorrowPendingModal(bookTitle);
             
-            // Update button state to reflect pending status
+            // Cập nhật trạng thái nút để phản ánh trạng thái chờ duyệt
             buttonElement.className = 'btn btn-warning glass-button btn-sm';
-            buttonElement.innerHTML = '<i class="fas fa-clock me-1"></i>Pending';
+            buttonElement.innerHTML = '<i class="fas fa-clock me-1"></i>Chờ duyệt';
             buttonElement.disabled = true;
             
         } else {
-            console.error('Error response:', response.status);
+            console.error('Phản hồi lỗi:', response.status);
             buttonElement.disabled = false;
-            buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Borrow </span>Now';
-            showAlert('Failed to send borrow request. Please try again.', 'danger');
+            buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Mượn </span>ngay';
+            showAlert('Không thể gửi yêu cầu mượn sách. Vui lòng thử lại.', 'danger');
         }
     } catch (error) {
-        console.error('Error borrowing book:', error);
+        console.error('Lỗi khi mượn sách:', error);
         buttonElement.disabled = false;
-        buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Borrow </span>Now';
-        showAlert('Failed to send borrow request. Please try again.', 'danger');
+        buttonElement.innerHTML = '<i class="fas fa-download me-1"></i><span class="d-none d-sm-inline">Mượn </span>ngay';
+        showAlert('Không thể gửi yêu cầu mượn sách. Vui lòng thử lại.', 'danger');
     }
 }
 
-// Function to show pending request modal
+// Hàm hiển thị modal yêu cầu chờ duyệt
 function showBorrowPendingModal(bookTitle) {
     const modalId = 'borrowPendingModal-' + Date.now();
     const modalHTML = `
@@ -292,22 +292,22 @@ function showBorrowPendingModal(bookTitle) {
                     <div class="modal-body text-center p-5">
                         <div class="mb-4">
                             <i class="fas fa-clock fa-5x text-warning mb-3"></i>
-                            <h3 class="text-warning mb-3">Request Pending!</h3>
+                            <h3 class="text-warning mb-3">Yêu cầu đang chờ duyệt!</h3>
                             <p class="text-muted mb-4">
-                                Your borrow request for "<strong>${bookTitle}</strong>" has been sent successfully!
+                                Yêu cầu mượn sách "<strong>${bookTitle}</strong>" của bạn đã được gửi thành công!
                             </p>
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
-                                The book owner will review your request and you'll receive a notification once they respond.
+                                Chủ sách sẽ xem xét yêu cầu của bạn và bạn sẽ nhận được thông báo khi họ phản hồi.
                             </div>
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <button type="button" class="btn btn-primary btn-lg px-4" onclick="closePendingModal('${modalId}')">
-                                <i class="fas fa-check me-2"></i>Got It
+                                <i class="fas fa-check me-2"></i>Đã hiểu
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="goToDashboard()">
-                                <i class="fas fa-tachometer-alt me-2"></i>View My Requests
+                                <i class="fas fa-tachometer-alt me-2"></i>Xem yêu cầu của tôi
                             </button>
                         </div>
                     </div>
@@ -316,11 +316,11 @@ function showBorrowPendingModal(bookTitle) {
         </div>
     `;
     
-    // Add modal to body
+    // Thêm modal vào body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
-// Close pending request modal
+// Đóng modal yêu cầu chờ duyệt
 function closePendingModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -328,7 +328,7 @@ function closePendingModal(modalId) {
     }
 }
 
-// Go to dashboard
+// Đi đến trang dashboard
 function goToDashboard() {
     window.location.href = '/dashboard';
 }

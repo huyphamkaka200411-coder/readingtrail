@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ poster.get_full_name() or poster.username }} - Poster Profile{% endblock %}
+{% block title %}{{ poster.get_full_name() or poster.username }} - Hồ sơ người đăng{% endblock %}
 
 {% block content %}
 <div class="profile-background 
@@ -9,7 +9,7 @@
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <!-- Poster Profile Card -->
+            <!-- Thẻ hồ sơ người đăng -->
             <div class="card glass-card mb-4">
                 {% set user_profile = poster.profile %}
                 <div class="card-header glass-header" 
@@ -34,18 +34,18 @@
                             <div class="mt-2">
                                 <span class="badge glass-badge">
                                     <i class="fas {{ rank_info.current_rank.icon }}" style="color: {{ rank_info.current_rank.color }}"></i>
-                                    {{ rank_info.current_rank.name }} ({{ rank_info.total_points }} pts)
+                                    {{ rank_info.current_rank.name }} ({{ rank_info.total_points }} điểm)
                                 </span>
                             </div>
                         </div>
                         <div class="col-md-4 text-md-end">
                             {% if current_user.is_authenticated and current_user.id != poster.id %}
                             <a href="{{ url_for('private_chat', recipient_id=poster.id) }}" class="btn btn-primary glass-button">
-                                <i class="fas fa-comment me-2"></i>Private Chat
+                                <i class="fas fa-comment me-2"></i>Trò chuyện riêng
                             </a>
                             {% elif current_user.is_authenticated and current_user.id == poster.id %}
                             <button type="button" class="btn btn-secondary glass-button" data-bs-toggle="modal" data-bs-target="#customizeProfileModal">
-                                <i class="fas fa-palette me-2"></i>Customize Profile
+                                <i class="fas fa-palette me-2"></i>Tùy chỉnh hồ sơ
                             </button>
                             {% endif %}
                         </div>
@@ -58,21 +58,21 @@
                             <div class="profile-stats">
                                 <div class="stat-item">
                                     <h5 class="stat-number">{{ posted_books|length }}</h5>
-                                    <p class="stat-label">Books Posted</p>
+                                    <p class="stat-label">Sách đã đăng</p>
                                 </div>
                                 <div class="stat-item">
                                     <h5 class="stat-number">{{ poster.created_at.strftime('%B %Y') }}</h5>
-                                    <p class="stat-label">Member Since</p>
+                                    <p class="stat-label">Thành viên từ</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="profile-info">
-                                <h6><i class="fas fa-info-circle me-2"></i>About</h6>
+                                <h6><i class="fas fa-info-circle me-2"></i>Giới thiệu</h6>
                                 <p class="text-muted">
-                                    Active community member sharing knowledge through book lending.
+                                    Thành viên cộng đồng tích cực chia sẻ kiến thức thông qua việc cho mượn sách.
                                     {% if poster.get_full_name() %}
-                                    Known as {{ poster.get_full_name() }} in the community.
+                                    Được biết đến là {{ poster.get_full_name() }} trong cộng đồng.
                                     {% endif %}
                                 </p>
                             </div>
@@ -81,12 +81,12 @@
                 </div>
             </div>
             
-            <!-- Posted Books Section -->
+            <!-- Phần sách đã đăng -->
             <div class="card glass-card">
                 <div class="card-header glass-header">
                     <h5 class="mb-0">
                         <i class="fas fa-books me-2"></i>
-                        Books Posted by {{ poster.get_full_name() or poster.username }}
+                        Sách được đăng bởi {{ poster.get_full_name() or poster.username }}
                     </h5>
                 </div>
                 
@@ -121,7 +121,7 @@
                                         {% endif %}
                                         <div class="mt-auto">
                                             <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye me-1"></i>View Details
+                                                <i class="fas fa-eye me-1"></i>Xem chi tiết
                                             </a>
                                         </div>
                                     </div>
@@ -132,17 +132,17 @@
                     {% else %}
                         <div class="empty-books text-center py-5">
                             <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No books posted yet</h5>
-                            <p class="text-muted">{{ poster.get_full_name() or poster.username }} hasn't posted any books to the library yet.</p>
+                            <h5 class="text-muted">Chưa đăng sách nào</h5>
+                            <p class="text-muted">{{ poster.get_full_name() or poster.username }} chưa đăng sách nào lên thư viện.</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
             
-            <!-- Back Button -->
+            <!-- Nút quay lại -->
             <div class="text-center mt-4">
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Catalog
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh mục
                 </a>
             </div>
         </div>
@@ -150,7 +150,7 @@
 </div>
 
 <style>
-/* Poster Profile Styles */
+/* Kiểu dáng hồ sơ người đăng */
 .glass-header {
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -240,7 +240,7 @@
     align-items: center;
 }
 
-/* Responsive adjustments */
+/* Điều chỉnh responsive */
 @media (max-width: 768px) {
     .profile-stats {
         flex-direction: row;
@@ -258,7 +258,7 @@
     }
 }
 
-/* Profile Customization Modal Styles */
+/* Kiểu modal tùy chỉnh hồ sơ */
 .banner-option {
     cursor: pointer;
     border: 2px solid transparent;
@@ -363,7 +363,7 @@
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Profile Background Themes */
+/* Chủ đề nền hồ sơ */
 .profile-background {
     min-height: 100vh;
     position: relative;
@@ -457,26 +457,26 @@
 }
 </style>
 
-<!-- Profile Customization Modal -->
+<!-- Modal tùy chỉnh hồ sơ -->
 {% if current_user.is_authenticated and current_user.id == poster.id %}
 <div class="modal fade" id="customizeProfileModal" tabindex="-1" aria-labelledby="customizeProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content glass-card">
             <div class="modal-header glass-header">
                 <h5 class="modal-title" id="customizeProfileModalLabel">
-                    <i class="fas fa-palette me-2"></i>Customize Your Profile
+                    <i class="fas fa-palette me-2"></i>Tùy chỉnh hồ sơ của bạn
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-info glass-alert">
                     <i class="fas fa-info-circle me-2"></i>
-                    <strong>Your Points:</strong> <span id="currentPoints">{{ rank_info.total_points }}</span>
+                    <strong>Điểm của bạn:</strong> <span id="currentPoints">{{ rank_info.total_points }}</span>
                 </div>
 
-                <!-- Preview Section -->
+                <!-- Phần xem trước -->
                 <div class="mb-4">
-                    <h6><i class="fas fa-eye me-2"></i>Preview</h6>
+                    <h6><i class="fas fa-eye me-2"></i>Xem trước</h6>
                     <div class="card glass-card">
                         <div class="card-header glass-header" id="previewHeader">
                             <h4 class="mb-0">
@@ -488,121 +488,121 @@
                     </div>
                 </div>
 
-                <!-- Banner Selection -->
+                <!-- Chọn banner -->
                 <div class="mb-4">
-                    <h6><i class="fas fa-image me-2"></i>Profile Banner</h6>
+                    <h6><i class="fas fa-image me-2"></i>Banner hồ sơ</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="" data-cost="0">
-                                <div class="banner-preview glass-header">Default</div>
+                                <div class="banner-preview glass-header">Mặc định</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Default</span>
-                                    <span class="banner-cost">Free</span>
+                                    <span class="banner-name">Mặc định</span>
+                                    <span class="banner-cost">Miễn phí</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" data-cost="50">
-                                <div class="banner-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Purple Blue</div>
+                                <div class="banner-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Tím xanh</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Purple Blue</span>
-                                    <span class="banner-cost">50 pts</span>
+                                    <span class="banner-name">Tím xanh</span>
+                                    <span class="banner-cost">50 điểm</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" data-cost="75">
-                                <div class="banner-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Pink Red</div>
+                                <div class="banner-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Hồng đỏ</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Pink Red</span>
-                                    <span class="banner-cost">75 pts</span>
+                                    <span class="banner-name">Hồng đỏ</span>
+                                    <span class="banner-cost">75 điểm</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" data-cost="100">
-                                <div class="banner-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Ocean Blue</div>
+                                <div class="banner-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Xanh đại dương</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Ocean Blue</span>
-                                    <span class="banner-cost">100 pts</span>
+                                    <span class="banner-name">Xanh đại dương</span>
+                                    <span class="banner-cost">100 điểm</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" data-cost="125">
-                                <div class="banner-preview" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">Green Mint</div>
+                                <div class="banner-preview" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">Xanh bạc hà</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Green Mint</span>
-                                    <span class="banner-cost">125 pts</span>
+                                    <span class="banner-name">Xanh bạc hà</span>
+                                    <span class="banner-cost">125 điểm</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="banner-option" data-style="linear-gradient(135deg, #fa709a 0%, #fee140 100%)" data-cost="150">
-                                <div class="banner-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Sunset</div>
+                                <div class="banner-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">Hoàng hôn</div>
                                 <div class="banner-info">
-                                    <span class="banner-name">Sunset</span>
-                                    <span class="banner-cost">150 pts</span>
+                                    <span class="banner-name">Hoàng hôn</span>
+                                    <span class="banner-cost">150 điểm</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Custom Title Section -->
+                <!-- Phần tiêu đề tùy chỉnh -->
                 <div class="mb-4">
-                    <h6><i class="fas fa-tag me-2"></i>Custom Title</h6>
+                    <h6><i class="fas fa-tag me-2"></i>Tiêu đề tùy chỉnh</h6>
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="customTitle">Custom Title (max 30 characters)</label>
-                                <input type="text" class="form-control glass-input" id="customTitle" maxlength="30" placeholder="Enter your custom title">
-                                <div class="form-text">Cost: 100 points</div>
+                                <label for="customTitle">Tiêu đề tùy chỉnh (tối đa 30 ký tự)</label>
+                                <input type="text" class="form-control glass-input" id="customTitle" maxlength="30" placeholder="Nhập tiêu đề tùy chỉnh của bạn">
+                                <div class="form-text">Chi phí: 100 điểm</div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <label>Title Color</label>
+                            <label>Màu tiêu đề</label>
                             <div class="color-options">
-                                <div class="color-option" data-color="#ffffff" data-cost="0" style="background: #ffffff;" title="White - Free"></div>
-                                <div class="color-option" data-color="#ffd700" data-cost="10" style="background: #ffd700;" title="Gold - 10 pts"></div>
-                                <div class="color-option" data-color="#ff6b6b" data-cost="20" style="background: #ff6b6b;" title="Red - 20 pts"></div>
-                                <div class="color-option" data-color="#4ecdc4" data-cost="25" style="background: #4ecdc4;" title="Teal - 25 pts"></div>
-                                <div class="color-option" data-color="#45b7d1" data-cost="30" style="background: #45b7d1;" title="Blue - 30 pts"></div>
-                                <div class="color-option" data-color="#96ceb4" data-cost="40" style="background: #96ceb4;" title="Green - 40 pts"></div>
-                                <div class="color-option" data-color="#dda0dd" data-cost="50" style="background: #dda0dd;" title="Purple - 50 pts"></div>
+                                <div class="color-option" data-color="#ffffff" data-cost="0" style="background: #ffffff;" title="Trắng - Miễn phí"></div>
+                                <div class="color-option" data-color="#ffd700" data-cost="10" style="background: #ffd700;" title="Vàng - 10 điểm"></div>
+                                <div class="color-option" data-color="#ff6b6b" data-cost="20" style="background: #ff6b6b;" title="Đỏ - 20 điểm"></div>
+                                <div class="color-option" data-color="#4ecdc4" data-cost="25" style="background: #4ecdc4;" title="Xanh ngọc - 25 điểm"></div>
+                                <div class="color-option" data-color="#45b7d1" data-cost="30" style="background: #45b7d1;" title="Xanh dương - 30 điểm"></div>
+                                <div class="color-option" data-color="#96ceb4" data-cost="40" style="background: #96ceb4;" title="Xanh lá - 40 điểm"></div>
+                                <div class="color-option" data-color="#dda0dd" data-cost="50" style="background: #dda0dd;" title="Tím - 50 điểm"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Cost Summary -->
+                <!-- Tóm tắt chi phí -->
                 <div class="alert alert-warning glass-alert">
-                    <h6><i class="fas fa-calculator me-2"></i>Cost Summary</h6>
+                    <h6><i class="fas fa-calculator me-2"></i>Tóm tắt chi phí</h6>
                     <div class="row">
                         <div class="col-md-6">
-                            <div>Banner: <span id="bannerCost">0</span> points</div>
-                            <div>Custom Title: <span id="titleCost">0</span> points</div>
-                            <div>Title Color: <span id="colorCost">0</span> points</div>
+                            <div>Banner: <span id="bannerCost">0</span> điểm</div>
+                            <div>Tiêu đề tùy chỉnh: <span id="titleCost">0</span> điểm</div>
+                            <div>Màu tiêu đề: <span id="colorCost">0</span> điểm</div>
                         </div>
                         <div class="col-md-6">
                             <div class="text-end">
-                                <strong>Total Cost: <span id="totalCost">0</span> points</strong><br>
-                                <span class="text-muted">Remaining: <span id="remainingPoints">{{ rank_info.total_points }}</span> points</span>
+                                <strong>Tổng chi phí: <span id="totalCost">0</span> điểm</strong><br>
+                                <span class="text-muted">Còn lại: <span id="remainingPoints">{{ rank_info.total_points }}</span> điểm</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary glass-button" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary glass-button" id="saveProfileBtn">Save Changes</button>
+                <button type="button" class="btn btn-secondary glass-button" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary glass-button" id="saveProfileBtn">Lưu thay đổi</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Profile customization functionality
+// Chức năng tùy chỉnh hồ sơ
 document.addEventListener('DOMContentLoaded', function() {
     const currentPoints = {{ rank_info.total_points }};
     let selectedBanner = "{{ user_profile.banner_style if user_profile else '' }}";
@@ -612,12 +612,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let titleCost = selectedTitle ? 100 : 0;
     let colorCost = 0;
 
-    // Initialize form with current values
+    // Khởi tạo form với giá trị hiện tại
     document.getElementById('customTitle').value = selectedTitle;
     document.getElementById('previewTitle').textContent = selectedTitle;
     document.getElementById('previewTitle').style.color = selectedTitleColor;
     
-    // Set current banner as selected
+    // Đặt banner hiện tại là đã chọn
     document.querySelectorAll('.banner-option').forEach(option => {
         if (option.dataset.style === selectedBanner) {
             option.classList.add('selected');
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Set current title color as selected
+    // Đặt màu tiêu đề hiện tại là đã chọn
     document.querySelectorAll('.color-option').forEach(option => {
         if (option.dataset.color === selectedTitleColor) {
             option.classList.add('selected');
@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Banner selection
+    // Chọn banner
     document.querySelectorAll('.banner-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.banner-option').forEach(o => o.classList.remove('selected'));
@@ -641,105 +641,11 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedBanner = this.dataset.style;
             selectedBannerCost = parseInt(this.dataset.cost);
             
-            // Update preview
+            // Cập nhật xem trước
             const previewHeader = document.getElementById('previewHeader');
             if (selectedBanner) {
                 previewHeader.style.background = selectedBanner;
                 previewHeader.style.backdropFilter = 'blur(20px)';
             } else {
                 previewHeader.style.background = '';
-                previewHeader.style.backdropFilter = '';
-            }
-            
-            updateCosts();
-        });
-    });
-
-    // Title input
-    document.getElementById('customTitle').addEventListener('input', function() {
-        selectedTitle = this.value;
-        document.getElementById('previewTitle').textContent = selectedTitle;
-        titleCost = selectedTitle ? 100 : 0;
-        updateCosts();
-    });
-
-    // Color selection
-    document.querySelectorAll('.color-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedTitleColor = this.dataset.color;
-            colorCost = parseInt(this.dataset.cost);
-            
-            // Update preview
-            document.getElementById('previewTitle').style.color = selectedTitleColor;
-            
-            updateCosts();
-        });
-    });
-
-    // Update cost display
-    function updateCosts() {
-        const totalCost = selectedBannerCost + titleCost + colorCost;
-        document.getElementById('bannerCost').textContent = selectedBannerCost;
-        document.getElementById('titleCost').textContent = titleCost;
-        document.getElementById('colorCost').textContent = colorCost;
-        document.getElementById('totalCost').textContent = totalCost;
-        document.getElementById('remainingPoints').textContent = currentPoints - totalCost;
-        
-        // Enable/disable save button
-        const saveBtn = document.getElementById('saveProfileBtn');
-        if (totalCost > currentPoints) {
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Not Enough Points';
-        } else {
-            saveBtn.disabled = false;
-            saveBtn.textContent = 'Save Changes';
-        }
-    }
-
-    // Save profile
-    document.getElementById('saveProfileBtn').addEventListener('click', async function() {
-        const totalCost = selectedBannerCost + titleCost + colorCost;
-        
-        if (totalCost > currentPoints) {
-            alert('Not enough points!');
-            return;
-        }
-
-        try {
-            const response = await fetch('/save_profile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    banner_style: selectedBanner,
-                    custom_title: selectedTitle,
-                    title_color: selectedTitleColor,
-                    cost: totalCost
-                })
-            });
-
-            const result = await response.json();
-            
-            if (result.success) {
-                alert(result.message);
-                location.reload(); // Refresh to show changes
-            } else {
-                alert('Error: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error saving profile:', error);
-            alert('Failed to save profile changes');
-        }
-    });
-
-    // Initial cost calculation
-    updateCosts();
-});
-</script>
-{% endif %}
-</div>
-
-{% endblock %}
+                preview

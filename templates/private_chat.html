@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Chat with {{ recipient.get_full_name() or recipient.username }} - L.E.A.F{% endblock %}
+{% block title %}Trò chuyện với {{ recipient.get_full_name() or recipient.username }} - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -12,12 +12,12 @@
                         <div>
                             <h5 class="mb-0">
                                 <i class="fas fa-comment me-2"></i>
-                                Chat with {{ recipient.get_full_name() or recipient.username }}
+                                Trò chuyện với {{ recipient.get_full_name() or recipient.username }}
                             </h5>
-                            <small class="text-muted">Private conversation</small>
+                            <small class="text-muted">Cuộc trò chuyện riêng tư</small>
                         </div>
                         <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-user me-1"></i>View Profile
+                            <i class="fas fa-user me-1"></i>Xem hồ sơ
                         </a>
                     </div>
                     
@@ -27,11 +27,11 @@
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-book me-2"></i>
                                 <div class="flex-grow-1">
-                                    <strong>About: {{ book.title }}</strong>
-                                    <small class="d-block text-muted">by {{ book.author }}</small>
+                                    <strong>Về: {{ book.title }}</strong>
+                                    <small class="d-block text-muted">của {{ book.author }}</small>
                                 </div>
                                 <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye me-1"></i>View Book
+                                    <i class="fas fa-eye me-1"></i>Xem sách
                                 </a>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                 </div>
                 
                 <div class="card-body p-0">
-                    <!-- Chat Messages -->
+                    <!-- Tin nhắn trò chuyện -->
                     <div id="chat-messages" class="chat-messages">
                         {% if messages %}
                             {% for message in messages %}
@@ -49,7 +49,7 @@
                                     <div class="message-header">
                                         <span class="sender-name">
                                             {% if message.sender_id == current_user.id %}
-                                                You
+                                                Bạn
                                             {% else %}
                                                 {{ recipient.get_full_name() or recipient.username }}
                                             {% endif %}
@@ -63,23 +63,23 @@
                         {% else %}
                             <div class="empty-chat">
                                 <i class="fas fa-comment-dots fa-3x text-muted mb-3"></i>
-                                <h6 class="text-muted">Start your conversation</h6>
+                                <h6 class="text-muted">Bắt đầu cuộc trò chuyện</h6>
                                 <p class="text-muted">
                                     {% if book %}
-                                        Ask {{ recipient.get_full_name() or recipient.username }} about "{{ book.title }}"
+                                        Hỏi {{ recipient.get_full_name() or recipient.username }} về "{{ book.title }}"
                                     {% else %}
-                                        Send a message to {{ recipient.get_full_name() or recipient.username }}
+                                        Gửi tin nhắn cho {{ recipient.get_full_name() or recipient.username }}
                                     {% endif %}
                                 </p>
                             </div>
                         {% endif %}
                     </div>
                     
-                    <!-- Message Input -->
+                    <!-- Ô nhập tin nhắn -->
                     <div class="chat-input-container">
                         <div class="input-group">
                             <input type="text" id="message-input" class="form-control glass-input" 
-                                   placeholder="Type your message..." maxlength="1000">
+                                   placeholder="Nhập tin nhắn của bạn..." maxlength="1000">
                             <button type="button" id="send-button" class="btn btn-primary glass-button">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -88,13 +88,13 @@
                 </div>
             </div>
             
-            <!-- Back Button -->
+            <!-- Nút quay lại -->
             <div class="text-center mt-4">
                 <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-outline-secondary glass-button me-2">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại hồ sơ
                 </a>
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
-                    <i class="fas fa-home me-2"></i>Back to Catalog
+                    <i class="fas fa-home me-2"></i>Quay lại danh mục
                 </a>
             </div>
         </div>
@@ -102,7 +102,7 @@
 </div>
 
 <style>
-/* Chat Styles */
+/* Kiểu dáng trò chuyện */
 .chat-container {
     height: 600px;
     display: flex;
@@ -217,7 +217,7 @@
     text-align: center;
 }
 
-/* Scrollbar styling */
+/* Kiểu thanh cuộn */
 .chat-messages::-webkit-scrollbar {
     width: 6px;
 }
@@ -236,7 +236,7 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* Animation for new messages */
+/* Hiệu ứng cho tin nhắn mới */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -252,7 +252,7 @@
     animation: slideIn 0.3s ease-out;
 }
 
-/* Book context styling */
+/* Kiểu ngữ cảnh sách */
 .book-context .alert {
     border-radius: 0.75rem;
     backdrop-filter: blur(10px);
@@ -265,7 +265,7 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Responsive adjustments */
+/* Điều chỉnh responsive */
 @media (max-width: 768px) {
     .message-content {
         max-width: 85%;
@@ -296,33 +296,33 @@ const recipientId = {{ recipient.id }};
 const bookId = {% if book %}{{ book.id }}{% else %}null{% endif %};
 let lastMessageId = 0;
 
-// Initialize chat
+// Khởi tạo trò chuyện
 document.addEventListener('DOMContentLoaded', function() {
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     const chatMessages = document.getElementById('chat-messages');
     
-    // Set initial last message ID
+    // Đặt ID tin nhắn cuối cùng ban đầu
     const messages = document.querySelectorAll('.message');
     if (messages.length > 0) {
-        // In a real implementation, you'd get this from the message data
+        // Trong triển khai thực tế, bạn sẽ lấy thông tin này từ dữ liệu tin nhắn
         lastMessageId = messages.length;
     }
     
-    // Scroll to bottom
+    // Cuộn xuống cuối
     scrollToBottom();
     
-    // Send message on button click
+    // Gửi tin nhắn khi nhấp nút
     sendButton.addEventListener('click', sendMessage);
     
-    // Send message on Enter key
+    // Gửi tin nhắn khi nhấn Enter
     messageInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
     
-    // Poll for new messages every 3 seconds
+    // Kiểm tra tin nhắn mới mỗi 3 giây
     setInterval(pollForNewMessages, 3000);
 });
 
@@ -332,7 +332,7 @@ function sendMessage() {
     
     if (!messageText) return;
     
-    // Disable input while sending
+    // Vô hiệu hóa ô nhập trong khi gửi
     messageInput.disabled = true;
     document.getElementById('send-button').disabled = true;
     
@@ -349,23 +349,23 @@ function sendMessage() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Clear input
+            // Xóa ô nhập
             messageInput.value = '';
             
-            // Add message to chat
+            // Thêm tin nhắn vào cuộc trò chuyện
             addMessageToChat(data.message, true);
             scrollToBottom();
         } else {
-            console.error('Failed to send message:', data.error);
-            showAlert('Failed to send message. Please try again.', 'error');
+            console.error('Không thể gửi tin nhắn:', data.error);
+            showAlert('Không thể gửi tin nhắn. Vui lòng thử lại.', 'error');
         }
     })
     .catch(error => {
-        console.error('Error sending message:', error);
-        showAlert('Failed to send message. Please try again.', 'error');
+        console.error('Lỗi khi gửi tin nhắn:', error);
+        showAlert('Không thể gửi tin nhắn. Vui lòng thử lại.', 'error');
     })
     .finally(() => {
-        // Re-enable input
+        // Kích hoạt lại ô nhập
         messageInput.disabled = false;
         document.getElementById('send-button').disabled = false;
         messageInput.focus();
@@ -381,17 +381,17 @@ function pollForNewMessages() {
             const currentMessageCount = document.querySelectorAll('.message').length;
             
             if (messages.length > currentMessageCount) {
-                // Clear and rebuild messages
+                // Xóa và xây dựng lại tin nhắn
                 const chatMessages = document.getElementById('chat-messages');
                 const emptyChat = chatMessages.querySelector('.empty-chat');
                 if (emptyChat) {
                     emptyChat.remove();
                 }
                 
-                // Remove old messages
+                // Xóa tin nhắn cũ
                 chatMessages.querySelectorAll('.message').forEach(msg => msg.remove());
                 
-                // Add all messages
+                // Thêm tất cả tin nhắn
                 messages.forEach(message => {
                     addMessageToChat(message, false);
                 });
@@ -401,7 +401,7 @@ function pollForNewMessages() {
         }
     })
     .catch(error => {
-        console.error('Error polling for messages:', error);
+        console.error('Lỗi khi kiểm tra tin nhắn mới:', error);
     });
 }
 
@@ -420,7 +420,7 @@ function addMessageToChat(message, isNew = false) {
     messageDiv.innerHTML = `
         <div class="message-content">
             <div class="message-header">
-                <span class="sender-name">${isSent ? 'You' : '{{ recipient.get_full_name() or recipient.username }}'}</span>
+                <span class="sender-name">${isSent ? 'Bạn' : '{{ recipient.get_full_name() or recipient.username }}'}</span>
                 <span class="message-time">${message.time_ago}</span>
             </div>
             <div class="message-text">${escapeHtml(message.message)}</div>
@@ -442,7 +442,7 @@ function escapeHtml(text) {
 }
 
 function showAlert(message, type = 'info') {
-    // Use the existing alert system from main.js if available
+    // Sử dụng hệ thống cảnh báo hiện có từ main.js nếu có
     if (typeof window.showAlert === 'function') {
         window.showAlert(message, type);
     } else {

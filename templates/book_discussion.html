@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Discussion: {{ book.title }} - LibraryApp{% endblock %}
+{% block title %}Thảo Luận: {{ book.title }} - LibraryApp{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <!-- Book Info Header -->
+            <!-- Thông Tin Sách -->
             <div class="card glass-card mb-4">
                 <div class="card-body">
                     <div class="row align-items-center">
@@ -19,7 +19,7 @@
                         <div class="col-md-9">
                             <h4 class="mb-2">{{ book.title }}</h4>
                             <p class="text-muted mb-1">
-                                <i class="fas fa-user me-1"></i>by {{ book.author }}
+                                <i class="fas fa-user me-1"></i>Bởi {{ book.author }}
                             </p>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-tag me-1"></i>{{ book.category }}
@@ -28,18 +28,18 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Discussion Card -->
+
+            <!-- Thẻ Thảo Luận -->
             <div class="card glass-card">
                 <div class="card-header glass-header">
                     <h5 class="mb-0">
-                        <i class="fas fa-comments me-2"></i>Book Discussion
+                        <i class="fas fa-comments me-2"></i>Thảo Luận Sách
                     </h5>
-                    <small class="text-muted">Share your thoughts about this book</small>
+                    <small class="text-muted">Chia sẻ suy nghĩ của bạn về cuốn sách này</small>
                 </div>
-                
+
                 <div class="card-body p-0">
-                    <!-- Messages Container -->
+                    <!-- Khung Tin Nhắn -->
                     <div id="chat-messages" class="chat-container">
                         {% if messages %}
                             {% for message in messages %}
@@ -58,13 +58,13 @@
                         {% else %}
                             <div class="empty-chat text-center py-5">
                                 <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">No discussion yet. Be the first to share your thoughts about "{{ book.title }}"!</p>
+                                <p class="text-muted">Chưa có thảo luận nào. Hãy là người đầu tiên chia sẻ suy nghĩ về "{{ book.title }}"!</p>
                             </div>
                         {% endif %}
                     </div>
                 </div>
-                
-                <!-- Message Input Form -->
+
+                <!-- Form Nhập Tin Nhắn -->
                 <div class="card-footer glass-footer">
                     <form method="POST" class="chat-form">
                         {% if not current_user.is_authenticated %}
@@ -72,16 +72,16 @@
                             <input type="text" 
                                    class="form-control glass-input" 
                                    name="username" 
-                                   placeholder="Your name..." 
+                                   placeholder="Tên của bạn..." 
                                    required>
                         </div>
                         {% endif %}
-                        
+
                         <div class="input-group">
                             <input type="text" 
                                    class="form-control glass-input" 
                                    name="message" 
-                                   placeholder="Share your thoughts about {{ book.title }}..." 
+                                   placeholder="Chia sẻ suy nghĩ của bạn về {{ book.title }}..." 
                                    required 
                                    id="message-input">
                             <button type="submit" class="btn btn-primary glass-button">
@@ -91,11 +91,11 @@
                     </form>
                 </div>
             </div>
-            
-            <!-- Back Button -->
+
+            <!-- Nút Quay Lại -->
             <div class="text-center mt-4">
                 <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-outline-secondary glass-button">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Book Details
+                    <i class="fas fa-arrow-left me-2"></i>Quay Lại Chi Tiết Sách
                 </a>
             </div>
         </div>
@@ -257,18 +257,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     const chatContainer = document.getElementById('chat-messages');
     const messageInput = document.getElementById('message-input');
-    
-    // Auto-scroll to bottom on page load
+
+    // Cuộn xuống cuối khi tải trang
     if (chatContainer) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
-    // Focus on message input
+
+    // Tự động focus vào ô nhập tin nhắn
     if (messageInput) {
         messageInput.focus();
     }
-    
-    // Auto-scroll to bottom after form submission
+
+    // Cuộn xuống cuối sau khi gửi tin nhắn
     const form = document.querySelector('.chat-form');
     if (form) {
         form.addEventListener('submit', function() {
@@ -279,8 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 100);
         });
     }
-    
-    // Add animation to existing messages
+
+    // Thêm hiệu ứng cho các tin nhắn hiện có
     const messages = document.querySelectorAll('.message-bubble');
     messages.forEach((message, index) => {
         setTimeout(() => {

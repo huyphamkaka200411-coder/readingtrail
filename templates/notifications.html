@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Notifications - L.E.A.F{% endblock %}
+{% block title %}Thông báo - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -9,11 +9,11 @@
             <div class="card glass-card">
                 <div class="card-header glass-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">
-                        <i class="fas fa-bell me-2"></i>Notifications
+                        <i class="fas fa-bell me-2"></i>Thông báo
                     </h4>
                     {% if notifications %}
                     <button type="button" class="btn btn-sm btn-outline-light" onclick="markAllAsRead()">
-                        <i class="fas fa-check-double me-1"></i>Mark All Read
+                        <i class="fas fa-check-double me-1"></i>Đánh dấu đã đọc tất cả
                     </button>
                     {% endif %}
                 </div>
@@ -49,18 +49,18 @@
                                             <button type="button" class="btn btn-sm btn-success me-2" 
                                                     onclick="handleBookRequest({{ notification.id }}, 'accept')" 
                                                     id="accept-btn-{{ notification.id }}">
-                                                <i class="fas fa-check me-1"></i>Accept
+                                                <i class="fas fa-check me-1"></i>Chấp nhận
                                             </button>
                                             <button type="button" class="btn btn-sm btn-danger me-2" 
                                                     onclick="handleBookRequest({{ notification.id }}, 'decline')" 
                                                     id="decline-btn-{{ notification.id }}">
-                                                <i class="fas fa-times me-1"></i>Decline
+                                                <i class="fas fa-times me-1"></i>Từ chối
                                             </button>
                                             {% elif notification.type == 'private_message' %}
                                             <button type="button" class="btn btn-sm btn-primary me-2" 
                                                     onclick="enterChat({{ notification.related_user_id }}, {{ notification.book_id if notification.book_id else 'null' }})" 
                                                     id="chat-btn-{{ notification.id }}">
-                                                <i class="fas fa-comment me-1"></i>Enter Chat
+                                                <i class="fas fa-comment me-1"></i>Vào trò chuyện
                                             </button>
                                             {% endif %}
                                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="markAsRead({{ notification.id }})">
@@ -76,17 +76,17 @@
                     {% else %}
                         <div class="empty-notifications text-center py-5">
                             <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No notifications yet</h5>
-                            <p class="text-muted">When someone shows interest in borrowing your posted books, you'll see notifications here.</p>
+                            <h5 class="text-muted">Chưa có thông báo</h5>
+                            <p class="text-muted">Khi có ai đó quan tâm đến việc mượn sách bạn đã đăng, bạn sẽ thấy thông báo ở đây.</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
             
-            <!-- Back to Home Button -->
+            <!-- Nút quay lại trang chủ -->
             <div class="text-center mt-4">
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Catalog
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh mục
                 </a>
             </div>
         </div>
@@ -94,7 +94,7 @@
 </div>
 
 <style>
-/* Notification-specific styles */
+/* Kiểu dáng cho thông báo */
 .glass-header {
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -172,7 +172,7 @@
     align-items: center;
 }
 
-/* Scrollbar styling */
+/* Kiểu thanh cuộn */
 .notifications-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -191,7 +191,7 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* Animation for marking as read */
+/* Hiệu ứng khi đánh dấu đã đọc */
 @keyframes fadeOut {
     from {
         opacity: 1;
@@ -213,7 +213,7 @@ function handleBookRequest(notificationId, action) {
     const acceptBtn = document.getElementById(`accept-btn-${notificationId}`);
     const declineBtn = document.getElementById(`decline-btn-${notificationId}`);
     
-    // Disable buttons during request
+    // Vô hiệu hóa nút trong khi xử lý yêu cầu
     if (acceptBtn) acceptBtn.disabled = true;
     if (declineBtn) declineBtn.disabled = true;
     
@@ -226,31 +226,31 @@ function handleBookRequest(notificationId, action) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success message
+            // Hiển thị thông báo thành công
             const notificationElement = document.querySelector(`[data-id="${notificationId}"]`);
             if (notificationElement) {
                 const actionsDiv = notificationElement.querySelector('.notification-actions');
                 if (actionsDiv) {
                     const statusMessage = action === 'accept' ? 
-                        '<span class="badge bg-success">Accepted</span>' : 
-                        '<span class="badge bg-danger">Declined</span>';
+                        '<span class="badge bg-success">Đã chấp nhận</span>' : 
+                        '<span class="badge bg-danger">Đã từ chối</span>';
                     actionsDiv.innerHTML = statusMessage;
                 }
             }
             
-            // Mark as read automatically
+            // Tự động đánh dấu đã đọc
             markAsRead(notificationId);
         } else {
-            alert(data.error || 'An error occurred');
-            // Re-enable buttons on error
+            alert(data.error || 'Đã xảy ra lỗi');
+            // Kích hoạt lại nút khi có lỗi
             if (acceptBtn) acceptBtn.disabled = false;
             if (declineBtn) declineBtn.disabled = false;
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while processing the request');
-        // Re-enable buttons on error
+        console.error('Lỗi:', error);
+        alert('Đã xảy ra lỗi khi xử lý yêu cầu');
+        // Kích hoạt lại nút khi có lỗi
         if (acceptBtn) acceptBtn.disabled = false;
         if (declineBtn) declineBtn.disabled = false;
     });
@@ -282,14 +282,14 @@ function markAsRead(notificationId) {
                 updateNotificationBadge();
             }, 300);
         } else {
-            console.error('Failed to mark notification as read');
+            console.error('Không thể đánh dấu thông báo là đã đọc');
             if (notificationElement) {
                 notificationElement.classList.remove('marking-read');
             }
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Lỗi:', error);
         if (notificationElement) {
             notificationElement.classList.remove('marking-read');
         }
@@ -306,25 +306,25 @@ function markAllAsRead() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Reload the page to reflect changes
+            // Tải lại trang để phản ánh thay đổi
             location.reload();
         } else {
-            console.error('Failed to mark all notifications as read');
+            console.error('Không thể đánh dấu tất cả thông báo là đã đọc');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Lỗi:', error);
     });
 }
 
 function enterChat(userId, bookId) {
-    // Build the chat URL
+    // Xây dựng URL trò chuyện
     let chatUrl = `/chat/${userId}`;
     if (bookId && bookId !== null) {
         chatUrl += `/${bookId}`;
     }
     
-    // Navigate to the chat page
+    // Chuyển đến trang trò chuyện
     window.location.href = chatUrl;
 }
 
@@ -345,11 +345,11 @@ function updateNotificationBadge() {
         }
     })
     .catch(error => {
-        console.error('Error updating notification badge:', error);
+        console.error('Lỗi cập nhật huy hiệu thông báo:', error);
     });
 }
 
-// Update notification badge on page load
+// Cập nhật huy hiệu thông báo khi tải trang
 document.addEventListener('DOMContentLoaded', function() {
     updateNotificationBadge();
 });

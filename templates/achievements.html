@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Achievements - L.E.A.F{% endblock %}
+{% block title %}Thành Tích - L.E.A.F{% endblock %}
 
 {% block content %}
 <div class="achievements-page">
     <div class="page-header">
         <h1 class="page-title">
             <i class="fas fa-trophy me-2"></i>
-            Your Reading Achievements
+            Thành Tích Đọc Sách Của Bạn
         </h1>
-        <p class="page-description">Track your progress and celebrate your reading milestones</p>
+        <p class="page-description">Theo dõi tiến trình và kỷ niệm những cột mốc đọc sách của bạn</p>
     </div>
 
-    <!-- Current Rank Display -->
+    <!-- Hiển thị Hạng Hiện Tại -->
     {% set rank_info = current_user.get_rank_info() %}
     <div class="rank-card mb-4">
         <div class="row align-items-center">
@@ -23,35 +23,35 @@
                 <div class="rank-name">{{ rank_info.current_rank.name }}</div>
             </div>
             <div class="col-md-6">
-                <div class="rank-points mb-2">{{ rank_info.total_points }} Points</div>
+                <div class="rank-points mb-2">{{ rank_info.total_points }} Điểm</div>
                 {% if rank_info.next_rank %}
                     <div class="rank-progress-bar">
                         <div class="rank-progress-fill" style="width: {{ rank_info.progress_percentage }}%; background-color: {{ rank_info.next_rank.color }}"></div>
                     </div>
                     <div class="rank-next-info">
-                        {{ rank_info.points_needed }} more points needed to reach {{ rank_info.next_rank.name }}
+                        Cần thêm {{ rank_info.points_needed }} điểm để đạt {{ rank_info.next_rank.name }}
                     </div>
                 {% else %}
                     <div class="rank-next-info">
-                        <i class="fas fa-crown"></i> Maximum rank achieved!
+                        <i class="fas fa-crown"></i> Đã đạt hạng cao nhất!
                     </div>
                 {% endif %}
             </div>
             <div class="col-md-3 text-center">
                 <a href="{{ url_for('ranks') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-medal me-2"></i>View All Ranks
+                    <i class="fas fa-medal me-2"></i>Xem Tất Cả Hạng
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Achievement Statistics -->
+    <!-- Thống Kê Thành Tích -->
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="achievement-stat-card">
                 <div class="stat-content">
                     <div class="stat-number">{{ user_achievements|length }}</div>
-                    <div class="stat-label">Achievements Unlocked</div>
+                    <div class="stat-label">Thành Tích Đã Mở Khóa</div>
                 </div>
                 <div class="stat-icon">
                     <i class="fas fa-trophy"></i>
@@ -62,7 +62,7 @@
             <div class="achievement-stat-card">
                 <div class="stat-content">
                     <div class="stat-number">{{ user_achievements|sum(attribute='points') or 0 }}</div>
-                    <div class="stat-label">Total Points</div>
+                    <div class="stat-label">Tổng Điểm</div>
                 </div>
                 <div class="stat-icon">
                     <i class="fas fa-star"></i>
@@ -73,7 +73,7 @@
             <div class="achievement-stat-card">
                 <div class="stat-content">
                     <div class="stat-number">{{ achievement_progress|length }}</div>
-                    <div class="stat-label">Total Achievements</div>
+                    <div class="stat-label">Tổng Thành Tích</div>
                 </div>
                 <div class="stat-icon">
                     <i class="fas fa-medal"></i>
@@ -82,18 +82,18 @@
         </div>
     </div>
 
-    <!-- Achievement Categories -->
+    <!-- Danh Mục Thành Tích -->
     <div class="achievement-categories mb-4">
         <div class="category-filters">
-            <button class="category-filter active" data-category="all">All</button>
-            <button class="category-filter" data-category="books">Books</button>
-            <button class="category-filter" data-category="reviews">Reviews</button>
-            <button class="category-filter" data-category="social">Social</button>
-            <button class="category-filter" data-category="special">Special</button>
+            <button class="category-filter active" data-category="all">Tất Cả</button>
+            <button class="category-filter" data-category="books">Sách</button>
+            <button class="category-filter" data-category="reviews">Đánh Giá</button>
+            <button class="category-filter" data-category="social">Xã Hội</button>
+            <button class="category-filter" data-category="special">Đặc Biệt</button>
         </div>
     </div>
 
-    <!-- Achievement Progress -->
+    <!-- Tiến Trình Thành Tích -->
     <div class="achievements-container">
         {% for progress in achievement_progress %}
         <div class="achievement-card {{ progress.achievement.category }}" data-category="{{ progress.achievement.category }}">
@@ -101,18 +101,18 @@
                 <div class="achievement-icon {% if progress.is_unlocked %}unlocked{% else %}locked{% endif %}">
                     <i class="fas {{ progress.achievement.icon }}"></i>
                 </div>
-                
+
                 <div class="achievement-details">
                     <div class="achievement-header">
                         <h3 class="achievement-name">{{ progress.achievement.name }}</h3>
                         <div class="achievement-points">
                             <i class="fas fa-star"></i>
-                            {{ progress.achievement.points }} pts
+                            {{ progress.achievement.points }} điểm
                         </div>
                     </div>
-                    
+
                     <p class="achievement-description">{{ progress.achievement.description }}</p>
-                    
+
                     <div class="achievement-progress">
                         <div class="progress-bar-container">
                             <div class="progress-bar" style="width: {{ progress.progress_percentage }}%"></div>
@@ -121,40 +121,40 @@
                             {{ progress.current_progress }} / {{ progress.max_progress }}
                         </div>
                     </div>
-                    
+
                     {% if progress.is_unlocked %}
                     <div class="achievement-unlocked">
                         <i class="fas fa-check-circle"></i>
-                        <span>Unlocked!</span>
+                        <span>Đã Mở Khóa!</span>
                     </div>
                     {% else %}
                     <div class="achievement-locked">
                         <i class="fas fa-lock"></i>
-                        <span>{{ progress.max_progress - progress.current_progress }} more to go</span>
+                        <span>Cần thêm {{ progress.max_progress - progress.current_progress }}</span>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
         {% endfor %}
-        
+
         {% if not achievement_progress %}
         <div class="no-achievements">
             <i class="fas fa-trophy fa-3x mb-3"></i>
-            <h3>No achievements yet!</h3>
-            <p>Start reading books to unlock your first achievements.</p>
+            <h3>Chưa có thành tích!</h3>
+            <p>Bắt đầu đọc sách để mở khóa những thành tích đầu tiên của bạn.</p>
         </div>
         {% endif %}
     </div>
 
-    <!-- Recent Achievements -->
+    <!-- Thành Tích Gần Đây -->
     {% if user_achievements %}
     <div class="recent-achievements mt-5">
         <h2 class="section-title">
             <i class="fas fa-clock me-2"></i>
-            Recent Achievements
+            Thành Tích Gần Đây
         </h2>
-        
+
         <div class="recent-achievements-list">
             {% for achievement in user_achievements[:5] %}
             <div class="recent-achievement-item">
@@ -484,16 +484,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     const categoryFilters = document.querySelectorAll('.category-filter');
     const achievementCards = document.querySelectorAll('.achievement-card');
-    
+
     categoryFilters.forEach(filter => {
         filter.addEventListener('click', function() {
             const category = this.dataset.category;
-            
-            // Update active filter
+
+            // Cập nhật filter đang chọn
             categoryFilters.forEach(f => f.classList.remove('active'));
             this.classList.add('active');
-            
-            // Filter achievements
+
+            // Lọc thành tích
             achievementCards.forEach(card => {
                 if (category === 'all' || card.dataset.category === category) {
                     card.style.display = 'block';

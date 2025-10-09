@@ -37,7 +37,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Back Navigation -->
+    <!-- Nút quay lại -->
     <div class="row mb-3">
         <div class="col">
             <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <!-- Book Details -->
+    <!-- Thông tin sách -->
     <div class="row">
         <div class="col-xl-4 col-lg-5 col-md-6 mb-4">
             <div class="card glass-card sticky-top" style="top: 100px;">
@@ -57,7 +57,7 @@
                          loading="lazy"
                          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22450%22 viewBox=%220 0 300 450%22><rect width=%22300%22 height=%22450%22 fill=%22%23666%22/><text x=%22150%22 y=%22225%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2224%22>Không có ảnh</text></svg>'">
 
-                    <!-- Borrowed Status Badge -->
+                    <!-- Badge trạng thái mượn -->
                     {% if is_borrowed %}
                     <div class="position-absolute top-0 end-0 m-3">
                         <span class="badge glass-badge bg-success">
@@ -77,7 +77,7 @@
 
                     <div class="book-meta mb-4">
                         <h4 class="text-muted mb-3">
-                            <i class="fas fa-user me-2"></i>{{ book.author }}
+                            <i class="fas fa-user me-2"></i>Tác giả: {{ book.author }}
                         </h4>
 
                         <div class="row g-2 g-sm-3 mb-4">
@@ -117,7 +117,7 @@
                         <p class="lead">{{ book.description }}</p>
                     </div>
 
-                    <!-- Ratings and Reviews Section -->
+                    <!-- Đánh giá & Nhận xét -->
                     <div class="ratings-section mb-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h5><i class="fas fa-star me-2"></i>Đánh giá & Nhận xét</h5>
@@ -127,18 +127,18 @@
                             </button>
                             {% endif %}
                         </div>
-                        
-                        <!-- Average Rating Display -->
+
+                        <!-- Hiển thị đánh giá trung bình -->
                         <div class="rating-summary mb-3" id="rating-summary">
                             <div class="d-flex align-items-center">
                                 <div class="rating-stars me-3" id="average-stars">
-                                    <!-- Stars will be populated by JavaScript -->
+                                    <!-- Ngôi sao sẽ được tạo bởi JS -->
                                 </div>
                                 <span class="rating-text" id="rating-text">Đang tải...</span>
                             </div>
                         </div>
-                        
-                        <!-- Review Form (Hidden by default) -->
+
+                        <!-- Form đánh giá (ẩn mặc định) -->
                         {% if current_user.is_authenticated %}
                         <div class="review-form mb-4" id="review-form" style="display: none;">
                             <div class="glass-card p-3">
@@ -172,14 +172,14 @@
                             </div>
                         </div>
                         {% endif %}
-                        
-                        <!-- Reviews List -->
+
+                        <!-- Danh sách đánh giá -->
                         <div class="reviews-list" id="reviews-list">
-                            <!-- Reviews will be loaded by JavaScript -->
+                            <!-- Reviews sẽ được tải bằng JS -->
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
+                    <!-- Nút hành động -->
                     <div class="action-buttons">
                         {% if current_user.is_authenticated %}
                             {% if book.poster and book.poster.id == current_user.id %}
@@ -193,7 +193,6 @@
                                     </button>
                                 </div>
                             {% elif not is_borrowed %}
-                                <!-- Due Date Selection for User-Posted Books -->
                                 {% if book.poster %}
                                 <div class="mb-3">
                                     <label for="proposedDueDate" class="form-label">
@@ -241,7 +240,6 @@
                             </div>
                         {% endif %}
 
-                        <!-- Secondary Actions -->
                         <div class="d-grid gap-2 d-sm-flex flex-wrap">
                             <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary glass-button flex-fill">
                                 <i class="fas fa-user me-2"></i>
@@ -257,7 +255,7 @@
                                 <i class="fas fa-user-circle me-2"></i>
                                 <span class="d-none d-sm-inline">Xem </span>người đăng
                             </a>
-                            
+
                             {% if current_user.is_authenticated and book.poster.id != current_user.id %}
                             <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" class="btn btn-outline-success glass-button flex-fill">
                                 <i class="fas fa-comments me-2"></i>
@@ -272,7 +270,7 @@
         </div>
     </div>
 
-    <!-- Additional Information -->
+    <!-- Thông tin mượn sách -->
     <div class="row mt-4">
         <div class="col">
             <div class="card">
@@ -295,7 +293,9 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
+
 
 {% block styles %}
 <style>
@@ -374,7 +374,7 @@
 <script>
 const bookId = {{ book.id }};
 
-// Rating and Review Functions
+// Hàm Xếp hạng và Đánh giá
 function renderStars(rating, maxStars = 5) {
     let starsHtml = '';
     for (let i = 1; i <= maxStars; i++) {
@@ -400,11 +400,11 @@ function loadReviews() {
                 displayReviews(data.reviews);
                 updateRatingSummary(data.reviews);
             } else {
-                console.error('Failed to load reviews:', data.error);
+                console.error('Không thể tải đánh giá:', data.error);
             }
         })
         .catch(error => {
-            console.error('Error loading reviews:', error);
+            console.error('Lỗi tải đánh giá:', error);
         });
 }
 
@@ -491,13 +491,13 @@ function submitReview() {
             alert(data.message);
             toggleReviewForm();
             form.reset();
-            loadReviews(); // Reload reviews
+            loadReviews(); // Tải lại đánh giá
         } else {
             alert(data.message || 'Không thể gửi đánh giá');
         }
     })
     .catch(error => {
-        console.error('Error submitting review:', error);
+        console.error('Lỗi gửi đánh giá:', error);
         alert('Không thể gửi đánh giá');
     });
 }
@@ -511,23 +511,23 @@ function deleteReview(reviewId) {
         .then(data => {
             if (data.success) {
                 alert(data.message);
-                loadReviews(); // Reload reviews
+                loadReviews(); // Tải lại đánh giá
             } else {
                 alert(data.message || 'Không thể xóa đánh giá');
             }
         })
         .catch(error => {
-            console.error('Error deleting review:', error);
+            console.error('Lỗi xóa đánh giá:', error);
             alert('Không thể xóa đánh giá');
         });
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load reviews when page loads
+    // Tải đánh giá khi trang load
     loadReviews();
     
-    // Handle review form submission
+    // Xử lý submit form đánh giá
     const reviewForm = document.getElementById('review-submit-form');
     if (reviewForm) {
         reviewForm.addEventListener('submit', function(e) {
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Handle borrow button click
+    // Xử lý nút mượn sách
     const borrowBtn = document.querySelector('.borrow-btn');
     if (borrowBtn) {
         borrowBtn.addEventListener('click', function(e) {
@@ -545,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const bookTitle = this.dataset.bookTitle;
             const hasOwner = this.dataset.hasOwner === 'true';
 
-            // If book has owner, get proposed due date
             let proposedDueDate = null;
             if (hasOwner) {
                 const dueDateInput = document.getElementById('proposedDueDate');
@@ -558,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle return button click
+    // Xử lý nút trả sách
     const returnBtn = document.querySelector('.return-btn');
     if (returnBtn) {
         returnBtn.addEventListener('click', function() {
@@ -571,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 {% if show_borrow_success_modal %}
-// Show borrow success modal
+// Hiển thị modal mượn sách thành công
 document.addEventListener('DOMContentLoaded', function() {
     const modalHTML = `
         <div class="modal fade show" id="borrowSuccessModal" tabindex="-1" aria-labelledby="borrowSuccessModalLabel" aria-hidden="true" style="display: block; background-color: rgba(0,0,0,0.5);">
@@ -607,7 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <button type="button" class="btn btn-primary btn-lg px-4" onclick="closeBorrowModal()">
-                                <i class="fas fa-check me-2"></i>Okay
+                                <i class="fas fa-check me-2"></i>Đồng ý
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="goToDashboard()">
                                 <i class="fas fa-tachometer-alt me-2"></i>Xem sách của tôi
@@ -619,10 +618,8 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
     
-    // Add modal to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     
-    // Prevent closing modal by clicking outside
     const modal = document.getElementById('borrowSuccessModal');
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
@@ -631,7 +628,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Close borrow success modal
 function closeBorrowModal() {
     const modal = document.getElementById('borrowSuccessModal');
     if (modal) {
@@ -639,46 +635,42 @@ function closeBorrowModal() {
     }
 }
 
-// Go to dashboard from modal
 function goToDashboard() {
     window.location.href = '/dashboard';
 }
-// New function to handle borrow requests with due date
+
 async function borrowBookRequest(bookId, bookTitle, proposedDueDate, buttonElement) {
     try {
         buttonElement.disabled = true;
         buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang gửi yêu cầu...';
         
-        // Create form data
         const formData = new FormData();
         if (proposedDueDate) {
             formData.append('proposed_due_date', proposedDueDate);
         }
 
-        // Make POST request to borrow route
         const response = await fetch(`/borrow/${bookId}`, {
             method: 'POST',
             body: formData
         });
 
         if (response.ok) {
-            // Instead of replacing content, just reload the page which will show the modal
             window.location.reload();
         } else {
-            console.error('Error response:', response.status);
+            console.error('Lỗi phản hồi:', response.status);
             buttonElement.disabled = false;
             buttonElement.innerHTML = '<i class="fas fa-download me-2"></i>Yêu cầu mượn';
             alert('Không thể gửi yêu cầu mượn. Vui lòng thử lại.');
         }
     } catch (error) {
-        console.error('Error borrowing book:', error);
+        console.error('Lỗi mượn sách:', error);
         buttonElement.disabled = false;
         buttonElement.innerHTML = '<i class="fas fa-download me-2"></i>Yêu cầu mượn';
         alert('Không thể gửi yêu cầu mượn. Vui lòng thử lại.');
     }
 }
 
-// Star rating functionality
+// Chức năng xếp hạng sao
 document.addEventListener('DOMContentLoaded', function() {
     const ratingInput = document.querySelector('.rating-input');
     if (ratingInput) {
@@ -686,13 +678,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const radioInputs = ratingInput.querySelectorAll('input[type="radio"]');
         let selectedRating = 0;
         
-        // Handle star clicks
         stars.forEach((star, index) => {
             const rating = index + 1;
             
             star.addEventListener('click', function() {
                 selectedRating = rating;
-                // Check the corresponding radio button
                 radioInputs[index].checked = true;
                 updateStarDisplay();
             });
@@ -702,7 +692,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Reset to selected rating on mouse leave
         ratingInput.addEventListener('mouseleave', function() {
             updateStarDisplay();
         });

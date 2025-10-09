@@ -37,7 +37,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Header Section -->
+    <!-- Phần tiêu đề -->
     <div class="row mb-4">
         <div class="col">
             <h1 class="display-4 mb-3">
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Thống kê nhanh -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
             <div class="card glass-card bg-primary">
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <!-- Borrowed Books -->
+    <!-- Sách đã mượn -->
     {% if borrowed_books %}
     <div class="row mb-4">
         <div class="col">
@@ -154,7 +154,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <!-- Empty State -->
+    <!-- Trạng thái rỗng -->
     <div class="row">
         <div class="col">
             <div class="text-center py-5">
@@ -171,7 +171,7 @@
     </div>
     {% endif %}
     
-    <!-- Posted Books -->
+    <!-- Sách đã đăng -->
     {% if posted_books %}
     <div class="row mb-4">
         <div class="col">
@@ -234,7 +234,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <!-- Empty State for Posted Books -->
+    <!-- Trạng thái rỗng cho sách đã đăng -->
     <div class="row mb-5">
         <div class="col">
             <div class="text-center py-4">
@@ -250,7 +250,7 @@
     </div>
     {% endif %}
     
-    <!-- Pending Requests -->
+    <!-- Yêu cầu chờ duyệt -->
     {% if pending_requests %}
     <div class="row mb-4">
         <div class="col">
@@ -289,7 +289,7 @@
                             <p class="card-text">
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>
-                                    Proposed due: {{ request.request.due_date.strftime('%B %d, %Y') }}
+                                    Hạn trả đề xuất: {{ request.request.due_date.strftime('%d/%m/%Y') }}
                                 </small>
                             </p>
                         </div>
@@ -300,7 +300,7 @@
                     <div class="d-grid gap-2">
                         <button class="btn btn-outline-danger btn-sm" 
                                 onclick="cancelBorrowRequest({{ request.book.id }})">
-                            <i class="fas fa-times me-1"></i>Cancel Request
+                            <i class="fas fa-times me-1"></i>Hủy yêu cầu
                         </button>
                     </div>
                 </div>
@@ -310,7 +310,7 @@
     </div>
     {% endif %}
     
-    <!-- Borrowing Guidelines -->
+    <!-- Hướng dẫn mượn sách -->
     <div class="row mt-5">
         <div class="col">
             <div class="card">
@@ -319,7 +319,7 @@
                             <ul class="list-unstyled">
                                 <li class="mb-2">
                                     <i class="fas fa-question-circle text-info me-2"></i>
-                                    <strong>Help:</strong> Contact leafbookshare@gmail.com
+                                    <strong>Trợ giúp:</strong> Liên hệ leafbookshare@gmail.com
                                 </li>
                             </ul>
                         </div>
@@ -334,7 +334,7 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle return button clicks
+    // Xử lý click nút trả sách
     document.querySelectorAll('.return-btn').forEach(button => {
         button.addEventListener('click', function() {
             const bookId = this.dataset.bookId;

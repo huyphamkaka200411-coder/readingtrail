@@ -15,26 +15,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- Top Navigation Bar -->
+    <!-- Thanh điều hướng trên cùng -->
     <nav class="navbar navbar-expand-lg fixed-top glass-navbar">
         <div class="container-fluid">
-            <!-- Brand and Toggle -->
+            <!-- Logo và nút toggle -->
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <i class="fas fa-book me-2"></i>
                 <span class="fw-bold">L.E.A.F</span>
             </a>
-            
-            <!-- Mobile Menu Toggle -->
+
+            <!-- Nút toggle menu trên di động -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
-            <!-- Navigation Items -->
+
+            <!-- Menu điều hướng -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-1"></i>Duyệt xem
+                            <i class="fas fa-home me-1"></i>Duyệt sách
                         </a>
                     </li>
                     <li class="nav-item">
@@ -78,16 +78,10 @@
                     {% endif %}
                     {% endif %}
                 </ul>
-                
-                <!-- User Section -->
+
+                <!-- Phần người dùng -->
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item me-3">
-                        <span class="nav-link">
-                            <i class="fas fa-books me-1"></i>
-                            <span id="navbar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> đã mượn
-                        </span>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-2"></i>
@@ -124,12 +118,10 @@
                     {% endif %}
                 </ul>
             </div>
-            
-
         </div>
     </nav>
 
-    <!-- Sidebar Trigger Area -->
+    <!-- Khu vực kích hoạt Sidebar -->
     <div class="sidebar-trigger" id="sidebarTrigger"></div>
 
     <!-- Sidebar -->
@@ -141,7 +133,7 @@
         <nav class="sidebar-nav">
             <a href="{{ url_for('index') }}" class="sidebar-link">
                 <i class="fas fa-home"></i>
-                <span>Duyệt xem</span>
+                <span>Duyệt sách</span>
             </a>
             <a href="{{ url_for('info') }}" class="sidebar-link">
                 <i class="fas fa-info-circle"></i>
@@ -160,9 +152,7 @@
                 <span>Thông báo</span>
                 <span id="sidebar-notification-badge" class="sidebar-badge" style="display: none;">0</span>
             </a>
-            
-            <div class="sidebar-divider"></div>
-            
+
             <div class="sidebar-divider"></div>
 
             <a href="{{ url_for('achievements') }}" class="sidebar-link">
@@ -173,17 +163,6 @@
                 <i class="fas fa-medal"></i>
                 <span>Bảng xếp hạng</span>
             </a>
-
-            <div class="sidebar-divider"></div>
-
-            <div class="sidebar-stats">
-                <div class="stat-item">
-                    <i class="fas fa-books"></i>
-                    <span>
-                        <span id="sidebar-borrowed-count">{{ borrowed_count if borrowed_count is defined else 0 }}</span> đã mượn
-                    </span>
-                </div>
-            </div>
 
             <div class="sidebar-divider"></div>
 
@@ -205,7 +184,7 @@
                                         <div class="progress-bar-mini">
                                             <div class="progress-fill" style="width: {{ rank_info.progress_percentage }}%; background-color: {{ rank_info.next_rank.color }}"></div>
                                         </div>
-                                        <span class="progress-text">{{ rank_info.points_needed }} để đạt {{ rank_info.next_rank.name }}</span>
+                                        <span class="progress-text">{{ rank_info.points_needed }} điểm để đạt {{ rank_info.next_rank.name }}</span>
                                     </div>
                                 {% endif %}
                             </div>
@@ -229,22 +208,20 @@
                 </div>
             {% endif %}
         </nav>
-                <button type="button" class="btn btn-sm glass-button" 
-                        onclick="toggleSidebar()" 
-                        aria-label="Đóng thanh bên">
-                    <i class="fas fa-times"></i>
-                </button>
+        <button type="button" class="btn btn-sm glass-button" 
+                onclick="toggleSidebar()" 
+                aria-label="Đóng thanh bên">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
-    <!-- Sidebar Overlay -->
+    <!-- Overlay Sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-
-
-    <!-- Alert Container -->
+    <!-- Khung thông báo -->
     <div id="alert-container" class="container mt-3"></div>
 
-    <!-- Main Content -->
+    <!-- Nội dung chính -->
     <main>
         {% block content %}{% endblock %}
     </main>
@@ -255,7 +232,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="fas fa-book me-2"></i>L.E.A.F</h5>
-                    <p class="mb-0">Your digital gateway to literature and knowledge.</p>
+                    <p class="mb-0">Cổng truy cập số của bạn đến văn học và tri thức.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     </p>
@@ -264,15 +241,15 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+      <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    <!-- Sidebar JavaScript -->
+    <!-- JavaScript cho Sidebar -->
     <script>
-    // Prevent multiple initialization
+    // Ngăn việc khởi tạo nhiều lần
     if (!window.sidebarInitialized) {
         window.sidebarInitialized = true;
 
@@ -293,7 +270,7 @@
                 sidebarOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
 
-                // Reset animation flag after transition
+                // Đặt lại cờ animation sau khi kết thúc transition
                 setTimeout(() => {
                     isAnimating = false;
                 }, 400);
@@ -307,39 +284,39 @@
                 sidebarOverlay.classList.remove('active');
                 document.body.style.overflow = '';
 
-                // Reset animation flag after transition
+                // Đặt lại cờ animation sau khi kết thúc transition
                 setTimeout(() => {
                     isAnimating = false;
                 }, 400);
             }
 
-            // Trigger area for opening sidebar
+            // Khu vực kích hoạt mở sidebar
             sidebarTrigger.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 openSidebar();
             });
 
-            // Close sidebar when clicking on overlay
+            // Đóng sidebar khi click vào overlay
             sidebarOverlay.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 closeSidebar();
             });
 
-            // Prevent sidebar from closing when clicking on sidebar content
+            // Ngăn sidebar đóng khi click vào nội dung sidebar
             sidebar.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
 
-            // Close sidebar on escape key
+            // Đóng sidebar khi nhấn phím Escape
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && sidebar.classList.contains('active')) {
                     closeSidebar();
                 }
             });
 
-            // Handle active link highlighting
+            // Xử lý highlight link đang active
             function updateActiveLink() {
                 const currentPath = window.location.pathname;
                 const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -353,10 +330,10 @@
                 });
             }
 
-            // Update active link on load
+            // Cập nhật link active khi load
             updateActiveLink();
 
-            // Update sidebar notification badge
+            // Cập nhật badge thông báo của sidebar
             function updateSidebarNotificationBadge() {
                 const mainBadge = document.getElementById('notification-badge');
                 const sidebarBadge = document.getElementById('sidebar-notification-badge');
@@ -366,7 +343,7 @@
                     const count = parseInt(mainBadge.textContent) || 0;
                     const isVisible = mainBadge.style.display !== 'none' && count > 0;
 
-                    // Update sidebar badge
+                    // Cập nhật badge sidebar
                     if (sidebarBadge) {
                         if (isVisible) {
                             sidebarBadge.textContent = count;
@@ -376,7 +353,7 @@
                         }
                     }
 
-                    // Update mobile badge
+                    // Cập nhật badge mobile
                     if (mobileBadge) {
                         if (isVisible) {
                             mobileBadge.textContent = count;
@@ -388,43 +365,19 @@
                 }
             }
 
-            // Update sidebar borrowed count
-            function updateSidebarBorrowedCount() {
-                const mainCount = document.getElementById('borrowed-count');
-                const sidebarCount = document.getElementById('sidebar-borrowed-count');
-                const mobileCount = document.getElementById('mobile-borrowed-count');
-
-                if (mainCount) {
-                    const countText = mainCount.textContent;
-                    
-                    // Update sidebar count
-                    if (sidebarCount) {
-                        sidebarCount.textContent = countText;
-                    }
-                    
-                    // Update mobile count
-                    if (mobileCount) {
-                        mobileCount.textContent = countText;
-                    }
-                }
-            }
-
-            // Initial updates
+            // Cập nhật ban đầu
             updateSidebarNotificationBadge();
-            updateSidebarBorrowedCount();
 
-            // Listen for changes in main badges with debouncing
+            // Lắng nghe thay đổi của badge chính với debounce
             let updateTimeout;
             const observer = new MutationObserver(function(mutations) {
                 clearTimeout(updateTimeout);
                 updateTimeout = setTimeout(() => {
                     updateSidebarNotificationBadge();
-                    updateSidebarBorrowedCount();
                 }, 100);
             });
 
             const mainBadge = document.getElementById('notification-badge');
-            const mainCount = document.getElementById('borrowed-count');
 
             if (mainBadge) {
                 observer.observe(mainBadge, { 
@@ -434,17 +387,11 @@
                     subtree: true 
                 });
             }
-            if (mainCount) {
-                observer.observe(mainCount, { 
-                    childList: true, 
-                    subtree: true 
-                });
-            }
 
-            // Listen for notification updates from the main script
+            // Lắng nghe cập nhật thông báo từ script chính
             window.addEventListener('notificationUpdate', updateSidebarNotificationBadge);
 
-            // Close sidebar when clicking on sidebar links (mobile UX)
+            // Đóng sidebar khi click vào link (trên di động)
             const sidebarLinks = document.querySelectorAll('.sidebar-link:not(.logout)');
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function() {
@@ -457,7 +404,7 @@
     }
     </script>
 
-    <!-- Notification Badge Script -->
+    <!-- Script cập nhật badge thông báo -->
     <script>
     function updateNotificationBadge() {
         fetch('/api/notifications/count')
@@ -477,14 +424,14 @@
                     } else {
                         badge.style.display = 'none';
                     }
-                    // Trigger sidebar update
+                    // Kích hoạt cập nhật sidebar
                     window.dispatchEvent(new CustomEvent('notificationUpdate'));
                 }
             }
         })
         .catch(error => {
-            // Silently fail if notifications endpoint doesn't exist
-            // This prevents console spam while the feature is being developed
+            // Nếu endpoint thông báo chưa tồn tại thì im lặng
+            // Ngăn console bị spam khi tính năng đang phát triển
             const badge = document.getElementById('notification-badge');
             if (badge) {
                 badge.style.display = 'none';
@@ -492,15 +439,13 @@
         });
     }
 
-    // Update badge on page load
+    // Cập nhật badge khi load trang
     document.addEventListener('DOMContentLoaded', function() {
         updateNotificationBadge();
 
-        // Update badge every 30 seconds for real-time updates
+        // Cập nhật badge mỗi 30 giây cho realtime
         setInterval(updateNotificationBadge, 30000);
     });
     </script>
 
     {% block scripts %}{% endblock %}
-</body>
-</html>
