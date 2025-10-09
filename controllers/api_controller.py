@@ -66,9 +66,7 @@ def get_users():
                 'last_name': user.last_name,
                 'full_name': user.get_full_name(),
                 'active': user.active,
-                'created_at': user.created_at.isoformat() if user.created_at else None,
-                'total_points': user.get_total_points(),
-                'rank_info': user.get_rank_info()
+                'created_at': user.created_at.isoformat() if user.created_at else None
             } for user in users.items],
             'pagination': {
                 'page': users.page,
@@ -103,8 +101,6 @@ def get_user(user_id):
             'full_name': user.get_full_name(),
             'active': user.active,
             'created_at': user.created_at.isoformat() if user.created_at else None,
-            'total_points': user.get_total_points(),
-            'rank_info': user.get_rank_info(),
             'borrowed_books_count': len(user.borrowed_books),
             'posted_books_count': len(user.posted_books)
         }

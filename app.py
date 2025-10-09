@@ -140,10 +140,6 @@ def get_discussion_messages():
 def book_discussion(book_id):
     return social_controller.book_discussion(book_id)
 
-@app.route('/poster/<int:user_id>')
-def view_poster(user_id):
-    return social_controller.view_poster(user_id)
-
 @app.route('/chat/<int:recipient_id>')
 @app.route('/chat/<int:recipient_id>/<int:book_id>')
 def private_chat(recipient_id, book_id=None):

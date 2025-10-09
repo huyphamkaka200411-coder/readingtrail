@@ -124,10 +124,6 @@ def borrow_book(book_id):
     try:
         create_borrow_request(book_id, proposed_due_date)
         
-        # Check and award achievements after successful borrow request
-        from controllers.achievement_controller import check_and_award_achievements
-        newly_unlocked = check_and_award_achievements(current_user.id)
-        
         # Check borrow status for template
         is_borrowed = False
         borrow_request = None
@@ -149,18 +145,9 @@ def borrow_book(book_id):
             'show_borrow_success_modal': True,
             'book_title': book.title,
             'poster_name': book.poster.get_full_name() if book.poster else 'Book Owner',
-            'achievements': [],
             'is_borrowed': is_borrowed,
             'borrow_request': borrow_request
         }
-        
-        # Add achievement notifications if any were unlocked
-        if newly_unlocked:
-            for achievement in newly_unlocked:
-                success_data['achievements'].append({
-                    'name': achievement.name,
-                    'points': achievement.points
-                })
         
         return render_template('book_detail.html', book=book, **success_data)
     except Exception as e:
@@ -179,16 +166,7 @@ def return_book(book_id):
     try:
         remove_borrowed_book(book_id)
         
-        # Check and award achievements after successful book return
-        from controllers.achievement_controller import check_and_award_achievements
-        newly_unlocked = check_and_award_achievements(current_user.id)
-        
         flash('Book returned successfully!', 'success')
-        
-        # Show achievement notifications if any were unlocked
-        if newly_unlocked:
-            for achievement in newly_unlocked:
-                flash(f'🏆 Achievement Unlocked: {achievement.name}! (+{achievement.points} points)', 'achievement')
     except Exception as e:
         logging.error(f"Error returning book: {e}")
         flash('Failed to return book', 'error')
@@ -238,24 +216,11 @@ def post_book():
             db.session.add(book)
             db.session.commit()
             
-            # Check and award achievements after successful book posting
-            from controllers.achievement_controller import check_and_award_achievements
-            newly_unlocked = check_and_award_achievements(current_user.id)
-            
             # Prepare success data to show modal
             success_data = {
                 'show_success_modal': True,
-                'book_title': title,
-                'achievements': []
+                'book_title': title
             }
-            
-            # Add achievement notifications if any were unlocked
-            if newly_unlocked:
-                for achievement in newly_unlocked:
-                    success_data['achievements'].append({
-                        'name': achievement.name,
-                        'points': achievement.points
-                    })
             
             return render_template('post_book.html', **success_data)
         except Exception as e:

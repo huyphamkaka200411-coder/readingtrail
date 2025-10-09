@@ -48,26 +48,10 @@ def add_review(book_id):
         
         db.session.commit()
         
-        # Check and award achievements after successful review
-        from controllers.achievement_controller import check_and_award_achievements
-        newly_unlocked = check_and_award_achievements(current_user.id)
-        
-        response_data = {
+        return jsonify({
             'success': True,
             'message': 'Review saved successfully'
-        }
-        
-        # Add achievement notifications if any were unlocked
-        if newly_unlocked:
-            response_data['achievements'] = [
-                {
-                    'name': achievement.name,
-                    'points': achievement.points,
-                    'message': f'🏆 Achievement Unlocked: {achievement.name}! (+{achievement.points} points)'
-                } for achievement in newly_unlocked
-            ]
-        
-        return jsonify(response_data)
+        })
         
     except Exception as e:
         logging.error(f"Error saving review: {e}")

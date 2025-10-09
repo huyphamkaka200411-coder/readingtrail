@@ -197,21 +197,6 @@
                     </p>
                 </div>
                 
-                {% if achievements %}
-                <div class="achievement-notifications mb-4">
-                    <h5 class="text-warning mb-3">
-                        <i class="fas fa-trophy me-2"></i>Đạt thành tích!
-                    </h5>
-                    {% for achievement in achievements %}
-                    <div class="alert alert-warning d-flex align-items-center mb-2">
-                        <i class="fas fa-trophy me-2"></i>
-                        <strong>{{ achievement.name }}</strong>
-                        <span class="ms-auto badge bg-warning">+{{ achievement.points }} điểm</span>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                
                 <button type="button" class="btn btn-primary btn-lg px-5" onclick="goToMainPage()">
                     <i class="fas fa-home me-2"></i>Okay
                 </button>

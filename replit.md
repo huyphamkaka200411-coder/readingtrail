@@ -1,9 +1,19 @@
 # L.E.A.F - Digital Book Borrowing System
 
 ## Overview
-L.E.A.F is a web-based digital library management system built with Flask that enables users to browse, search, borrow, and review books from a digital catalog. It aims to provide a comprehensive, interactive platform for book enthusiasts, incorporating social features like discussions, private messaging, user profiles, and an achievement/ranking system to foster community engagement. The project's ambition is to deliver a lightweight, scalable, and user-friendly digital library experience with a strong focus on community interaction.
+L.E.A.F is a web-based digital library management system built with Flask that enables users to browse, search, borrow, and review books from a digital catalog. The system focuses on core library features with social interactions, providing a simple and clean user experience for book management, borrowing, reviews, discussions, and private messaging.
 
 ## Recent Changes (October 2025)
+- **Complete Gamification Removal (Oct 9)**: Eliminated all gamification features to focus on core library functionality:
+  - Removed Achievement system (models, controllers, routes, API endpoints, and all database references)
+  - Removed Ranking system (8-tier rank structure, points calculation, leaderboards)
+  - Removed UserProfile model and profile customization features (banners, custom titles)
+  - Deleted all achievement-related templates (achievements.html, achievements_guide.html, ranks.html, profile.html)
+  - Cleaned up all achievement/ranking references from controllers (book_controller.py, review_controller.py, social_controller.py, api_controller.py)
+  - Removed view_poster route and function as profile pages no longer exist
+  - Removed gamification fields (total_points, rank_info) from User API responses
+  - App now focuses exclusively on: book management, borrowing/returning, reviews, discussions, and private messaging
+
 - **Additional UI Cleanup (Oct 9)**: Further simplification of user interface:
   - Installed pytz package to fix timezone handling in private chat feature
   - Removed "Xem người đăng" (view poster) button from book detail pages
@@ -41,7 +51,7 @@ Timezone preference: Vietnam timezone (UTC+7) for all timestamps.
 
 ### Technical Implementations
 - **Backend Framework**: Flask (Python web framework).
-- **Database**: PostgreSQL with Flask-SQLAlchemy ORM for persistent storage of books, borrowing records, user data, reviews, achievements, and social interactions.
+- **Database**: PostgreSQL with Flask-SQLAlchemy ORM for persistent storage of books, borrowing records, user data, reviews, and social interactions.
 - **Session Management**: Flask sessions used for user state and temporary borrowing tracking.
 - **Architecture Pattern**: Refactored to a modular MVC (Model-View-Controller) pattern with separate files for models and controllers.
 - **Logging**: Python's built-in logging module.
@@ -50,13 +60,9 @@ Timezone preference: Vietnam timezone (UTC+7) for all timestamps.
 - **Book Management**: Browsing, searching, detailed views, and borrowing/returning of books.
 - **User Authentication**: Required for all borrowing, posting, and social interactions.
 - **Social Features**:
-    - **Discussions**: Real-time chat functionality.
+    - **Discussions**: Real-time chat functionality for general discussions and book-specific conversations.
     - **Private Messaging**: Direct user-to-user communication, including "Talk to Author" from book pages.
-    - **User Profiles**: Customizable profiles with banners and titles, displaying user activity, ranks, and achievements.
 - **Ratings & Reviews**: 1-5 star rating system with text reviews, displayed on book cards and detail pages.
-- **Achievements & Ranking**:
-    - **Achievements**: System to track and award achievements for various user actions (borrowing, reviewing, posting, etc.).
-    - **Ranking**: 8-tier ranking system based on achievement points, with a dedicated ranks page and leaderboard.
 
 ### System Design Choices
 - **Database-driven**: All core data is persisted in a PostgreSQL database for scalability and reliability.

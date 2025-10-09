@@ -108,30 +108,6 @@ def book_discussion(book_id):
         return render_template('book_discussion.html', book=book, messages=[])
 
 
-def view_poster(user_id):
-    """View poster profile page"""
-    try:
-        logging.info(f"View poster called with user_id: {user_id}")
-        poster = User.query.get(user_id)
-        if not poster:
-            logging.error(f"User with ID {user_id} not found")
-            return render_template('404.html'), 404
-            
-        logging.info(f"Found poster: {poster.username} (ID: {poster.id})")
-        
-        # Get books posted by this user
-        posted_books = Book.query.filter_by(posted_by=user_id).order_by(Book.created_at.desc()).all()
-        logging.info(f"Found {len(posted_books)} books posted by this user")
-        
-        # Get user profile for customization
-        user_profile = UserProfile.query.filter_by(user_id=user_id).first()
-        
-        return render_template('poster_profile.html', poster=poster, posted_books=posted_books, user_profile=user_profile)
-    except Exception as e:
-        logging.error(f"Error loading poster profile: {e}")
-        return render_template('404.html'), 404
-
-
 def private_chat(recipient_id, book_id=None):
     """Private chat page with another user, optionally about a specific book"""
     if not current_user.is_authenticated:

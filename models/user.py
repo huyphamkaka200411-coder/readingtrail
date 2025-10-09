@@ -32,61 +32,6 @@ class User(UserMixin, db.Model):
             return f"{self.first_name} {self.last_name}"
         return self.username
     
-    def get_total_points(self):
-        """Calculate total points from all achievements"""
-        from models.achievement import Achievement, UserAchievement
-        total = db.session.query(db.func.sum(Achievement.points)).join(
-            UserAchievement, Achievement.id == UserAchievement.achievement_id
-        ).filter(UserAchievement.user_id == self.id).scalar()
-        return total if total else 0
-    
-    def get_rank_info(self):
-        """Get user's rank based on total points"""
-        total_points = self.get_total_points()
-        
-        # Define rank system
-        ranks = [
-            {'name': 'Newbie', 'min_points': 0, 'color': '#95a5a6', 'icon': 'fa-seedling'},
-            {'name': 'Reader', 'min_points': 50, 'color': '#3498db', 'icon': 'fa-book'},
-            {'name': 'Bookworm', 'min_points': 150, 'color': '#9b59b6', 'icon': 'fa-book-open'},
-            {'name': 'Scholar', 'min_points': 300, 'color': '#e67e22', 'icon': 'fa-graduation-cap'},
-            {'name': 'Expert', 'min_points': 500, 'color': '#f39c12', 'icon': 'fa-star'},
-            {'name': 'Master', 'min_points': 750, 'color': '#e74c3c', 'icon': 'fa-crown'},
-            {'name': 'Grandmaster', 'min_points': 1000, 'color': '#1abc9c', 'icon': 'fa-gem'},
-            {'name': 'Legend', 'min_points': 1500, 'color': '#fd79a8', 'icon': 'fa-trophy'}
-        ]
-        
-        # Find current rank
-        current_rank = ranks[0]
-        for rank in ranks:
-            if total_points >= rank['min_points']:
-                current_rank = rank
-            else:
-                break
-        
-        # Find next rank
-        next_rank = None
-        for rank in ranks:
-            if total_points < rank['min_points']:
-                next_rank = rank
-                break
-        
-        # Calculate progress
-        points_needed = 0
-        progress_percentage = 0
-        if next_rank:
-            points_needed = next_rank['min_points'] - total_points
-            progress_percentage = ((total_points - current_rank['min_points']) / 
-                                 (next_rank['min_points'] - current_rank['min_points'])) * 100
-        
-        return {
-            'current_rank': current_rank,
-            'next_rank': next_rank,
-            'total_points': total_points,
-            'points_needed': points_needed,
-            'progress_percentage': int(progress_percentage)
-        }
-    
     def is_online(self):
         """Check if user is considered online (active within last 5 minutes)"""
         if not self.last_activity:
