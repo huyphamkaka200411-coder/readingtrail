@@ -115,7 +115,10 @@ def get_user(user_id):
 def create_user():
     """POST /api/v1/users - Create a new user"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         required_fields = ['username', 'email', 'password']
         for field in required_fields:
@@ -169,7 +172,10 @@ def update_user(user_id):
         if current_user.id != user_id:
             return error_response('Access denied', 403)
         
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         # Update allowed fields
         if 'first_name' in data:
@@ -283,7 +289,10 @@ def get_book(book_id):
 def create_book():
     """POST /api/v1/books - Create a new book"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         required_fields = ['title', 'author', 'category', 'isbn']
         for field in required_fields:
@@ -329,7 +338,10 @@ def update_book(book_id):
         if current_user.id != book.posted_by:
             return error_response('Access denied', 403)
         
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         # Update allowed fields
         if 'title' in data:
@@ -530,7 +542,10 @@ def create_book_review(book_id):
         if not book:
             return error_response('Book not found', 404)
         
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         if 'rating' not in data:
             return error_response('Rating is required')
@@ -577,7 +592,10 @@ def update_review(review_id):
         if review.user_id != current_user.id:
             return error_response('Access denied', 403)
         
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         if 'rating' in data:
             rating = data['rating']
@@ -664,7 +682,10 @@ def get_discussions():
 def create_discussion():
     """POST /api/v1/discussions - Create a new discussion"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         
         if 'message' not in data:
             return error_response('Message is required')

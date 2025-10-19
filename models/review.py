@@ -1,5 +1,7 @@
-from datetime import datetime
+
 from config import db
+from datetime import datetime, timezone
+from pytz import timezone as pytz_timezone
 
 
 class BookReview(db.Model):
@@ -23,14 +25,18 @@ class BookReview(db.Model):
     def __repr__(self):
         return f'<BookReview {self.id} for book {self.book_id} by user {self.user_id}>'
     
+
     def to_dict(self):
-        from pytz import timezone
-        from datetime import datetime as dt
-        
-        # Calculate time ago
-        now = dt.utcnow()
-        time_diff = now - self.created_at
-        
+        # Ensure created_at is timezone-aware
+        if self.created_at.tzinfo is None:
+            created_at_utc = self.created_at.replace(tzinfo=timezone.utc)
+        else:
+            created_at_utc = self.created_at.astimezone(timezone.utc)
+
+        now_utc = datetime.utcnow().replace(tzinfo=timezone.utc)
+        time_diff = now_utc - created_at_utc
+
+        # Format time ago
         if time_diff.days > 0:
             time_ago = f"{time_diff.days} day{'s' if time_diff.days > 1 else ''} ago"
         elif time_diff.seconds > 3600:
@@ -41,17 +47,18 @@ class BookReview(db.Model):
             time_ago = f"{minutes} minute{'s' if minutes > 1 else ''} ago"
         else:
             time_ago = "Just now"
-        
-        vn_tz = timezone('Asia/Ho_Chi_Minh')
-        local_time = self.created_at.replace(tzinfo=timezone('UTC')).astimezone(vn_tz)
-        
+
+        # Convert to Vietnam timezone
+        vn_tz = pytz_timezone('Asia/Ho_Chi_Minh')
+        local_time = created_at_utc.astimezone(vn_tz)
+
         return {
             'id': self.id,
             'book_id': self.book_id,
             'user_id': self.user_id,
             'rating': self.rating,
             'review_text': self.review_text,
-            'created_at': self.created_at.isoformat(),
+            'created_at': created_at_utc.isoformat(),
             'formatted_time': local_time.strftime('%d/%m/%Y %H:%M'),
             'time_ago': time_ago,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,

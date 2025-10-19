@@ -1,85 +1,86 @@
 from datetime import datetime
 from config import db
 
-
 class Book(db.Model):
     __tablename__ = 'books'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(200), nullable=False)
     category = db.Column(db.String(100), nullable=False)
-    isbn = db.Column(db.String(20), unique=True, nullable=False)
+    location = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     cover_url = db.Column(db.String(500))
     publication_year = db.Column(db.Integer)
     pages = db.Column(db.Integer)
     available = db.Column(db.Boolean, default=True)
+    borrow_duration_weeks = db.Column(db.Integer, default=2)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Foreign keys
     posted_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    
-    # Relationships
-    borrowed_records = db.relationship('BorrowedBook', backref='book', lazy=True, cascade='all, delete-orphan')
+
     poster = db.relationship('User', backref=db.backref('posted_books', lazy=True))
-    
+
     def __repr__(self):
         return f'<Book {self.title}>'
-    
+
     def to_dict(self):
         return {
             'id': self.id,
             'title': self.title,
             'author': self.author,
             'category': self.category,
-            'isbn': self.isbn,
+            'location': self.location,
             'description': self.description,
             'cover_url': self.cover_url,
             'publication_year': self.publication_year,
             'pages': self.pages,
             'available': self.available,
+            'borrow_duration_weeks': self.borrow_duration_weeks,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'posted_by': self.posted_by
+            'posted_by': self.posted_by,
+            'poster_name': self.poster.get_full_name() if self.poster else None
         }
-    
+
+
     def get_average_rating(self):
-        """Calculate average rating for this book"""
+        """Tính trung bình số sao của sách"""
         from models.review import BookReview
         reviews = BookReview.query.filter_by(book_id=self.id).all()
         if not reviews:
             return 0
-        return sum(review.rating for review in reviews) / len(reviews)
-    
+        return round(sum(review.rating for review in reviews) / len(reviews), 1)
+
     def get_review_count(self):
-        """Get total number of reviews for this book"""
+        """Đếm tổng số lượt đánh giá"""
         from models.review import BookReview
         return BookReview.query.filter_by(book_id=self.id).count()
 
 
 class BorrowedBook(db.Model):
     __tablename__ = 'borrowed_books'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    session_id = db.Column(db.String(100))  # Optional for guest users
+    session_id = db.Column(db.String(100))  # Cho người mượn không đăng nhập
     borrowed_date = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime, nullable=False)
-    agreed_due_date = db.Column(db.DateTime)  # Negotiated due date between borrower and lender
+    agreed_due_date = db.Column(db.DateTime)  # Ngày trả được thống nhất
     returned_date = db.Column(db.DateTime)
     is_returned = db.Column(db.Boolean, default=False)
-    is_agreed = db.Column(db.Boolean, default=False)  # Whether lender has agreed to the terms
-    
+    is_agreed = db.Column(db.Boolean, default=False)  # Người đăng đồng ý cho mượn hay chưa
+
     def __repr__(self):
         return f'<BorrowedBook {self.book_id} by {self.user_id}>'
-    
+
     def is_overdue(self):
-        """Check if the book is overdue"""
+        """Kiểm tra xem sách có bị quá hạn hay không"""
         due_date = self.agreed_due_date if self.agreed_due_date else self.due_date
         return datetime.utcnow() > due_date and not self.is_returned
-    
+
     def to_dict(self):
+        """Trả về dữ liệu ở dạng dictionary"""
         return {
             'id': self.id,
             'book_id': self.book_id,

@@ -124,3 +124,25 @@ class Notification(db.Model):
             'book_id': self.book_id,
             'related_user_id': self.related_user_id
         }
+class Follow(db.Model):
+    __tablename__ = 'follows'
+
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    follower = db.relationship('User', foreign_keys=[follower_id], backref='following')
+    followed = db.relationship('User', foreign_keys=[followed_id], backref='followers')
+
+    def __repr__(self):
+        return f'<Follow {self.follower_id} → {self.followed_id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'follower_id': self.follower_id,
+            'followed_id': self.followed_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }

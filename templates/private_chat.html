@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Trò chuyện với {{ recipient.get_full_name() or recipient.username }} - L.E.A.F{% endblock %}
+{% block title %}Trò chuyện với {{ recipient.get_full_name() or recipient.username }} - ReadingTrail{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -16,9 +16,6 @@
                             </h5>
                             <small class="text-muted">Cuộc trò chuyện riêng tư</small>
                         </div>
-                        <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-user me-1"></i>Xem hồ sơ
-                        </a>
                     </div>
                     
                     {% if book %}
@@ -90,9 +87,6 @@
             
             <!-- Nút quay lại -->
             <div class="text-center mt-4">
-                <a href="{{ url_for('view_poster', user_id=recipient.id) }}" class="btn btn-outline-secondary glass-button me-2">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại hồ sơ
-                </a>
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary glass-button">
                     <i class="fas fa-home me-2"></i>Quay lại danh mục
                 </a>

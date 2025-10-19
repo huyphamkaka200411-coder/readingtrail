@@ -1,7 +1,5 @@
-"""
-L.E.A.F - Digital Book Borrowing System
-Main application file following MVC pattern
-"""
+
+
 import os
 import logging
 from datetime import datetime
@@ -11,48 +9,63 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import create_app, db, login_manager
 
-# Import models after db is initialized
-from models import (
-    User, Book, BorrowedBook, Discussion, Notification, 
-    PrivateMessage, BookReview
-)
-
-# Import controllers
-from controllers import (
-    auth_controller, book_controller, social_controller, 
-    review_controller
-)
-from controllers.api_controller import api_bp
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-
-# Create app
+# ------------------------------------------------------------
+# 1️⃣ Create the Flask app BEFORE registering any blueprints
+# ------------------------------------------------------------
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Register API blueprint
+# ------------------------------------------------------------
+# 2️⃣ Import and register blueprints (AFTER app is created)
+# ------------------------------------------------------------
+from controllers.profile_controller import profile_bp
+from controllers import (
+    auth_controller, book_controller, social_controller, review_controller
+)
+from controllers.api_controller import api_bp
+
+# Register all blueprints here
+app.register_blueprint(profile_bp)
 app.register_blueprint(api_bp)
 
-# User loader for Flask-Login
+# ------------------------------------------------------------
+# 3️⃣ Import models after db is initialized
+# ------------------------------------------------------------
+from models import (
+    User, Book, BorrowedBook, Discussion, Notification,
+    PrivateMessage, BookReview
+)
+
+# ------------------------------------------------------------
+# 4️⃣ Configure logging
+# ------------------------------------------------------------
+logging.basicConfig(level=logging.DEBUG)
+
+# ------------------------------------------------------------
+# 5️⃣ Flask-Login: load user
+# ------------------------------------------------------------
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Context processor for global template variables
+# ------------------------------------------------------------
+# 6️⃣ Context processor for template globals
+# ------------------------------------------------------------
 @app.context_processor
 def inject_borrowed_count():
     """Inject borrowed count and notification count into all templates"""
     from datetime import datetime, timedelta
-    
     borrowed_count = 0
     notification_count = 0
-    
+
     if current_user.is_authenticated:
-        # Update user activity on each request
-        current_user.update_activity()
-        db.session.commit()
-        
+        try:
+            current_user.update_activity()
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Lỗi cập nhật hoạt động: {e}")
+
         borrowed_count = len(book_controller.get_borrowed_books())
         try:
             notification_count = Notification.query.filter_by(
@@ -62,7 +75,7 @@ def inject_borrowed_count():
         except Exception as e:
             logging.error(f"Error getting notification count: {e}")
             notification_count = 0
-    
+
     return dict(
         borrowed_count=borrowed_count,
         notification_count=notification_count,
@@ -70,142 +83,159 @@ def inject_borrowed_count():
         timedelta=timedelta
     )
 
-# Helper function for session management
+# ------------------------------------------------------------
+# 7️⃣ Helper: get user/session identifier
+# ------------------------------------------------------------
 def get_user_identifier():
     """Get user ID if logged in, otherwise session ID"""
     if current_user.is_authenticated:
         return f"user_{current_user.id}"
     else:
-        if 'session_id' not in session:
+        if "session_id" not in session:
             import uuid
-            session['session_id'] = str(uuid.uuid4())
+            session["session_id"] = str(uuid.uuid4())
         return f"session_{session['session_id']}"
 
-# Authentication routes
-@app.route('/login', methods=['GET', 'POST'])
+# ------------------------------------------------------------
+# 8️⃣ Routes (reuse existing controllers)
+# ------------------------------------------------------------
+@app.route("/login", methods=["GET", "POST"])
 def login():
     return auth_controller.login()
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     return auth_controller.signup()
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     return auth_controller.logout()
 
-# Book routes
-@app.route('/')
+@app.route("/")
 def index():
     return book_controller.index()
 
-@app.route('/book/<int:book_id>')
+@app.route("/book/<int:book_id>")
 def book_detail(book_id):
     return book_controller.book_detail(book_id)
 
-@app.route('/borrow/<int:book_id>', methods=['POST'])
+@app.route("/borrow/<int:book_id>", methods=["POST"])
 def borrow_book(book_id):
     return book_controller.borrow_book(book_id)
 
-@app.route('/return/<int:book_id>', methods=['POST'])
+@app.route("/return/<int:book_id>", methods=["POST"])
 def return_book(book_id):
     return book_controller.return_book(book_id)
 
-@app.route('/dashboard')
+@app.route("/dashboard")
 def dashboard():
     return book_controller.dashboard()
 
-@app.route('/post_book', methods=['GET', 'POST'])
+@app.route("/post_book", methods=["GET", "POST"])
 def post_book():
     return book_controller.post_book()
 
-@app.route('/add_book', methods=['GET', 'POST'])
+@app.route("/add_book", methods=["GET", "POST"])
 def add_book():
     return book_controller.post_book()
 
-@app.route('/seed_books')
+@app.route("/seed_books")
 def seed_books():
     return book_controller.seed_books()
 
 # Social routes
-@app.route('/discussion', methods=['GET', 'POST'])
+@app.route("/discussion", methods=["GET", "POST"])
 def discussion():
     return social_controller.discussion()
 
-@app.route('/api/discussion/messages')
+@app.route("/api/discussion/messages")
 def get_discussion_messages():
     return social_controller.get_discussion_messages()
 
-@app.route('/book/<int:book_id>/discussion', methods=['GET', 'POST'])
+@app.route("/book/<int:book_id>/discussion", methods=["GET", "POST"])
 def book_discussion(book_id):
     return social_controller.book_discussion(book_id)
 
-@app.route('/chat/<int:recipient_id>')
-@app.route('/chat/<int:recipient_id>/<int:book_id>')
+@app.route("/chat/<int:recipient_id>")
+@app.route("/chat/<int:recipient_id>/<int:book_id>")
 def private_chat(recipient_id, book_id=None):
     return social_controller.private_chat(recipient_id, book_id)
 
-@app.route('/api/chat/<int:recipient_id>/send', methods=['POST'])
+@app.route("/api/chat/<int:recipient_id>/send", methods=["POST"])
 def send_private_message(recipient_id):
     return social_controller.send_private_message(recipient_id)
 
-@app.route('/api/chat/<int:recipient_id>/messages')
+@app.route("/api/chat/<int:recipient_id>/messages")
 def get_chat_messages(recipient_id):
     return social_controller.get_chat_messages(recipient_id)
 
-@app.route('/notifications')
+@app.route("/notifications")
 def notifications():
     return social_controller.notifications()
 
-@app.route('/api/notifications/<int:notification_id>/read', methods=['POST'])
+@app.route("/api/notifications/<int:notification_id>/read", methods=["POST"])
 def mark_notification_read(notification_id):
     return social_controller.mark_notification_read(notification_id)
 
-@app.route('/api/notifications/read_all', methods=['POST'])
+@app.route("/api/notifications/read_all", methods=["POST"])
 def mark_all_notifications_read():
     return social_controller.mark_all_notifications_read()
 
-@app.route('/api/notifications/count')
+@app.route("/api/notifications/count")
 def get_unread_notifications_count():
     return social_controller.get_unread_notifications_count()
 
-@app.route('/notifications/book-request/<int:notification_id>/<action>', methods=['POST'])
+@app.route("/notifications/book-request/<int:notification_id>/<action>", methods=["POST"])
 def handle_book_request_notification(notification_id, action):
     return social_controller.handle_book_request_notification(notification_id, action)
 
-@app.route('/api/books/<int:book_id>/approve_borrow', methods=['POST'])
+@app.route("/api/books/<int:book_id>/approve_borrow", methods=["POST"])
 def approve_borrow_request(book_id):
     return social_controller.approve_borrow_request(book_id)
 
-@app.route('/api/books/<int:book_id>/reject_borrow', methods=['POST'])
+@app.route("/api/books/<int:book_id>/reject_borrow", methods=["POST"])
 def reject_borrow_request(book_id):
     return social_controller.reject_borrow_request(book_id)
 
-@app.route('/api/books/<int:book_id>/cancel_borrow', methods=['POST'])
+@app.route("/api/books/<int:book_id>/cancel_borrow", methods=["POST"])
 def cancel_borrow_request(book_id):
     return social_controller.cancel_borrow_request(book_id)
 
 # Review routes
-@app.route('/api/books/<int:book_id>/reviews', methods=['POST'])
+@app.route("/api/books/<int:book_id>/reviews", methods=["POST"])
 def add_review(book_id):
     return review_controller.add_review(book_id)
 
-@app.route('/api/books/<int:book_id>/reviews')
+@app.route("/api/books/<int:book_id>/reviews")
 def get_reviews(book_id):
     return review_controller.get_reviews(book_id)
 
-@app.route('/api/reviews/<int:review_id>', methods=['DELETE'])
+@app.route("/api/reviews/<int:review_id>", methods=["DELETE"])
 def delete_review(review_id):
     return review_controller.delete_review(review_id)
 
-@app.route('/info')
+@app.route("/info")
 def info():
-    """Display information about L.E.A.F platform"""
-    return render_template('info.html')
+    """Display information about ReadingTrail platform"""
+    return render_template("info.html")
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+import pytz
+app.jinja_env.globals['pytz'] = pytz
 
-# Initialize database
+from flask import send_from_directory
+import os
+
+@app.route('/background')
+def background():
+    return send_from_directory(os.getcwd(), 'Background.jpg')
+
+# ------------------------------------------------------------
+# 9️⃣ Initialize DB and run
+# ------------------------------------------------------------
 with app.app_context():
     db.create_all()
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

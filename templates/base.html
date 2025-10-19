@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}L.E.A.F - Thư Viện Sách Số{% endblock %}</title>
+    <title>{% block title %}ReadingTrail - Thư Viện Sách Số{% endblock %}</title>
 
     <!-- Bootstrap CSS with Replit theme -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,7 +22,7 @@
             <!-- Logo và nút toggle -->
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <i class="fas fa-book me-2"></i>
-                <span class="fw-bold">L.E.A.F</span>
+                <span class="fw-bold">ReadingTrail</span>
             </a>
 
             <!-- Nút toggle menu trên di động -->
@@ -37,11 +38,7 @@
                             <i class="fas fa-home me-1"></i>Duyệt sách
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('info') }}">
-                            <i class="fas fa-info-circle me-1"></i>Thông tin
-                        </a>
-                    </li>
+
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('dashboard') }}">
@@ -55,7 +52,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ url_for('notifications') }}">
-                            <i class="fas fa-bell me-1"></i>Thông báo
+                            <i class="fas fa-bell me-1"></i>Thông báo/Tin nhắn
                             <span id="navbar-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
                         </a>
                     </li>
@@ -63,43 +60,59 @@
                 </ul>
 
                 <!-- Phần người dùng -->
-                <ul class="navbar-nav">
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-2"></i>
-                            <span class="fw-semibold">{{ current_user.get_full_name() or current_user.username }}</span>
+                <ul class="navbar-nav ms-auto align-items-center">
+                  {% if current_user.is_authenticated %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" id="avatarDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                           style="width:36px; height:36px; font-weight:600;">
+                        {{ current_user.username[:1]|upper }}
+                      </div>
+                      <span class="fw-semibold d-none d-sm-inline">{{ current_user.username }}</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end glass-dropdown shadow-lg" aria-labelledby="avatarDropdown">
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('profile.profile') }}">
+                          <i class="fas fa-user-circle me-2"></i>Trang cá nhân
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                            </a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">
-                            <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                      </li>
+                          <button class="dropdown-item" id="toggleThemeBtn">
+                            <i class="fas fa-adjust me-2"></i>Hiển thị: <span id="themeLabel">Tối</span>
+                          </button>
+
+                      <li>
+                        <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                          <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('signup') }}">
-                            <i class="fas fa-user-plus me-1"></i>Đăng ký
-                        </a>
-                    </li>
-                    {% endif %}
+                      </li>
+                    </ul>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}">
+                      <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signup') }}">
+                      <i class="fas fa-user-plus me-1"></i>Đăng ký
+                    </a>
+                  </li>
+                  {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Khu vực kích hoạt Sidebar -->
+    <!-- Khu vực kích hoạt Sidebar 
     <div class="sidebar-trigger" id="sidebarTrigger"></div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar -
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h4><i class="fas fa-book me-2"></i>L.E.A.F</h4>
+            <h4><i class="fas fa-book me-2"></i>ReadingTrail</h4>
         </div>
 
         <nav class="sidebar-nav">
@@ -172,19 +185,35 @@
     </main>
 
     <!-- Footer -->
-    <footer class="glass-navbar text-light py-4 mt-5">
+    <footer class="footer-glass text-light py-4 mt-auto">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
+                <!-- Cột trái: thông tin ứng dụng -->
                 <div class="col-md-6">
-                    <h5><i class="fas fa-book me-2"></i>L.E.A.F</h5>
-                    <p class="mb-0">Cổng truy cập số của bạn đến văn học và tri thức.</p>
+                    <h5 class="mb-2"><i class="fas fa-book me-2"></i>ReadingTrail</h5>
+                    <p class="mb-1">Cổng truy cập số của bạn đến văn học và tri thức.</p>
+                    <a href="{{ url_for('terms') }}" class="text-decoration-none text-warning">
+                        Điều khoản & Chính sách
+                    </a>
                 </div>
-                <div class="col-md-6 text-md-end">
+
+                <!-- Cột phải: liên hệ -->
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <p class="mb-1">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:readingtrail.org@gmail.com" class="text-decoration-none text-light">
+                            readingtrail.org@gmail.com
+                        </a>
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-phone me-2"></i>
+                        <span>0359 033 211</span>
                     </p>
                 </div>
             </div>
         </div>
     </footer>
+
 
       <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -402,4 +431,135 @@
     });
     </script>
 
+
+
+    <!-- Chuyển đổi giao diện sáng/tối -->
+    /* --- Chuyển đổi giao diện sáng/tối --- */
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const body = document.body;
+      const toggleBtn = document.getElementById('toggleThemeBtn');
+      const label = document.getElementById('themeLabel');
+
+      // HÀM MỚI: SỬ DỤNG url_for VÀO TRONG JS BẰNG CÁCH DÙNG TEMPLATE JINJA2
+      // Giả định: Background.jpg và BackgroundWhite.jpg nằm trong thư mục static/images/
+      function setBackground(imageFileName) {
+        // SỬ DỤNG CÚ PHÁP JINJA2 TẠI ĐÂY
+        // NẾU IMAGE Ở STATIC, CHỈNH SỬA THÀNH: filename='images/' + imageFileName
+        const imageUrl = "{{ url_for('static', filename='') }}" + imageFileName;
+        body.style.background = `url('${imageUrl}') no-repeat center center fixed`; 
+        body.style.backgroundSize = 'cover';
+        body.style.backgroundAttachment = 'fixed';
+      }
+
+      // Khởi tạo theme
+      const savedTheme = localStorage.getItem('themeMode') || 'dark';
+      const isLight = savedTheme === 'light';
+
+      if (isLight) {
+        body.classList.add('light-mode');
+        label.textContent = 'Sáng';
+        setBackground('images/BackgroundWhite.jpg'); // CHỈNH SỬA ĐƯỜNG DẪN
+      } else {
+        setBackground('images/Background.jpg'); // CHỈNH SỬA ĐƯỜNG DẪN
+      }
+
+      toggleBtn?.addEventListener('click', () => {
+        const newIsLight = body.classList.toggle('light-mode');
+        label.textContent = newIsLight ? 'Sáng' : 'Tối';
+
+        // Đảm bảo các file ảnh này đã được copy vào thư mục static/images/
+        setBackground(newIsLight ? 'images/BackgroundWhite.jpg' : 'images/Background.jpg'); 
+        localStorage.setItem('themeMode', newIsLight ? 'light' : 'dark');
+      });
+    });
+    </script>
+
+    
     {% block scripts %}{% endblock %}
+    <style>
+    /* ----- RESET SPACING ----- */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    /* ----- NAVBAR FIXED ----- */
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1030;
+        margin: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+        /* Giao diện sáng - invert màu để đổi sang trắng */
+    body.light-mode {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+
+    /* ----- MAIN CONTENT SPACING ----- */
+    main {
+        flex: 1 0 auto;
+        padding-top: 90px;  /* để không bị navbar che */
+        padding-bottom: 100px; /* để không bị footer che */
+    }
+
+    /* ----- FOOTER STICKY BOTTOM (KHÔNG ĐÈ LÊN NỘI DUNG) ----- */
+    footer {
+        margin-top: auto;
+        width: 100%;
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-top: 1px solid rgba(var(--bs-body-color-rgb), 0.1);
+        text-align: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+
+    /* ----- FLEX LAYOUT ----- */
+    html, body {
+      background-color: var(--bs-body-bg) !important;
+      color: var(--bs-body-color);
+    }
+    main {
+      background-color: var(--bs-body-bg);
+    }
+
+    /* --- Xóa hoàn toàn dải đen trên cùng khi ở chế độ sáng --- */
+    html, body {
+      background-color: var(--bs-body-bg) !important;
+    }
+
+    nav.glass-navbar,
+    .navbar,
+    .navbar::before,
+    .navbar::after {
+      background: var(--bs-body-bg) !important;
+      background-color: var(--bs-body-bg) !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    body::before,
+    body::after,
+    html::before,
+    html::after {
+      background: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    [data-bs-theme="light"] .glass-navbar {
+      background-color: #ffffff !important;
+      color: #000 !important;
+    }
+
+    [data-bs-theme="dark"] .glass-navbar {
+      background-color: #0d1117 !important;
+      color: #fff !important;
+    }
+
+    </style>

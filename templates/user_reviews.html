@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Đánh giá của {{ user.username }} - ReadingTrail{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-light">
+      Đánh giá dành cho {{ user.get_full_name() or user.username }}
+    </h2>
+    <p class="text-muted">
+      Tổng cộng có {{ reviews|length }} đánh giá.
+    </p>
+  </div>
+
+  {% if reviews %}
+    {% for r in reviews %}
+      <div class="card glass-card shadow-sm mb-4">
+        <div class="card-body">
+
+          <!-- Header người đánh giá -->
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1 text-primary">
+                <i class="fas fa-user me-2"></i>{{ r.reviewer.get_full_name() or r.reviewer.username }}
+              </h5>
+
+              {% set vn_tz = pytz.timezone('Asia/Ho_Chi_Minh') %}
+              {% set local_time = (r.updated_at or r.created_at).astimezone(vn_tz) %}
+              <small class="text-muted">
+                ({{ local_time.strftime('%d/%m/%Y %H:%M') }})
+              </small>
+            </div>
+
+            <span class="badge bg-primary fs-6 shadow-sm">
+              ⭐ {{ r.rating }}/10
+            </span>
+          </div>
+
+          <hr class="my-2">
+
+          <!-- Nội dung nhận xét -->
+          {% if r.comment %}
+            <p class="mt-2 mb-1 text-light">{{ r.comment }}</p>
+          {% else %}
+            <p class="mt-2 mb-1 text-muted fst-italic">(Không có nhận xét)</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info text-center glass-card">
+      Người dùng này chưa có đánh giá nào.
+    </div>
+  {% endif %}
+
+  <!-- Nút quay lại -->
+  <div class="text-center mt-4">
+    <a href="{{ url_for('profile.view_profile', user_id=user.id) }}" 
+       class="btn btn-outline-secondary glass-button px-4">
+      <i class="fas fa-arrow-left me-2"></i>Quay lại hồ sơ
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,27 +1,15 @@
-// L.E.A.F Main JavaScript
 
-// Global variables
 let isLoading = false;
 
-// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
 function initializeApp() {
-    // Set up event listeners and initialize components
-    console.log('L.E.A.F initialized');
-    
-    // Update borrowed count display
+    console.log('ReadingTrail initialized');
     updateBorrowedCount();
-    
-    // Update notification count display
     updateNotificationCount();
-    
-    // Load ratings for all books on catalog page
     loadCatalogRatings();
-    
-    // Initialize tooltips if Bootstrap is available
     if (typeof bootstrap !== 'undefined') {
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function(tooltipTriggerEl) {
@@ -29,8 +17,6 @@ function initializeApp() {
         });
     }
 }
-
-// Show alert messages
 function showAlert(message, type = 'info') {
     const alertContainer = document.getElementById('alert-container');
     if (!alertContainer) return;
@@ -46,7 +32,6 @@ function showAlert(message, type = 'info') {
     
     alertContainer.insertAdjacentHTML('beforeend', alertHTML);
     
-    // Auto-dismiss after 5 seconds
     setTimeout(() => {
         const alertElement = document.getElementById(alertId);
         if (alertElement) {
@@ -55,8 +40,6 @@ function showAlert(message, type = 'info') {
         }
     }, 5000);
 }
-
-// Get appropriate icon for alert type
 function getAlertIcon(type) {
     const icons = {
         'success': 'check-circle',
@@ -67,7 +50,6 @@ function getAlertIcon(type) {
     return icons[type] || 'info-circle';
 }
 
-// Set loading state for button
 function setButtonLoading(button, loading = true) {
     if (loading) {
         button.classList.add('loading');
@@ -245,7 +227,7 @@ function updateNotificationCount() {
     fetch('/api/notifications/count')
         .then(response => response.json())
         .then(data => {
-            const count = data.unread_count || 0;
+            const unreadCount = data.data?.unread_count ?? 0;
             
             // Update sidebar badge
             const sidebarBadge = document.getElementById('sidebar-notification-badge');

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Đánh giá người dùng - ReadingTrail{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card glass-card border-0 shadow-lg">
+        <div class="card-body p-5">
+          
+          <!-- Header -->
+          <div class="text-center mb-4">
+            <i class="fas fa-user text-primary fa-3x mb-3"></i>
+            <h3 class="fw-bold">Đánh giá người dùng</h3>
+            <p class="text-muted">
+              Người được đánh giá: 
+              <strong class="text-primary">{{ target_user.get_full_name() or target_user.username }}</strong>
+            </p>
+            {% if existing_review %}
+              <p class="text-success small fst-italic">
+                (Lần đánh giá gần nhất: 
+                {{ existing_review.updated_at.astimezone(pytz.timezone('Asia/Ho_Chi_Minh')).strftime('%d/%m/%Y %H:%M') }}
+                )
+              </p>
+            {% endif %}
+          </div>
+
+          <!-- Form đánh giá -->
+          <form method="POST" class="text-start">
+            
+            <!-- Điểm đánh giá -->
+            <div class="mb-4">
+              <label for="rating" class="form-label fw-semibold">
+                Điểm (1–10):
+              </label>
+              <input type="number" id="rating" name="rating" min="1" max="10"
+                     class="form-control glass-input text-center"
+                     value="{{ existing_review.rating if existing_review else '' }}"
+                     placeholder="Nhập điểm từ 1 đến 10" required>
+            </div>
+
+            <!-- Nhận xét -->
+            <div class="mb-4">
+              <label for="comment" class="form-label fw-semibold">Nhận xét</label>
+              <textarea id="comment" name="comment" rows="5" class="form-control glass-input"
+                        placeholder="Hãy chia sẻ cảm nhận của bạn...">{{ existing_review.comment if existing_review else '' }}</textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary glass-button px-4">
+                <i class="fas fa-paper-plane me-2"></i>
+                {% if existing_review %}Cập nhật đánh giá{% else %}Gửi đánh giá{% endif %}
+              </button>
+
+              <!-- ✅ Quay lại hồ sơ người dùng -->
+              <a href="{{ url_for('profile.view_profile', user_id=target_user.id) }}" 
+                 class="btn btn-outline-secondary glass-button px-4 ms-2">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại hồ sơ
+              </a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

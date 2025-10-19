@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Đăng sách - L.E.A.F{% endblock %}
+{% block title %}Đăng sách - ReadingTrail{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -30,39 +30,12 @@
                             <!-- Genre/Category -->
                             <div class="col-md-6 mb-4">
                                 <label for="category" class="form-label">Thể loại *</label>
-                                <select class="form-select glass-input" id="category" name="category" required>
-                                    <option value="">Chọn thể loại</option>
-                                    <option value="Fiction">Tiểu thuyết</option>
-                                    <option value="Non-Fiction">Phi tiểu thuyết</option>
-                                    <option value="Mystery">Trinh thám</option>
-                                    <option value="Romance">Lãng mạn</option>
-                                    <option value="Science Fiction">Khoa học viễn tưởng</option>
-                                    <option value="Fantasy">Kỳ ảo</option>
-                                    <option value="Biography">Tiểu sử</option>
-                                    <option value="History">Lịch sử</option>
-                                    <option value="Self-Help">Tự lực</option>
-                                    <option value="Business">Kinh doanh</option>
-                                    <option value="Technology">Công nghệ</option>
-                                    <option value="Classic Literature">Văn học cổ điển</option>
-                                    <option value="Educational">Giáo dục</option>
-                                    <option value="Health & Fitness">Sức khỏe & Thể hình</option>
-                                    <option value="Travel">Du lịch</option>
-                                    <option value="Cooking">Nấu ăn</option>
-                                    <option value="Art & Design">Nghệ thuật & Thiết kế</option>
-                                    <option value="Philosophy">Triết học</option>
-                                    <option value="Religion & Spirituality">Tôn giáo & Tâm linh</option>
-                                    <option value="Politics">Chính trị</option>
-                                    <option value="Psychology">Tâm lý học</option>
-                                    <option value="True Crime">Tội phạm có thật</option>
-                                    <option value="Horror">Kinh dị</option>
-                                    <option value="Thriller">Giật gân</option>
-                                    <option value="Young Adult">Thanh thiếu niên</option>
-                                    <option value="Children's">Thiếu nhi</option>
-                                    <option value="Poetry">Thơ</option>
-                                    <option value="Drama">Kịch</option>
-                                    <option value="Comics & Graphic Novels">Truyện tranh & Tiểu thuyết đồ họa</option>
-                                    <option value="Other">Khác</option>
-                                </select>
+                                <input type="text" 
+                                       class="form-control glass-input" 
+                                       id="category" 
+                                       name="category" 
+                                       placeholder="Nhập thể loại sách" 
+                                       required>
                             </div>
 
                             <!-- Author -->
@@ -122,15 +95,42 @@
                                        min="1">
                             </div>
 
-                            <!-- ISBN -->
-                            <div class="col-md-4 mb-4">
-                                <label for="isbn" class="form-label">ISBN</label>
-                                <input type="text" 
-                                       class="form-control glass-input" 
-                                       id="isbn" 
-                                       name="isbn" 
-                                       placeholder="vd: 978-0-306-40615-7">
+                            <div class="col-md-6 mb-4">
+                                <label for="location" class="form-label">Vị trí (Tỉnh/Thành phố)</label>
+                                <input list="vietnam-provinces" class="form-control glass-input" id="location" name="location" placeholder="Ví dụ: Hà Nội, TP. Hồ Chí Minh" required>
+                                <datalist id="vietnam-provinces">
+                                    <option value="Hà Nội">
+                                    <option value="TP. Hồ Chí Minh">
+                                    <option value="Đà Nẵng">
+                                    <option value="Hải Phòng">
+                                    <option value="Cần Thơ">
+                                    <option value="Khánh Hòa">
+                                    <option value="Bình Dương">
+                                    <option value="Đồng Nai">
+                                    <option value="Thanh Hóa">
+                                    <option value="Nghệ An">
+                                    <option value="Bắc Ninh">
+                                    <!-- bạn có thể thêm các tỉnh khác -->
+                                </datalist>
+                                <div class="form-text text-muted">Nhập hoặc chọn tỉnh/thành nơi sách đang ở.</div>
                             </div>
+
+                        </div>
+
+                        <!-- Borrow Duration -->
+                        <div class="mb-4">
+                            <label for="borrow_duration_weeks" class="form-label">
+                                <i class="fas fa-clock me-2"></i>Thời gian cho mượn (tuần)
+                            </label>
+                            <input type="number" 
+                                   class="form-control glass-input" 
+                                   id="borrow_duration_weeks" 
+                                   name="borrow_duration_weeks" 
+                                   placeholder="Ví dụ: 2" 
+                                   min="1" 
+                                   max="52"
+                                   value="2">
+                            <div class="form-text">Nhập số tuần mà bạn cho phép người khác mượn sách.</div>
                         </div>
 
                         <!-- Book Price + Contact -->
@@ -197,6 +197,21 @@
                     </p>
                 </div>
                 
+                {% if achievements %}
+                <div class="achievement-notifications mb-4">
+                    <h5 class="text-warning mb-3">
+                        <i class="fas fa-trophy me-2"></i>Đạt thành tích!
+                    </h5>
+                    {% for achievement in achievements %}
+                    <div class="alert alert-warning d-flex align-items-center mb-2">
+                        <i class="fas fa-trophy me-2"></i>
+                        <strong>{{ achievement.name }}</strong>
+                        <span class="ms-auto badge bg-warning">+{{ achievement.points }} điểm</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
                 <button type="button" class="btn btn-primary btn-lg px-5" onclick="goToMainPage()">
                     <i class="fas fa-home me-2"></i>Okay
                 </button>
@@ -209,25 +224,8 @@
 function goToMainPage() {
     window.location.href = "{{ url_for('index') }}";
 }
-
-// Auto-focus the modal when it appears
-document.addEventListener('DOMContentLoaded', function() {
-    {% if show_success_modal %}
-    const modal = document.getElementById('successModal');
-    if (modal) {
-        modal.focus();
-        // Prevent closing modal by clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                e.preventDefault();
-            }
-        });
-    }
-    {% endif %}
-});
 </script>
 {% endif %}
-
 {% endblock %}
 
 {% block scripts %}
@@ -236,39 +234,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('category');
     const form = document.querySelector('form');
     
-    // Add search functionality to category dropdown
-    categorySelect.addEventListener('change', function() {
-        if (this.value) {
-            this.style.borderColor = '#28a745';
-        } else {
-            this.style.borderColor = '';
-        }
-    });
-    
-    // Form validation
+    // Validate form
     form.addEventListener('submit', function(e) {
         const title = document.getElementById('title').value.trim();
         const author = document.getElementById('author').value.trim();
-        const category = document.getElementById('category').value;
+        const category = document.getElementById('category').value.trim();
         
         if (!title || !author || !category) {
             e.preventDefault();
             alert('Vui lòng điền đầy đủ các trường bắt buộc (Tên sách, Tác giả và Thể loại).');
             return false;
         }
-        
-        // Show loading state
+
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Posting...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng...';
             submitBtn.disabled = true;
         }
     });
-    
-    // Auto-resize description textarea
-    const descriptionTextarea = document.getElementById('description');
-    if (descriptionTextarea) {
-        descriptionTextarea.addEventListener('input', function() {
+
+    // Auto-resize textarea
+    const desc = document.getElementById('description');
+    if (desc) {
+        desc.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });

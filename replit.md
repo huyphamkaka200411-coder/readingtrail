@@ -1,7 +1,7 @@
-# L.E.A.F - Digital Book Borrowing System
+# ReadingTrail - Digital Book Borrowing System
 
 ## Overview
-L.E.A.F is a web-based digital library management system built with Flask that enables users to browse, search, borrow, and review books from a digital catalog. The system focuses on core library features with social interactions, providing a simple and clean user experience for book management, borrowing, reviews, discussions, and private messaging.
+ReadingTrail is a web-based digital library management system built with Flask that enables users to browse, search, borrow, and review books from a digital catalog. The system focuses on core library features with social interactions, providing a simple and clean user experience for book management, borrowing, reviews, discussions, and private messaging.
 
 ## Recent Changes (October 2025)
 - **Complete Gamification Removal (Oct 9)**: Eliminated all gamification features to focus on core library functionality:

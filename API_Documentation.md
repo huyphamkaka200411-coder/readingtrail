@@ -1,7 +1,7 @@
-# L.E.A.F REST API Documentation
+# ReadingTrail REST API Documentation
 
 ## Overview
-This document describes the RESTful web services for the L.E.A.F Digital Book Borrowing System. All API endpoints follow standard REST conventions and return JSON responses.
+This document describes the RESTful web services for the ReadingTrail Digital Book Borrowing System. All API endpoints follow standard REST conventions and return JSON responses.
 
 ## Quick Reference
 

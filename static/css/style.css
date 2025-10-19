@@ -1,6 +1,12 @@
-/* Custom styles for L.E.A.F */
+/* Custom styles for ReadingTrail */
 
 /* Rating Stars Styling */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+
 .rating-stars-small {
     display: flex;
     gap: 1px;
@@ -31,37 +37,26 @@
 
 /* Dark Background */
 body {
-    background: #0d1117;
-    background-attachment: fixed;
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
     min-height: 100vh;
     position: relative;
-    color: #e6edf3;
-    padding-top: 70px; /* Account for fixed navbar */
+    padding-top: 70px;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(30, 30, 40, 0.5) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(40, 30, 50, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(20, 40, 50, 0.4) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-}
 
-/* Top Navigation Bar Styles */
+
+
 .glass-navbar {
-    background: rgba(13, 17, 23, 0.85) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 255,255,255), 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
     z-index: 1030;
 }
+
 
 .glass-navbar .navbar-brand {
     font-weight: 600;
@@ -241,29 +236,17 @@ body::before {
 }
 
 .glass-navbar {
-  background: rgba(13, 17, 23, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 255,255,255), 0.15);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  box-shadow: 
-    0 4px 25px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+
 .glass-navbar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(74, 144, 226, 0.1) 0%, 
-    rgba(116, 168, 226, 0.05) 50%, 
-    rgba(74, 144, 226, 0.1) 100%);
-  pointer-events: none;
-  z-index: -1;
+  display: none !important;
 }
 
 .glass-button {
@@ -422,29 +405,12 @@ body::before {
     position: relative;
 }
 
-/* Physical Book Indicator */
-.book-card::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(145deg, rgba(40, 167, 69, 0.8), rgba(40, 167, 69, 0.6));
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    z-index: 2;
-    opacity: 0.8;
+.book-card:hover::before,
+.book-card:hover::after {
+    opacity: 0 !important;
 }
 
-.book-card::after {
-    content: '📖';
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    font-size: 14px;
-    z-index: 3;
-}
+
 
 /* Enhanced Physical Book Styling */
 .physical-book-badge {
@@ -1903,4 +1869,249 @@ footer {
     color: inherit;
     text-decoration: none;
     transform: translateY(-1px);
+}
+
+.glass-dropdown {
+    background-color: rgba(var(--bs-body-bg-rgb), 0.95) !important;
+}
+.footer-glass {
+    margin-top: auto;
+    width: 100%;
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    border-top: 1px solid rgba(var(--bs-body-color-rgb, 255,255,255), 0.15);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+body, html, header, nav.navbar, .glass-navbar {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: none !important;
+}
+[data-bs-theme="light"] nav.glass-navbar,
+[data-bs-theme="light"] .glass-navbar {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+[data-bs-theme="dark"] nav.glass-navbar,
+[data-bs-theme="dark"] .glass-navbar {
+  background-color: #0d1117 !important;
+  color: #ffffff !important;
+}
+
+html, body, nav.glass-navbar {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* ==== FIX VẠCH ĐEN Ở TRÊN NAVBAR (CHUYỂN THEME) ==== */
+
+/* Ép trình duyệt vẽ toàn bộ vùng top đúng màu nền */
+html, body {
+  background-color: var(--bs-body-bg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow-x: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Loại bỏ layer đen giả tạo phía trên navbar */
+html::before,
+body::before {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  height: 0 !important;
+}
+
+/* Ép navbar luôn dính sát top và không tạo border ảo */
+.glass-navbar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  margin: 0 !important;
+  border: none !important;
+  background-color: var(--bs-body-bg) !important;
+  box-shadow: none !important;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Khi theme thay đổi, ép repaint lại vùng nền để xóa viền đen */
+[data-bs-theme] {
+  animation: repaintFix 0.01s linear;
+}
+
+@keyframes repaintFix {
+  from { opacity: 0.99; }
+  to { opacity: 1; }
+}
+/* ==========================================
+   📱 TỐI ƯU HIỂN THỊ CHO MOBILE / NHỎ MÀN HÌNH
+   ========================================== */
+
+/* Giảm nhẹ padding và margin khi trên thiết bị nhỏ */
+@media (max-width: 768px) {
+
+  html {
+    font-size: 14px !important; /* Nhỏ hơn một chút để vừa khít mobile */
+  }
+
+  body {
+    padding: 0 0.5rem !important;
+  }
+
+  /* Navbar - gọn hơn, tránh bị tràn */
+  .navbar {
+    padding: 0.4rem 0.6rem !important;
+  }
+
+  .navbar-brand span {
+    font-size: 1rem !important;
+  }
+
+  .navbar .nav-link {
+    font-size: 0.9rem !important;
+    padding: 0.3rem 0.5rem !important;
+  }
+
+  /* Dropdown - chữ nhỏ gọn */
+  .dropdown-menu {
+    font-size: 0.9rem !important;
+  }
+
+  /* Giảm kích thước avatar */
+  .avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Giảm khoảng cách card */
+  .card {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Card trong trang danh sách sách */
+  .card-title {
+    font-size: 1rem !important;
+  }
+
+  .card-text {
+    font-size: 0.9rem !important;
+  }
+
+  /* Nút bấm */
+  .btn {
+    font-size: 0.9rem !important;
+    padding: 0.35rem 0.75rem !important;
+  }
+
+  /* Thanh tìm kiếm */
+  .form-control,
+  .form-select {
+    font-size: 0.9rem !important;
+    padding: 0.35rem 0.6rem !important;
+  }
+
+  /* Footer - căn giữa, tránh bị tràn */
+  footer .row {
+    text-align: center !important;
+  }
+  footer .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Giảm khoảng cách trên/dưới để tránh scroll thừa */
+  main {
+    padding-top: 70px !important;
+    padding-bottom: 80px !important;
+  }
+}
+
+/* Extra nhỏ - điện thoại dưới 480px */
+@media (max-width: 480px) {
+  html {
+    font-size: 13px !important;
+  }
+
+  .navbar-brand span {
+    display: none; /* ẩn text 'ReadingTrail' để tiết kiệm không gian */
+  }
+
+  .navbar-brand i {
+    font-size: 1.2rem !important;
+  }
+
+  .btn {
+    font-size: 0.85rem !important;
+  }
+
+  .card-body {
+    padding: 0.75rem !important;
+  }
+}
+/* ======= SỬA LỖI CHỮ "ĐĂNG SÁCH" BỊ ẨN TRÊN MOBILE ======= */
+@media (max-width: 768px) {
+  /* Giữ cho tiêu đề không bị che */
+  h1, h2, h3, .page-title {
+    font-size: 1.3rem !important;
+    text-align: center !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Nút Đăng sách hiển thị đầy đủ */
+  .btn,
+  .btn-lg {
+    white-space: normal !important; /* Cho phép xuống dòng khi hẹp */
+    font-size: 0.95rem !important;
+    padding: 0.5rem 0.9rem !important;
+    min-width: 130px;
+  }
+
+  /* Không để container hoặc card bóp quá nhỏ */
+  .container, .container-fluid {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Nếu nút nằm trong hàng flex, cho nó full chiều rộng */
+  .d-flex > .btn {
+    flex: 1 1 100% !important;
+    text-align: center;
+  }
+
+  /* Bố cục phần tiêu đề trang (nếu có flex) - căn giữa */
+  .page-header, .book-list-header, .section-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+
+/* Cực nhỏ (điện thoại rất nhỏ như iPhone SE) */
+@media (max-width: 480px) {
+  .btn {
+    font-size: 0.9rem !important;
+    padding: 0.45rem 0.8rem !important;
+  }
+}
+@media (max-width: 576px) {
+  .btn.btn-success.btn-lg {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 0.8rem !important;
+  }
 }

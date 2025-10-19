@@ -14,7 +14,10 @@ import logging
 def add_review(book_id):
     """Add or update a review for a book"""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         rating = int(data.get('rating'))
         review_text = data.get('review_text', '').strip()
         

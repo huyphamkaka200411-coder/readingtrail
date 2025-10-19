@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Hồ sơ của {{ user.get_full_name() or user.username }} - ReadingTrail{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="card glass-card border-0 shadow-lg p-4">
+        <div class="text-center">
+
+          <!-- Avatar -->
+          <div class="mb-3">
+            <i class="fas fa-user-circle fa-5x text-primary"></i>
+          </div>
+
+          <!-- Tên người dùng -->
+          <h2 class="fw-bold mb-1 text-light">
+            {{ user.get_full_name() or user.username }}
+          </h2>
+
+          <!-- Email -->
+          <p class="text-muted mb-3">
+            <i class="fas fa-envelope me-2 text-secondary"></i>{{ user.email }}
+          </p>
+
+          <!-- Mô tả -->
+          {% if user.description %}
+            <p class="text-light mt-3">{{ user.description }}</p>
+          {% else %}
+            <p class="text-muted fst-italic">(Người dùng chưa thêm mô tả)</p>
+          {% endif %}
+
+          <hr class="my-4">
+
+          <!-- Các nút hành động -->
+          <div class="d-flex justify-content-center flex-wrap gap-3">
+            <a href="{{ url_for('profile.user_reviews', user_id=user.id) }}" 
+               class="btn btn-outline-primary glass-button px-4">
+              <i class="fas fa-star me-2"></i>Xem đánh giá
+            </a>
+
+            {% if current_user.is_authenticated and current_user.id != user.id %}
+              <a href="{{ url_for('profile.review_user', user_id=user.id) }}" 
+                 class="btn btn-primary glass-button px-4">
+                <i class="fas fa-pen me-2"></i>Đánh giá người này
+              </a>
+            {% endif %}
+
+            <!-- ✅ Nút quay lại đúng cuốn sách -->
+            {% if request.args.get('from_book') %}
+              <a href="{{ url_for('book_detail', book_id=request.args.get('from_book')|int) }}" 
+                 class="btn btn-outline-secondary glass-button px-4">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+              </a>
+            {% else %}
+              <a href="{{ url_for('index') }}" 
+                 class="btn btn-outline-secondary glass-button px-4">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

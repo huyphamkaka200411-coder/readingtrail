@@ -108,36 +108,45 @@ def book_discussion(book_id):
         return render_template('book_discussion.html', book=book, messages=[])
 
 
+from flask import render_template, redirect, url_for, flash
+from flask_login import current_user
+from models import User, Book, PrivateMessage
+from datetime import datetime, timezone
+from pytz import timezone as pytz_timezone
+from config import db
+import logging
+
 def private_chat(recipient_id, book_id=None):
     """Private chat page with another user, optionally about a specific book"""
     if not current_user.is_authenticated:
         flash('Please login to access private chat', 'error')
         return redirect(url_for('login'))
-    
+
     recipient = User.query.get_or_404(recipient_id)
-    
+
     # Get book context if provided
-    book = None
-    if book_id:
-        book = Book.query.get(book_id)
-    
+    book = Book.query.get(book_id) if book_id else None
+
     # Get existing messages between users
     messages = PrivateMessage.query.filter(
         ((PrivateMessage.sender_id == current_user.id) & (PrivateMessage.recipient_id == recipient_id)) |
         ((PrivateMessage.sender_id == recipient_id) & (PrivateMessage.recipient_id == current_user.id))
     ).order_by(PrivateMessage.timestamp.asc()).all()
-    
+
     # Add time_ago field for template compatibility
+    vn_tz = pytz_timezone('Asia/Ho_Chi_Minh')
+    now_utc = datetime.utcnow().replace(tzinfo=timezone.utc)
+
     for message in messages:
-        from pytz import timezone
-        import datetime
-        vn_tz = timezone('Asia/Ho_Chi_Minh')
-        local_time = message.timestamp.replace(tzinfo=timezone('UTC')).astimezone(vn_tz)
-        
-        # Calculate time ago
-        now = datetime.datetime.utcnow().replace(tzinfo=timezone('UTC'))
-        time_diff = now - message.timestamp.replace(tzinfo=timezone('UTC'))
-        
+        # Convert timestamp safely
+        if message.timestamp.tzinfo is None:
+            local_time = message.timestamp.replace(tzinfo=timezone.utc).astimezone(vn_tz)
+            time_diff = now_utc - message.timestamp.replace(tzinfo=timezone.utc)
+        else:
+            local_time = message.timestamp.astimezone(vn_tz)
+            time_diff = now_utc - message.timestamp.astimezone(timezone.utc)
+
+        # Format time ago
         if time_diff.days > 0:
             message.time_ago = f"{time_diff.days}d ago"
         elif time_diff.seconds > 3600:
@@ -146,19 +155,28 @@ def private_chat(recipient_id, book_id=None):
             message.time_ago = f"{time_diff.seconds // 60}m ago"
         else:
             message.time_ago = "just now"
-    
-    # Mark messages as read
-    PrivateMessage.query.filter_by(
+
+    # Mark messages as read using ORM instances
+    unread_messages = PrivateMessage.query.filter_by(
         sender_id=recipient_id,
         recipient_id=current_user.id,
         is_read=False
-    ).update({'is_read': True})
-    db.session.commit()
-    
+    ).all()
+
+    for msg in unread_messages:
+        msg.is_read = True
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error marking messages as read: {e}")
+
     return render_template('private_chat.html', 
-                         recipient=recipient, 
-                         book=book,
-                         messages=messages)
+                           recipient=recipient, 
+                           book=book,
+                           messages=messages)
+
 
 
 def send_private_message(recipient_id):
@@ -167,7 +185,10 @@ def send_private_message(recipient_id):
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
     
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         message_text = data.get('message', '').strip()
         book_id = data.get('book_id')
         
@@ -285,12 +306,15 @@ def mark_all_notifications_read():
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
     
     try:
-        Notification.query.filter_by(
-            user_id=current_user.id,
-            is_read=False
-        ).update({'is_read': True})
-        
-        db.session.commit()
+        notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+        for n in notifications:
+            n.is_read = True
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Lỗi cập nhật thông báo: {e}")
+
         
         return jsonify({'success': True})
         
@@ -310,7 +334,11 @@ def get_unread_notifications_count():
             is_read=False
         ).count()
         
-        return jsonify({'count': count})
+        return jsonify({
+            'success': True,
+            'message': 'Unread count fetched successfully',
+            'data': { 'unread_count': count }
+        })
         
     except Exception as e:
         logging.error(f"Error getting notification count: {e}")
@@ -405,7 +433,10 @@ def approve_borrow_request(book_id):
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
     
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         agreed_due_date = data.get('agreed_due_date')
         borrower_id = data.get('borrower_id')
         
@@ -458,7 +489,10 @@ def reject_borrow_request(book_id):
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
     
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            data = request.form
+
         borrower_id = data.get('borrower_id')
         
         if not borrower_id:
