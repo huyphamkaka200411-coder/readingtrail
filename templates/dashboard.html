@@ -43,21 +43,11 @@
             <h1 class="display-4 mb-3">
                 <i class="fas fa-user me-3"></i>Sách của tôi
             </h1>
-            <p class="lead text-muted">Quản lý sách đã mượn và theo dõi ngày hạn trả</p>
         </div>
     </div>
 
     <!-- Thống kê nhanh -->
     <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card glass-card bg-primary">
-                <div class="card-body text-center">
-                    <i class="fas fa-books fa-2x mb-2"></i>
-                    <h3 class="card-title">{{ borrowed_books|length }}</h3>
-                    <p class="card-text">Sách đã mượn</p>
-                </div>
-            </div>
-        </div>
         <div class="col-md-3 mb-3">
             <div class="card glass-card bg-success">
                 <div class="card-body text-center">
@@ -67,117 +57,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card glass-card bg-info">
-                <div class="card-body text-center">
-                    <i class="fas fa-clock fa-2x mb-2"></i>
-                    <h3 class="card-title">{{ pending_requests|length if pending_requests else 0 }}</h3>
-                    <p class="card-text">Yêu cầu chờ duyệt</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card glass-card bg-warning">
-                <div class="card-body text-center">
-                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
-                    <h3 class="card-title">{{ borrowed_books|selectattr('is_overdue')|list|length }}</h3>
-                    <p class="card-text">Sách quá hạn</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Sách đã mượn -->
-    {% if borrowed_books %}
-    <div class="row mb-4">
-        <div class="col">
-            <h3><i class="fas fa-list me-2"></i>Đang mượn</h3>
-        </div>
-    </div>
-    
-    <div class="row">
-        {% for book in borrowed_books %}
-        <div class="col-lg-6 col-xl-4 mb-4">
-            <div class="card h-100 glass-card {% if book.is_overdue %}border-danger{% endif %}">
-                {% if book.is_overdue %}
-                <div class="card-header bg-danger text-white">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Quá hạn
-                </div>
-                {% endif %}
-                
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <img src="{{ book.cover_url }}" 
-                                 class="img-fluid rounded book-cover-small" 
-                                 alt="{{ book.title }}"
-                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22150%22 viewBox=%220 0 100 150%22><rect width=%22100%22 height=%22150%22 fill=%22%23666%22/><text x=%2250%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22>Không có ảnh</text></svg>'">
-                        </div>
-                        <div class="col-8">
-                            <h5 class="card-title">{{ book.title }}</h5>
-                            <p class="card-text text-muted mb-2">
-                                <i class="fas fa-user me-1"></i>{{ book.author }}
-                            </p>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-tag me-1"></i>{{ category_vn.get(book.category, book.category) }}
-                                </small>
-                            </p>
-                            
-                            {% if book.due_date %}
-                            <div class="mb-3">
-                                <strong class="{% if book.is_overdue %}text-danger{% endif %}">
-                                    <i class="fas fa-calendar me-1"></i>
-                                    Hạn trả: {{ book.due_date }}
-                                </strong>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-footer">
-                    <div class="d-grid gap-2 d-md-flex">
-                        <a href="{{ url_for('book_detail', book_id=book.id) }}" 
-                           class="btn btn-outline-primary btn-sm me-md-2 glass-button">
-                            <i class="fas fa-eye me-1"></i>Xem
-                        </a>
-                        <button class="btn btn-warning btn-sm glass-button return-btn" 
-                                data-book-id="{{ book.id }}"
-                                data-book-title="{{ book.title }}">
-                            <i class="fas fa-undo me-1"></i>Trả
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <!-- Trạng thái rỗng -->
-    <div class="row">
-        <div class="col">
-            <div class="text-center py-5">
-                <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
-                <h3>Chưa mượn sách nào</h3>
-                <p class="text-muted mb-4">
-                    Bắt đầu khám phá danh mục để tìm cuốn sách hay tiếp theo!
-                </p>
-                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg glass-button">
-                    <i class="fas fa-search me-2"></i>Duyệt sách
-                </a>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Sách đã đăng -->
     {% if posted_books %}
     <div class="row mb-4">
-        <div class="col">
-            <h3><i class="fas fa-plus-circle me-2"></i>Sách tôi đã đăng</h3>
-            <p class="text-muted">Sách bạn đã thêm vào danh mục thư viện</p>
-        </div>
     </div>
     
     <div class="row mb-5">
@@ -307,23 +189,7 @@
     {% endif %}
     
     <!-- Hướng dẫn mượn sách -->
-    <div class="row mt-5">
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                        <div class="col-md-6">
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <i class="fas fa-question-circle text-info me-2"></i>
-                                    <strong>Trợ giúp:</strong> Liên hệ leafbookshare@gmail.com
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 {% endblock %}
 
