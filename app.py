@@ -1,5 +1,3 @@
-
-
 import os
 import logging
 from datetime import datetime
@@ -9,48 +7,36 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import create_app, db, login_manager
 
-# ------------------------------------------------------------
-# 1️⃣ Create the Flask app BEFORE registering any blueprints
-# ------------------------------------------------------------
+# Create the Flask app
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# ------------------------------------------------------------
-# 2️⃣ Import and register blueprints (AFTER app is created)
-# ------------------------------------------------------------
+# Import and register blueprints
 from controllers.profile_controller import profile_bp
 from controllers import (
     auth_controller, book_controller, social_controller, review_controller
 )
 from controllers.api_controller import api_bp
 
-# Register all blueprints here
+# Register all blueprints
 app.register_blueprint(profile_bp)
 app.register_blueprint(api_bp)
 
-# ------------------------------------------------------------
-# 3️⃣ Import models after db is initialized
-# ------------------------------------------------------------
+# Import models
 from models import (
     User, Book, BorrowedBook, Discussion, Notification,
     PrivateMessage, BookReview
 )
 
-# ------------------------------------------------------------
-# 4️⃣ Configure logging
-# ------------------------------------------------------------
+# Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# ------------------------------------------------------------
-# 5️⃣ Flask-Login: load user
-# ------------------------------------------------------------
+# Flask-Login: load user
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# ------------------------------------------------------------
-# 6️⃣ Context processor for template globals
-# ------------------------------------------------------------
+# Context processor
 @app.context_processor
 def inject_borrowed_count():
     """Inject borrowed count and notification count into all templates"""
@@ -64,7 +50,7 @@ def inject_borrowed_count():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            logging.error(f"Lỗi cập nhật hoạt động: {e}")
+            logging.error(f"Error updating activity: {e}")
 
         borrowed_count = len(book_controller.get_borrowed_books())
         try:
@@ -83,9 +69,7 @@ def inject_borrowed_count():
         timedelta=timedelta
     )
 
-# ------------------------------------------------------------
-# 7️⃣ Helper: get user/session identifier
-# ------------------------------------------------------------
+# Helper function
 def get_user_identifier():
     """Get user ID if logged in, otherwise session ID"""
     if current_user.is_authenticated:
@@ -96,9 +80,7 @@ def get_user_identifier():
             session["session_id"] = str(uuid.uuid4())
         return f"session_{session['session_id']}"
 
-# ------------------------------------------------------------
-# 8️⃣ Routes (reuse existing controllers)
-# ------------------------------------------------------------
+# Auth routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
     return auth_controller.login()
@@ -111,6 +93,7 @@ def signup():
 def logout():
     return auth_controller.logout()
 
+# Book routes
 @app.route("/")
 def index():
     return book_controller.index()
@@ -142,6 +125,17 @@ def add_book():
 @app.route("/seed_books")
 def seed_books():
     return book_controller.seed_books()
+
+# ✅ NEW: Book management routes
+@app.route("/api/books/<int:book_id>/update_status", methods=["POST"])
+def update_book_status(book_id):
+    """Toggle book availability status"""
+    return book_controller.update_book_status(book_id)
+
+@app.route("/api/books/<int:book_id>/delete", methods=["DELETE", "POST"])
+def delete_book(book_id):
+    """Delete a book"""
+    return book_controller.delete_book(book_id)
 
 # Social routes
 @app.route("/discussion", methods=["GET", "POST"])
@@ -214,16 +208,21 @@ def get_reviews(book_id):
 def delete_review(review_id):
     return review_controller.delete_review(review_id)
 
+# Info routes
 @app.route("/info")
 def info():
     """Display information about ReadingTrail platform"""
     return render_template("info.html")
+
 @app.route("/terms")
 def terms():
     return render_template("terms.html")
+
+# Setup pytz for templates
 import pytz
 app.jinja_env.globals['pytz'] = pytz
 
+# Background image
 from flask import send_from_directory
 import os
 
@@ -231,9 +230,7 @@ import os
 def background():
     return send_from_directory(os.getcwd(), 'Background.jpg')
 
-# ------------------------------------------------------------
-# 9️⃣ Initialize DB and run
-# ------------------------------------------------------------
+# Initialize DB
 with app.app_context():
     db.create_all()
 

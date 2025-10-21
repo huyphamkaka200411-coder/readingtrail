@@ -165,7 +165,6 @@ def return_book(book_id):
 
     try:
         remove_borrowed_book(book_id)
-
         flash('Book returned successfully!', 'success')
     except Exception as e:
         logging.error(f"Error returning book: {e}")
@@ -222,6 +221,76 @@ def post_book():
     return render_template('post_book.html')
 
 
+def update_book_status(book_id):
+    """Toggle book availability status (available/unavailable)"""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'message': 'Vui lòng đăng nhập'}), 401
+
+    try:
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({'success': False, 'message': 'Không tìm thấy sách'}), 404
+
+        # Check if current user is the book owner
+        if book.posted_by != current_user.id:
+            return jsonify({'success': False, 'message': 'Bạn không có quyền cập nhật sách này'}), 403
+
+        # Toggle availability
+        book.available = not book.available
+        db.session.commit()
+
+        status_text = "có sẵn để cho mượn" if book.available else "không còn cho mượn"
+        return jsonify({
+            'success': True, 
+            'message': f'Đã cập nhật trạng thái sách thành "{status_text}"',
+            'available': book.available
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating book status: {e}")
+        return jsonify({'success': False, 'message': 'Lỗi khi cập nhật trạng thái sách'}), 500
+
+
+def delete_book(book_id):
+    """Delete a book"""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'message': 'Vui lòng đăng nhập'}), 401
+
+    try:
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({'success': False, 'message': 'Không tìm thấy sách'}), 404
+
+        # Check if current user is the book owner
+        if book.posted_by != current_user.id:
+            return jsonify({'success': False, 'message': 'Bạn không có quyền xóa sách này'}), 403
+
+        # Check if book is currently borrowed
+        active_borrows = BorrowedBook.query.filter_by(
+            book_id=book_id,
+            is_returned=False
+        ).count()
+
+        if active_borrows > 0:
+            return jsonify({
+                'success': False, 
+                'message': 'Không thể xóa sách đang được mượn. Vui lòng đợi người mượn trả sách trước.'
+            }), 400
+
+        book_title = book.title
+        db.session.delete(book)
+        db.session.commit()
+
+        return jsonify({
+            'success': True, 
+            'message': f'Đã xóa sách "{book_title}" thành công'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error deleting book: {e}")
+        return jsonify({'success': False, 'message': 'Lỗi khi xóa sách'}), 500
 
 
 def dashboard():
@@ -310,11 +379,9 @@ def load_books():
     """Load books from database"""
     try:
         books = Book.query.order_by(Book.created_at.desc()).all()
-
         for book in books:
             if book.posted_by:
                 poster = User.query.get(book.posted_by)
-
         return books
     except Exception as e:
         logging.error(f"Error loading books: {e}")
@@ -341,7 +408,6 @@ def get_borrowed_books():
             is_returned=False,
             is_agreed=True
         ).all()
-
         return [record.book_id for record in borrowed_records]
     except Exception as e:
         logging.error(f"Error getting borrowed books: {e}")
@@ -383,17 +449,11 @@ def create_borrow_request(book_id, proposed_due_date=None):
     from models.book import BorrowedBook
     from config import db
 
-    # Default due date is 2 weeks from now
-    # Default due date dựa trên thời gian mượn của sách
     book = get_book_by_id(book_id)
     weeks = book.borrow_duration_weeks if book and book.borrow_duration_weeks else 2
-    # Default due date dựa trên thời gian mượn của sách
-    book = get_book_by_id(book_id)
-    weeks = book.borrow_duration_weeks if book and book.borrow_duration_weeks else 2
+
     if not proposed_due_date:
         proposed_due_date = datetime.utcnow() + timedelta(weeks=weeks)
-
-
 
     borrow_record = BorrowedBook(
         book_id=book_id,
@@ -406,7 +466,6 @@ def create_borrow_request(book_id, proposed_due_date=None):
     db.session.commit()
 
     # Create notification for book owner
-    book = get_book_by_id(book_id)
     if book and book.posted_by:
         create_borrow_notification(book, current_user.get_full_name() or current_user.username, proposed_due_date)
 
