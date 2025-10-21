@@ -174,7 +174,7 @@ def return_book(book_id):
 
 
 def post_book():
-    """Add a new book to the catalog (now includes borrow duration in weeks and location)"""
+    """Add a new book to the catalog (now includes borrow duration in weeks, location, and cover image)"""
     if not current_user.is_authenticated:
         flash('Please login to post books', 'error')
         return redirect(url_for('login'))
@@ -186,6 +186,7 @@ def post_book():
         category = request.form.get('category', '').strip()
         location = request.form.get('location', '').strip()
         description = request.form.get('description', '').strip()
+        cover_url = request.form.get('cover_url', '').strip()  # ✅ Thêm dòng này
         publication_year = request.form.get('publication_year')
         pages = request.form.get('pages')
         borrow_duration_weeks = request.form.get('borrow_duration_weeks', '2').strip()
@@ -195,13 +196,14 @@ def post_book():
             flash('Vui lòng điền đầy đủ các trường bắt buộc (Tên, Tác giả, Thể loại, Vị trí).', 'error')
             return render_template('post_book.html')
 
-        # ✅ Tạo sách mới
+        # ✅ Tạo sách mới (có ảnh bìa)
         book = Book(
             title=title,
             author=author,
             category=category,
             location=location,
             description=description,
+            cover_url=cover_url,   # ✅ thêm dòng này
             publication_year=int(publication_year) if publication_year else None,
             pages=int(pages) if pages else None,
             posted_by=current_user.id,
@@ -219,6 +221,7 @@ def post_book():
             flash('Không thể đăng sách. Vui lòng thử lại.', 'error')
 
     return render_template('post_book.html')
+
 
 
 def update_book_status(book_id):

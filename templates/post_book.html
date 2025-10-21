@@ -74,14 +74,15 @@
                         <div class="row">
                             <!-- Publication Year -->
                             <div class="col-md-4 mb-4">
-                                <label for="publication_year" class="form-label">Ngày đăng</label>
-                                <input type="date" 
+                                <label for="publication_year" class="form-label">Năm xuất bản</label>
+                                <input type="number" 
                                        class="form-control glass-input" 
                                        id="publication_year" 
-                                       name="publication_year">
+                                       name="publication_year" 
+                                       placeholder="0-2025"
+                                       min="0" 
+                                       max="2025">
                             </div>
-
-
 
                             <!-- Pages -->
                             <div class="col-md-4 mb-4">
@@ -164,7 +165,7 @@
 
                                     <!-- bạn có thể thêm các tỉnh khác -->
                                 </datalist>
-                                <div class="form-text text-muted">Tỉnh thành nơi sách đang ở.</div>
+                                <div class="form-text text-muted">Nhập hoặc chọn tỉnh/thành nơi sách đang ở.</div>
                             </div>
 
                         </div>

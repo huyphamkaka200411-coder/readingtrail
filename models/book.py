@@ -15,14 +15,15 @@ class Book(db.Model):
     pages = db.Column(db.Integer)
     available = db.Column(db.Boolean, default=True)
     borrow_duration_weeks = db.Column(db.Integer, default=2)
-
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    posted_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
+    # ✅ CHỈ GIỮ LẠI DÒNG NÀY THÔI
+    posted_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     poster = db.relationship('User', backref=db.backref('posted_books', lazy=True))
 
     def __repr__(self):
         return f'<Book {self.title}>'
+
 
     def to_dict(self):
         return {
