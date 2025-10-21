@@ -9,31 +9,38 @@ from models import Book, BorrowedBook, User, Notification
 from datetime import datetime, timedelta
 import logging
 
-
 def index():
     """Home page with book catalog"""
     from models.book import BorrowedBook
 
     books = load_books()
-    search_query = request.args.get('search', '')
-    category_filter = request.args.get('category', '')
+    search_query = request.args.get('search', '').strip()
+    category_filter = request.args.get('category', '').strip()
+    location_filter = request.args.get('location', '').strip()  # ✅ thêm lọc vị trí
 
-    # Apply search filter
+    # ✅ Lọc theo từ khóa
     if search_query:
-        books = [book for book in books if 
-                search_query.lower() in book.title.lower() or 
-                search_query.lower() in book.author.lower() or
-                search_query.lower() in book.description.lower()]
+        books = [
+            book for book in books
+            if search_query.lower() in book.title.lower()
+            or search_query.lower() in book.author.lower()
+            or (book.description and search_query.lower() in book.description.lower())
+        ]
 
-    # Apply category filter
+    # ✅ Lọc theo thể loại
     if category_filter:
-        books = [book for book in books if book.category == category_filter]
+        books = [book for book in books if category_filter.lower() in book.category.lower()]
 
-    # Get all unique categories for filter dropdown
+    # ✅ Lọc theo vị trí
+    if location_filter:
+        books = [book for book in books if location_filter.lower() in book.location.lower()]
+
+    # ✅ Lấy danh sách thể loại và vị trí duy nhất để hiển thị gợi ý hoặc dropdown
     all_books = load_books()
-    categories = sorted(list(set(book.category for book in all_books)))
+    categories = sorted(list(set(book.category for book in all_books if book.category)))
+    locations = sorted(list(set(book.location for book in all_books if book.location)))
 
-    # Get pending requests for current user to show proper button states
+    # ✅ Lấy các yêu cầu mượn đang chờ duyệt
     pending_requests = []
     if current_user.is_authenticated:
         pending_requests = BorrowedBook.query.filter_by(
@@ -43,12 +50,17 @@ def index():
         ).all()
         pending_requests = [req.book_id for req in pending_requests]
 
-    return render_template('index.html', 
-                         books=books, 
-                         search_query=search_query, 
-                         category_filter=category_filter,
-                         categories=categories,
-                         pending_requests=pending_requests)
+    return render_template(
+        'index.html',
+        books=books,
+        search_query=search_query,
+        category_filter=category_filter,
+        location_filter=location_filter,  # ✅ truyền vào template
+        categories=categories,
+        locations=locations,
+        pending_requests=pending_requests
+    )
+
 
 
 def book_detail(book_id):
