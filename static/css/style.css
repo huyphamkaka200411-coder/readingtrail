@@ -2109,9 +2109,3 @@ body::before {
     padding: 0.45rem 0.8rem !important;
   }
 }
-@media (max-width: 576px) {
-  .btn.btn-success.btn-lg {
-    font-size: 0.9rem !important;
-    padding: 0.5rem 0.8rem !important;
-  }
-}
