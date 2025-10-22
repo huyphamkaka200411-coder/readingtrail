@@ -291,7 +291,7 @@
                                 {% if book.poster and current_user.is_authenticated and book.poster.id != current_user.id %}
                                 <a href="{{ url_for('private_chat', recipient_id=book.poster.id, book_id=book.id) }}" class="btn btn-outline-success glass-button flex-fill">
                                     <i class="fas fa-comments me-2"></i>
-                                    <span class="d-none d-sm-inline">Nhắn tin với </span>tác giả
+                                    <span class="d-none d-sm-inline">Nhắn tin với </span>người đăng
                                 </a>
                                 {% endif %}
                             </div>
