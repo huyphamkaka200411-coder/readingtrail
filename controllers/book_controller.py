@@ -7,6 +7,7 @@ from flask_login import login_required, current_user
 from config import db
 from models import Book, BorrowedBook, User, Notification
 from datetime import datetime, timedelta
+from utils.image_upload import upload_book_cover
 import logging
 
 def index():
@@ -16,7 +17,7 @@ def index():
     books = load_books()
     search_query = request.args.get('search', '').strip()
     category_filter = request.args.get('category', '').strip()
-    location_filter = request.args.get('location', '').strip()  # ✅ thêm lọc vị trí
+    location_filter = request.args.get('location', '').strip()
 
     # ✅ Lọc theo từ khóa
     if search_query:
@@ -55,7 +56,7 @@ def index():
         books=books,
         search_query=search_query,
         category_filter=category_filter,
-        location_filter=location_filter,  # ✅ truyền vào template
+        location_filter=location_filter,
         categories=categories,
         locations=locations,
         pending_requests=pending_requests
@@ -184,9 +185,8 @@ def return_book(book_id):
 
     return redirect(url_for('dashboard'))
 
-
 def post_book():
-    """Add a new book to the catalog (now includes borrow duration in weeks, location, and cover image)"""
+    """Add a new book to the catalog"""
     if not current_user.is_authenticated:
         flash('Please login to post books', 'error')
         return redirect(url_for('login'))
@@ -198,24 +198,44 @@ def post_book():
         category = request.form.get('category', '').strip()
         location = request.form.get('location', '').strip()
         description = request.form.get('description', '').strip()
-        cover_url = request.form.get('cover_url', '').strip()  # ✅ Thêm dòng này
         publication_year = request.form.get('publication_year')
         pages = request.form.get('pages')
         borrow_duration_weeks = request.form.get('borrow_duration_weeks', '2').strip()
 
-        # ✅ Kiểm tra trường bắt buộc
+        # Kiểm tra trường bắt buộc
         if not title or not author or not category or not location:
             flash('Vui lòng điền đầy đủ các trường bắt buộc (Tên, Tác giả, Thể loại, Vị trí).', 'error')
             return render_template('post_book.html')
 
-        # ✅ Tạo sách mới (có ảnh bìa)
+        # XỬ LÝ UPLOAD ẢNH
+        cover_url = None
+        cover_file = request.files.get('cover_image')
+
+        if cover_file and cover_file.filename != '':
+            try:
+                cover_url = upload_book_cover(cover_file)
+                if not cover_url:
+                    flash('Lỗi upload ảnh bìa. Vui lòng thử lại.', 'error')
+                    return render_template('post_book.html')
+            except ValueError as e:
+                flash(str(e), 'error')
+                return render_template('post_book.html')
+            except Exception as e:
+                logging.error(f"Lỗi upload ảnh: {e}")
+                flash('Lỗi upload ảnh. Vui lòng thử lại.', 'error')
+                return render_template('post_book.html')
+        else:
+            flash('Vui lòng chọn ảnh bìa sách.', 'error')
+            return render_template('post_book.html')
+
+        # Tạo sách mới
         book = Book(
             title=title,
             author=author,
             category=category,
             location=location,
             description=description,
-            cover_url=cover_url,   # ✅ thêm dòng này
+            cover_url=cover_url,
             publication_year=int(publication_year) if publication_year else None,
             pages=int(pages) if pages else None,
             posted_by=current_user.id,
@@ -233,7 +253,6 @@ def post_book():
             flash('Không thể đăng sách. Vui lòng thử lại.', 'error')
 
     return render_template('post_book.html')
-
 
 
 def update_book_status(book_id):
