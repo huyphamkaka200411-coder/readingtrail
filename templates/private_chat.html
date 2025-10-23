@@ -17,26 +17,9 @@
                             <small class="text-muted">Cuộc trò chuyện riêng tư</small>
                         </div>
                     </div>
-                    
-                    {% if book %}
-                    <div class="book-context">
-                        <div class="alert alert-info py-2 px-3 mb-0">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-book me-2"></i>
-                                <div class="flex-grow-1">
-                                    <strong>Về: {{ book.title }}</strong>
-                                    <small class="d-block text-muted">của {{ book.author }}</small>
-                                </div>
-                                <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye me-1"></i>Xem sách
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
                 
-                <div class="card-body p-0">
+                <div class="card-body p-0 chat-body-wrapper">
                     <!-- Tin nhắn trò chuyện -->
                     <div id="chat-messages" class="chat-messages">
                         {% if messages %}
@@ -71,16 +54,16 @@
                             </div>
                         {% endif %}
                     </div>
-                    
-                    <!-- Ô nhập tin nhắn -->
-                    <div class="chat-input-container">
-                        <div class="input-group">
-                            <input type="text" id="message-input" class="form-control glass-input" 
-                                   placeholder="Nhập tin nhắn của bạn..." maxlength="1000">
-                            <button type="button" id="send-button" class="btn btn-primary glass-button">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
+                </div>
+                
+                <!-- Ô nhập tin nhắn - CỐ ĐỊNH Ở DƯỚI -->
+                <div class="card-footer chat-input-container p-0">
+                    <div class="input-group">
+                        <input type="text" id="message-input" class="form-control glass-input" 
+                               placeholder="Nhập tin nhắn của bạn..." maxlength="1000">
+                        <button type="button" id="send-button" class="btn btn-primary glass-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -96,11 +79,12 @@
 </div>
 
 <style>
-/* Kiểu dáng trò chuyện */
+/* ✅ KIỂU DÁNG MỚI - CỐ ĐỊNH THANH NHẬP Ở DƯỚI */
 .chat-container {
     height: 600px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .glass-header {
@@ -109,21 +93,32 @@
     backdrop-filter: blur(20px);
     border-radius: 15px 15px 0 0;
     flex-shrink: 0;
+    padding: 1rem;
+}
+
+/* ✅ Wrapper cho phần body - cho phép scroll */
+.chat-body-wrapper {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-messages {
-    flex-grow: 1;
+    flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    max-height: 450px;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .message {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    animation: slideIn 0.3s ease-out;
 }
 
 .message.sent {
@@ -140,6 +135,7 @@
     border-radius: 15px;
     padding: 12px 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    word-wrap: break-word;
 }
 
 .message.sent .message-content {
@@ -167,28 +163,36 @@
 
 .message-time {
     color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
 }
 
 .message-text {
     color: #fff;
     line-height: 1.4;
     word-wrap: break-word;
+    word-break: break-word;
 }
 
+/* ✅ THANH NHẬP CỐ ĐỊNH Ở DƯỚI */
 .chat-input-container {
-    padding: 20px;
+    flex-shrink: 0;
+    padding: 15px 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     border-radius: 0 0 15px 15px;
-    flex-shrink: 0;
+}
+
+.chat-input-container .input-group {
+    margin: 0;
 }
 
 .glass-input {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
-    border-radius: 25px;
+    border-radius: 25px 0 0 25px;
     padding: 12px 20px;
+    transition: all 0.3s ease;
 }
 
 .glass-input:focus {
@@ -196,10 +200,26 @@
     border-color: rgba(74, 144, 226, 0.5);
     box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
     color: #fff;
+    outline: none;
 }
 
 .glass-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
+}
+
+.chat-input-container .glass-button {
+    background: rgba(74, 144, 226, 0.4);
+    border: 1px solid rgba(74, 144, 226, 0.5);
+    color: #fff;
+    border-radius: 0 25px 25px 0;
+    padding: 12px 24px;
+    transition: all 0.3s ease;
+}
+
+.chat-input-container .glass-button:hover {
+    background: rgba(74, 144, 226, 0.6);
+    border-color: rgba(74, 144, 226, 0.7);
+    transform: scale(1.05);
 }
 
 .empty-chat {
@@ -207,23 +227,24 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 300px;
+    height: 100%;
     text-align: center;
+    padding: 40px 20px;
 }
 
 /* Kiểu thanh cuộn */
 .chat-messages::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
@@ -259,18 +280,32 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Điều chỉnh responsive */
+/* ✅ Điều chỉnh responsive */
 @media (max-width: 768px) {
+    .chat-container {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
     .message-content {
         max-width: 85%;
     }
     
-    .chat-container {
-        height: 500px;
+    .chat-messages {
+        padding: 15px;
     }
     
-    .chat-messages {
-        max-height: 350px;
+    .chat-input-container {
+        padding: 12px 15px;
+    }
+    
+    .glass-input {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .chat-input-container .glass-button {
+        padding: 10px 20px;
     }
     
     .book-context .d-flex {
@@ -281,6 +316,18 @@
     
     .book-context .btn {
         align-self: flex-end;
+    }
+}
+
+@media (max-width: 576px) {
+    .chat-container {
+        height: 65vh;
+        min-height: 450px;
+    }
+    
+    .message-content {
+        max-width: 90%;
+        font-size: 14px;
     }
 }
 </style>
@@ -299,19 +346,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Đặt ID tin nhắn cuối cùng ban đầu
     const messages = document.querySelectorAll('.message');
     if (messages.length > 0) {
-        // Trong triển khai thực tế, bạn sẽ lấy thông tin này từ dữ liệu tin nhắn
         lastMessageId = messages.length;
     }
     
     // Cuộn xuống cuối
     scrollToBottom();
     
+    // Focus vào input
+    messageInput.focus();
+    
     // Gửi tin nhắn khi nhấp nút
     sendButton.addEventListener('click', sendMessage);
     
     // Gửi tin nhắn khi nhấn Enter
     messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             sendMessage();
         }
     });
@@ -328,7 +378,9 @@ function sendMessage() {
     
     // Vô hiệu hóa ô nhập trong khi gửi
     messageInput.disabled = true;
-    document.getElementById('send-button').disabled = true;
+    const sendButton = document.getElementById('send-button');
+    sendButton.disabled = true;
+    sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
     fetch(`/api/chat/${recipientId}/send`, {
         method: 'POST',
@@ -351,17 +403,18 @@ function sendMessage() {
             scrollToBottom();
         } else {
             console.error('Không thể gửi tin nhắn:', data.error);
-            showAlert('Không thể gửi tin nhắn. Vui lòng thử lại.', 'error');
+            alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
         }
     })
     .catch(error => {
         console.error('Lỗi khi gửi tin nhắn:', error);
-        showAlert('Không thể gửi tin nhắn. Vui lòng thử lại.', 'error');
+        alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
     })
     .finally(() => {
         // Kích hoạt lại ô nhập
         messageInput.disabled = false;
-        document.getElementById('send-button').disabled = false;
+        sendButton.disabled = false;
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
         messageInput.focus();
     });
 }
@@ -426,22 +479,15 @@ function addMessageToChat(message, isNew = false) {
 
 function scrollToBottom() {
     const chatMessages = document.getElementById('chat-messages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 100);
 }
 
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
-
-function showAlert(message, type = 'info') {
-    // Sử dụng hệ thống cảnh báo hiện có từ main.js nếu có
-    if (typeof window.showAlert === 'function') {
-        window.showAlert(message, type);
-    } else {
-        alert(message);
-    }
 }
 </script>
 {% endblock %}

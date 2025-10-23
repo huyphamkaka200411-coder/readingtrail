@@ -178,12 +178,11 @@ def private_chat(recipient_id, book_id=None):
                            messages=messages)
 
 
-
 def send_private_message(recipient_id):
     """Send a private message"""
     if not current_user.is_authenticated:
         return jsonify({'success': False, 'error': 'Not authenticated'}), 401
-    
+
     try:
         data = request.get_json(silent=True)
         if not data:
@@ -191,48 +190,59 @@ def send_private_message(recipient_id):
 
         message_text = data.get('message', '').strip()
         book_id = data.get('book_id')
-        
+
         if not message_text:
             return jsonify({'success': False, 'error': 'Message cannot be empty'}), 400
-        
+
         # Create message
         message = PrivateMessage()
         message.sender_id = current_user.id
         message.recipient_id = recipient_id
         message.message = message_text
         message.book_id = book_id if book_id else None
-        
+
         db.session.add(message)
-        
-        # Create notification for the recipient
-        if book_id:
-            book = Book.query.get(book_id)
-            notification_message = f'{current_user.get_full_name() or current_user.username} wants to talk with you about "{book.title}"'
-            notification_title = 'New Message About Your Book'
+
+        # ✅ KIỂM TRA XEM ĐÃ CÓ THÔNG BÁO CHƯA ĐỌC TỪ NGƯỜI NÀY CHƯA
+        existing_notification = Notification.query.filter_by(
+            user_id=recipient_id,
+            type='private_message',
+            related_user_id=current_user.id,
+            is_read=False
+        ).first()
+
+        if existing_notification:
+            # ✅ CẬP NHẬT THỜI GIAN THÔNG BÁO (đẩy lên đầu danh sách)
+            existing_notification.created_at = datetime.utcnow()
+            logging.info(f"Cập nhật thời gian thông báo từ {current_user.id} đến {recipient_id}")
         else:
-            notification_message = f'{current_user.get_full_name() or current_user.username} sent you a private message'
-            notification_title = 'New Private Message'
-        
-        notification = Notification()
-        notification.user_id = recipient_id
-        notification.type = 'private_message'
-        notification.title = notification_title
-        notification.message = notification_message
-        notification.book_id = book_id if book_id else None
-        notification.related_user_id = current_user.id
-        
-        db.session.add(notification)
+            # ✅ TẠO THÔNG BÁO MỚI - KHÔNG NHẮC ĐÉN SÁCH
+            notification_message = f'{current_user.get_full_name() or current_user.username} đã gửi tin nhắn cho bạn'
+            notification_title = 'Tin nhắn riêng mới'
+
+            notification = Notification()
+            notification.user_id = recipient_id
+            notification.type = 'private_message'
+            notification.title = notification_title
+            notification.message = notification_message
+            notification.book_id = book_id if book_id else None
+            notification.related_user_id = current_user.id
+
+            db.session.add(notification)
+            logging.info(f"Tạo thông báo mới: tin nhắn từ {current_user.id} đến {recipient_id}")
+
         db.session.commit()
-        
-        logging.info(f"Private message sent from {current_user.id} to {recipient_id}, notification created")
-        
+
+        logging.info(f"Private message sent from {current_user.id} to {recipient_id}")
+
         return jsonify({
             'success': True,
             'message': message.to_dict()
         })
-        
+
     except Exception as e:
         logging.error(f"Error sending private message: {e}")
+        db.session.rollback()
         return jsonify({'success': False, 'error': 'Failed to send message'}), 500
 
 
