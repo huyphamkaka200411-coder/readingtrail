@@ -233,6 +233,15 @@ def background():
 # Initialize DB
 with app.app_context():
     db.create_all()
+with app.app_context():
+    try:
+        db.session.execute(db.text(
+            "ALTER TABLE books ADD COLUMN IF NOT EXISTS rental_price VARCHAR(100)"
+        ))
+        db.session.commit()
+    except Exception as e:
+        print("⚠️ Skip alter table:", e)
+        db.session.rollback()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
