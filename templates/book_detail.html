@@ -128,6 +128,15 @@
                                     <span>{{ book.borrow_duration_weeks or 2 }} tuần ({{ (book.borrow_duration_weeks or 2) * 7 }} ngày)</span>
                                 </div>
                             </div>
+                            {% if book.rental_price %}
+                            <div class="col-12 col-sm-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-money-bill-wave me-2 text-success"></i>
+                                    <strong class="me-2">Giá cho mượn:</strong>
+                                    <span class="badge bg-success fs-6">{{ book.rental_price }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="book-description mb-4">

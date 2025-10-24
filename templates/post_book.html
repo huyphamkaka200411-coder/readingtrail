@@ -226,13 +226,16 @@
                         <!-- Book Price + Contact -->
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label for="price" class="form-label">Giá sách</label>
+                                <label for="rental_price" class="form-label">
+                                    <i class="fas fa-money-bill-wave me-2"></i>Giá cho mượn *
+                                </label>
                                 <input type="text" 
                                        class="form-control glass-input" 
-                                       id="price" 
-                                       name="price" 
-                                       placeholder="30.000 VNĐ">
-                                <div class="form-text">Giá hoặc ghi miễn phí</div>
+                                       id="rental_price" 
+                                       name="rental_price" 
+                                       placeholder="VD: 20.000 hoặc Miễn phí"
+                                       required>
+                                <div class="form-text">Nhập giá cho mượn hoặc ghi "Miễn phí"</div>
                             </div>
 
                             <div class="col-md-6 mb-4">

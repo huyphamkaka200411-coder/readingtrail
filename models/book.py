@@ -15,6 +15,7 @@ class Book(db.Model):
     pages = db.Column(db.Integer)
     available = db.Column(db.Boolean, default=True)
     borrow_duration_weeks = db.Column(db.Integer, default=2)
+    rental_price = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # ✅ CHỈ GIỮ LẠI DÒNG NÀY THÔI
@@ -38,6 +39,7 @@ class Book(db.Model):
             'pages': self.pages,
             'available': self.available,
             'borrow_duration_weeks': self.borrow_duration_weeks,
+            'rental_price': self.rental_price,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'posted_by': self.posted_by,
             'poster_name': self.poster.get_full_name() if self.poster else None

@@ -314,6 +314,7 @@ def create_book():
         book.publication_year = data.get('publication_year')
         book.pages = data.get('pages')
         book.posted_by = current_user.id
+        book.rental_price = data.get('rental_price')
         
         db.session.add(book)
         db.session.commit()

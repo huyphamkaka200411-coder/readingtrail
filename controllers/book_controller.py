@@ -184,7 +184,6 @@ def return_book(book_id):
         flash('Failed to return book', 'error')
 
     return redirect(url_for('dashboard'))
-
 def post_book():
     """Add a new book to the catalog"""
     if not current_user.is_authenticated:
@@ -201,6 +200,7 @@ def post_book():
         publication_year = request.form.get('publication_year')
         pages = request.form.get('pages')
         borrow_duration_weeks = request.form.get('borrow_duration_weeks', '2').strip()
+        rental_price = request.form.get('rental_price', '').strip()  # ✅ THÊM DÒNG NÀY
 
         # Kiểm tra trường bắt buộc
         if not title or not author or not category or not location:
@@ -239,7 +239,8 @@ def post_book():
             publication_year=int(publication_year) if publication_year else None,
             pages=int(pages) if pages else None,
             posted_by=current_user.id,
-            borrow_duration_weeks=int(borrow_duration_weeks) if borrow_duration_weeks.isdigit() else 2
+            borrow_duration_weeks=int(borrow_duration_weeks) if borrow_duration_weeks.isdigit() else 2,
+            rental_price=rental_price  # ✅ THÊM DÒNG NÀY
         )
 
         try:
